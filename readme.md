@@ -1,24 +1,24 @@
 Trabajaremos con la versión 5.4.6 de Lua, que es la más actual hasta la fecha.
 ---
-## Instalación de Lua en Linux o WSL. En particular, con Ubuntu 22.04.
+# Instalación de Lua en Linux o WSL. En particular, con Ubuntu 22.04.
 
 ### Opción 100% por consola:
 
-* sudo apt install lua5.4
-* curl -R -O http://www.lua.org/ftp/lua-5.4.6.tar.gz
-* tar zxf lua-5.4.6.tar.gz
-* cd lua-5.4.6
-* make all test
-* sudo make all install
+1. `sudo apt install lua5.4`
+2. `curl -R -O http://www.lua.org/ftp/lua-5.4.6.tar.gz`
+3. `tar zxf lua-5.4.6.tar.gz`
+4. `cd lua-5.4.6`
+5. `make all test`
+6. `sudo make all install`
 
 Para comprobar que lua fue instalado, se puede correr `lua` por consola, lo que nos va a abrir un interpreter similar al de python donde vamos a poder escribir codigo ahi mismo.
 
 ### Opción interfaz gráfica o WSL con VSCode o similar:
 
-1. Descargar el repositorio lua-5.4.6.tar.gz desde https://www.lua.org/ftp/
+1. Descargar el repositorio `lua-5.4.6.tar.gz` desde [La pagina oficial de Lua](https://www.lua.org/ftp/)
 2. Descomprimir la carpeta. Si se trata de WSL, copiar la carpeta en WSL (aquí sirve un editor como VSCode que te deja copiar las carpetas directamente al WSL).
-3. Bulding. Ir a la carpeta lua-5.4.6 y ejecutar make. Si esto falla, correr make help para ver si la plataforma que estás utilizando es válida. Al encontrarla, corré make xxx.
-4. instalación. Correr sudo make install.
+3. Building. Ir a la carpeta `lua-5.4.6` y `ejecutar make`. Si esto falla, correr make help para ver si la plataforma que estás utilizando es válida. Al encontrarla, corré make xxx.
+4. Instalación. Correr `sudo make install`.
 
 Nota: los pasos 3 y 4 pueden reemplazarse por `sudo make all install` o `sudo make xxx install`. (reemplazar con el nombre de la plataforma, por ejemplo linux)
 
@@ -45,7 +45,7 @@ En este punto, cualquiera sea el metodo de instalación, se deberia poder correr
 
 ---
 
-## Love2D
+# Love2D
 
 Love2D es el framework que vamos a utilizar para el juego, particularmente **Love2D 11.4**
 
@@ -55,24 +55,25 @@ O bien:
 
 ### Linux:
 
-sudo add-apt-repository ppa:bartbes/love-stable
-sudo apt update
-sudo apt install love
-
+1. `sudo add-apt-repository ppa:bartbes/love-stable`
+2. `sudo apt update`
+3. `sudo apt install love`
 
 ### Windows:
 
 -Descargar y correr el instalador.
 
-### Correr un hola mundo en lua
+---
 
-#### Paso 1: Crear un archivo hola_mundo.lua
-#### Paso 2: Escribir print("¡Hola, mundo!")
-#### Paso 3: Ir a la carpeta del proyecto y correr por línea de comandos lua hola_mundo.lua
+## Correr un hola mundo en lua
 
-### Para correr un proyecto hecho en Love2D
+1. Crear un archivo hola_mundo.lua
+2. Escribir print("¡Hola, mundo!")
+3. Ir a la carpeta del proyecto y correr por línea de comandos `lua hola_mundo.lua`.
 
-Creamos una carpeta para nuestro proyecto y dentro de esa carpeta creamos un main.lua
+## Para correr un proyecto hecho en Love2D
+
+Creamos una carpeta para nuestro proyecto y dentro de esa carpeta creamos un **main.lua**. Es importante que el archivo se llame main.
 Dentro del main.lua podemos escribir por ejemplo:
 ```
 function love.draw()
