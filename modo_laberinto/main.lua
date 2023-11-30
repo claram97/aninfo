@@ -9,6 +9,11 @@ snakeBodyImageRight = love.graphics.newImage('assets/snake_body_right.png')
 fruitImage = love.graphics.newImage('assets/fruit.png')
 backgroundImage = love.graphics.newImage('assets/background.png')
 
+
+local level = 1
+local fruitsToChangeWalls = {3, 6}  -- Number of fruits to collect before walls change
+local wallsChanged = false
+
 -- set window dimensions
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
@@ -114,7 +119,6 @@ end
 function love.update(dt)
     -- check for game over
 
-
     if gameOver then
         -- check for space key press to restart the game
         if love.keyboard.isDown('space') then
@@ -184,24 +188,17 @@ function love.update(dt)
             snake[1].x = snake[1].x + 1
         end
 
-        --for _, staticWall in ipairs({{staticWall1X, staticWall1Y}, {staticWall2X, staticWall2Y}, {staticWall3X, staticWall3Y}, {staticWall4X, staticWall4Y}}) do
-        --    local wallX, wallY = staticWall[1], staticWall[2]
-    
-         --   if snake[1].x >= wallX and snake[1].x < wallX + 3 and snake[1].y == wallY then
-         --       -- Collision with a static wall, trigger game over
-        --        gameOver = true
-        --    end
-       --end
 
-        --for _, staticLine in ipairs({{staticVerticalLine1X, staticVerticalLine1Y}, {staticVerticalLine2X, staticVerticalLine2Y}}) do
-          ---  local lineX, lineY = staticLine[1], staticLine[2]
-    
-        --    if snake[1].y >= lineY and snake[1].y < lineY + 3 and snake[1].x == lineX then
-        --        -- Collision with a static vertical line, trigger game over
-        --        gameOver = true
-       --     end
-       -- end
-
+        if score == 3 or score == 6 then
+            if not wallsChanged then
+                level = level + 1
+                wallsChanged = true  -- Set this to true only when the level changes
+                generateStaticWalls()
+                generateStaticVerticalLines()
+            end
+        else
+            wallsChanged = false  -- Reset when the score is not 3 or 6
+        end
        checkCollisionWithStaticWalls()
        checkCollisionWithStaticLines()
 
@@ -228,6 +225,7 @@ function love.update(dt)
             -- move fruit to new location
             moveFruitToSafePosition()
         end
+ 
     end
 end
 
@@ -400,10 +398,14 @@ end
 
 function love.draw()
     -- draw game area
-
-    love.graphics.setColor(1,1,1)
-    --love.graphics.rectangle('fill', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
-    --love.graphics.draw(backgroundImage, 0, 0, 0, WINDOW_WIDTH / backgroundImage:getWidth(), WINDOW_HEIGHT / backgroundImage:getHeight())
+    --wallColor = {1,0,1}
+    if level == 1 then
+        wallColor = {0, 1, 0}  -- Set wall and line color for level 1
+    elseif level == 2 then
+        wallColor = {1, 0, 0} 
+    elseif level == 3 then
+        wallColor = {1, 0.75, 0.8} 
+    end
     
     love.graphics.setBackgroundColor(1, 1, 1)  -- Set background color to white
     for i = 0, GAME_AREA_WIDTH - 1 do
@@ -412,7 +414,7 @@ function love.draw()
             if (i + j) % 2 == 0 then
                 love.graphics.setColor(1, 1, 1)  -- White color
             else
-                love.graphics.setColor(0, 1, 0)  -- Green color
+                love.graphics.setColor(wallColor)
             end
 
             love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
@@ -424,12 +426,7 @@ function love.draw()
     -- draw game area borders
     love.graphics.setColor(0, 0, 0)
     love.graphics.rectangle('line', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
-    --draw_static_wall(staticWall1X, staticWall1Y)
-    --draw_static_wall(staticWall2X, staticWall2Y)
-    --draw_static_wall(staticWall3X, staticWall3Y)
-    --draw_static_wall(staticWall4X, staticWall4Y)
-    --draw_static_vertical_line(staticVerticalLine1X, staticVerticalLine1Y)
-    --draw_static_vertical_line(staticVerticalLine2X, staticVerticalLine2Y)
+
 
     drawStaticWalls()
     drawStaticVerticalLines()
