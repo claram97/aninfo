@@ -14,6 +14,7 @@ local level = 1
 local fruitsToChangeWalls = {3, 6}  -- Number of fruits to collect before walls change
 local wallsChanged = false
 
+
 -- set window dimensions
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
@@ -93,7 +94,6 @@ function love.load()
 
     -- set initial direction
     direction = SNAKE_START_DIRECTION
-
     -- set timer for snake movement
     timer = love.timer.getTime()
 end
@@ -168,7 +168,10 @@ function love.update(dt)
     end
 
     -- move snake
-    if love.timer.getTime() - timer > 0.1 then
+    local speed = 0.1 - 0.01 * (score - 1)
+    speed = math.max(speed, 0.05)  -- Ensure the speed doesn't go below a certain threshold (e.g., 0.05)
+    
+    if love.timer.getTime() - timer > speed then
         timer = love.timer.getTime()
 
         -- move body
