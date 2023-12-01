@@ -40,6 +40,7 @@ local score = 0
 -- Define obstacle variables
 local OBSTACLE_MIN_RADIUS = 20
 local OBSTACLE_MAX_RADIUS = 50
+local OBSTACLE_APPARITION_FREQUENCY = 5
 
 
 -- Define table to store snake segments
@@ -257,8 +258,7 @@ function getRandomFruitPosition()
 end
 
 function updateObstacles()
-    local obstacle_frequency = 3
-    if score % obstacle_frequency == 0 then
+    if score % OBSTACLE_APPARITION_FREQUENCY == 0 then
         local obstacle_radius = math.random(OBSTACLE_MAX_RADIUS)
         if obstacle_radius < OBSTACLE_MIN_RADIUS then
             obstacle_radius = OBSTACLE_MIN_RADIUS
