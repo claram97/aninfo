@@ -49,7 +49,7 @@ local staticVerticalLine2X, staticVerticalLine2Y
 local staticWalls = {}
 local staticVerticalLines = {}
 
-local FuncionesAuxiliares = require("funciones_extras")
+local FuncionesAuxiliares = require("pantalla_final")
 -- load Love2D libraries
 love.graphics = require('love.graphics')
 love.timer = require('love.timer')
