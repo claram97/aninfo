@@ -9,11 +9,11 @@ snakeBodyImageRight = love.graphics.newImage('assets/snake_body_right.png')
 fruitImage = love.graphics.newImage('assets/fruit.png')
 backgroundImage = love.graphics.newImage('assets/background.png')
 
-
+local gameState = "playing"
 local level = 1
 local fruitsToChangeWalls = {3, 6}  -- Number of fruits to collect before walls change
 local wallsChanged = false
-
+local gameOverHandled = false
 
 -- set window dimensions
 WINDOW_WIDTH = 1200
@@ -49,7 +49,7 @@ local staticVerticalLine2X, staticVerticalLine2Y
 local staticWalls = {}
 local staticVerticalLines = {}
 
-
+local FuncionesAuxiliares = require("funciones_extras")
 -- load Love2D libraries
 love.graphics = require('love.graphics')
 love.timer = require('love.timer')
@@ -402,87 +402,88 @@ end
 function love.draw()
     -- draw game area
     --wallColor = {1,0,1}
-    if level == 1 then
-        wallColor = {0, 1, 0}  -- Set wall and line color for level 1
-    elseif level == 2 then
-        wallColor = {1, 0, 0} 
-    elseif level == 3 then
-        wallColor = {1, 0.75, 0.8} 
-    end
-    
-    love.graphics.setBackgroundColor(1, 1, 1)  -- Set background color to white
-    for i = 0, GAME_AREA_WIDTH - 1 do
-        for j = 0, GAME_AREA_HEIGHT - 1 do
-            -- Alternate between white and green squares
-            if (i + j) % 2 == 0 then
-                love.graphics.setColor(1, 1, 1)  -- White color
-            else
-                love.graphics.setColor(wallColor)
-            end
-
-            love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+    if gameState == "playing" then
+        if level == 1 then
+            wallColor = {0, 1, 0}  -- Set wall and line color for level 1
+        elseif level == 2 then
+            wallColor = {1, 0, 0} 
+        elseif level == 3 then
+            wallColor = {1, 0.75, 0.8} 
         end
-    end
+        
+        love.graphics.setBackgroundColor(1, 1, 1)  -- Set background color to white
+        for i = 0, GAME_AREA_WIDTH - 1 do
+            for j = 0, GAME_AREA_HEIGHT - 1 do
+                -- Alternate between white and green squares
+                if (i + j) % 2 == 0 then
+                    love.graphics.setColor(1, 1, 1)  -- White color
+                else
+                    love.graphics.setColor(wallColor)
+                end
 
-
-
-    -- draw game area borders
-    love.graphics.setColor(0, 0, 0)
-    love.graphics.rectangle('line', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
-
-
-    drawStaticWalls()
-    drawStaticVerticalLines()
-    -- draw snake
-    for i = 1, #snake do
-        if i == 1 then
-            -- draw snake head image
-            love.graphics.setColor(1, 1, 1)
-            if direction == 'up' then
-                love.graphics.draw(snakeHeadImageUp, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, 0)
-            elseif direction == 'down' then
-                love.graphics.draw(snakeHeadImageDown, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, 0)
-            elseif direction == 'left' then
-                love.graphics.draw(snakeHeadImageLeft, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, 0)
-            elseif direction == 'right' then
-                love.graphics.draw(snakeHeadImageRight, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, 0)
-            end
-
-
-        else
-            -- draw square
-            love.graphics.setColor(0.82, 0.553, 0.275)
-            love.graphics.rectangle('fill', snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-
-            -- draw snake body image
-            love.graphics.setColor(1, 1, 1)
-            local angle = 0
-            if snake[i].x < snake[i-1].x then
-                love.graphics.draw(snakeBodyImageRight, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, angle)
-            elseif snake[i].x > snake[i-1].x then
-                love.graphics.draw(snakeBodyImageRight, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, angle)
-            elseif snake[i].y < snake[i-1].y then
-                love.graphics.draw(snakeBodyImageUp, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, angle)
-            elseif snake[i].y > snake[i-1].y then
-                love.graphics.draw(snakeBodyImageDown, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, angle)
+                love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
         end
-    end
-    -- draw fruit
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.draw(fruitImage, fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, 0, TILE_SIZE/fruitImage:getWidth(), TILE_SIZE/fruitImage:getHeight())
-    -- love.graphics.setColor(1, 0, 0)
-    -- love.graphics.rectangle('fill', fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
 
-    -- draw score
-    draw_border()
-    love.graphics.setColor(0,0,0)
-    love.graphics.setFont(font)
-    love.graphics.print('Score: ' .. score, 10, 10)
-    if gameOver then
-        local gameOverMessage = 'Game Over\nScore: ' .. score
+
+
+        -- draw game area borders
         love.graphics.setColor(0, 0, 0)
+        love.graphics.rectangle('line', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
+
+
+        drawStaticWalls()
+        drawStaticVerticalLines()
+        -- draw snake
+        for i = 1, #snake do
+            if i == 1 then
+                -- draw snake head image
+                love.graphics.setColor(1, 1, 1)
+                if direction == 'up' then
+                    love.graphics.draw(snakeHeadImageUp, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, 0)
+                elseif direction == 'down' then
+                    love.graphics.draw(snakeHeadImageDown, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, 0)
+                elseif direction == 'left' then
+                    love.graphics.draw(snakeHeadImageLeft, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, 0)
+                elseif direction == 'right' then
+                    love.graphics.draw(snakeHeadImageRight, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, 0)
+                end
+
+
+            else
+                -- draw square
+                love.graphics.setColor(0.82, 0.553, 0.275)
+                love.graphics.rectangle('fill', snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+
+                -- draw snake body image
+                love.graphics.setColor(1, 1, 1)
+                local angle = 0
+                if snake[i].x < snake[i-1].x then
+                    love.graphics.draw(snakeBodyImageRight, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, angle)
+                elseif snake[i].x > snake[i-1].x then
+                    love.graphics.draw(snakeBodyImageRight, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, angle)
+                elseif snake[i].y < snake[i-1].y then
+                    love.graphics.draw(snakeBodyImageUp, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, angle)
+                elseif snake[i].y > snake[i-1].y then
+                    love.graphics.draw(snakeBodyImageDown, snake[i].x * TILE_SIZE, snake[i].y * TILE_SIZE, angle)
+                end
+            end
+        end
+        -- draw fruit
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(fruitImage, fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, 0, TILE_SIZE/fruitImage:getWidth(), TILE_SIZE/fruitImage:getHeight())
+        -- love.graphics.setColor(1, 0, 0)
+        -- love.graphics.rectangle('fill', fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+
+        -- draw score
+        draw_border()
+        love.graphics.setColor(0,0,0)
         love.graphics.setFont(font)
-        love.graphics.print(gameOverMessage, WINDOW_WIDTH / 2 - font:getWidth(gameOverMessage) / 2, WINDOW_HEIGHT / 2 - font:getHeight() / 2)
+        love.graphics.print('Score: ' .. score, 10, 10)
+    end
+    if gameOver then
+        gameState = "not"
+        FuncionesAuxiliares.mostrarPantallaFinal(score)
+
     end
 end
