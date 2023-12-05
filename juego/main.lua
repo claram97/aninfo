@@ -58,35 +58,32 @@ local obstacles = {
     {x = 200, y = 300, radius = 50},
 }
 
-function draw()
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.draw(background, 0, 0)
-    love.graphics.setColor(snake_color)
-    for i, segment in ipairs(snake_segments) do
-        local imageToDraw = (i == 1) and snakeHeadImage or snakeBodyImage
-        love.graphics.draw(imageToDraw, segment.x - snake_radius, segment.y - snake_radius)
-    end
-    love.graphics.setColor(1, 0, 0)
-    love.graphics.draw(fruitImage, fruit_x - fruit_radius, fruit_y - fruit_radius)
+FuncionesAuxiliares = require("pantalla_final")
+gameState = "playing"
 
-    -- Draw obstacles
-    love.graphics.setColor(0, 0, 0)
-    for _, obstacle in ipairs(obstacles) do
-        love.graphics.circle('fill', obstacle.x, obstacle.y, obstacle.radius)
+function draw()
+    if gameState == "playing" then
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.draw(background, 0, 0)
+        love.graphics.setColor(snake_color)
+        for i, segment in ipairs(snake_segments) do
+            local imageToDraw = (i == 1) and snakeHeadImage or snakeBodyImage
+            love.graphics.draw(imageToDraw, segment.x - snake_radius, segment.y - snake_radius)
+        end
+        love.graphics.setColor(1, 0, 0)
+        love.graphics.draw(fruitImage, fruit_x - fruit_radius, fruit_y - fruit_radius)
+
+        -- Draw obstacles
+        love.graphics.setColor(0, 0, 0)
+        for _, obstacle in ipairs(obstacles) do
+            love.graphics.circle('fill', obstacle.x, obstacle.y, obstacle.radius)
+        end
     end
 
     if game_over then
-        -- draw background rectangle
-        love.graphics.setColor(0.5, 0.5, 0.5, 0.8)
-        love.graphics.rectangle('fill', WINDOW_WIDTH / 2 - 150, WINDOW_HEIGHT / 2 - 75, 300, 150)
+        gameState= "not"
+        FuncionesAuxiliares.mostrarPantallaFinal(score)
 
-        -- draw game over text
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.setFont(font)
-        love.graphics.printf('Game Over', WINDOW_WIDTH / 2 - 150, WINDOW_HEIGHT / 2 - 50, 300, 'center')
-
-        -- draw final score
-        love.graphics.printf('Final Score: ' .. score, WINDOW_WIDTH / 2 - 150, WINDOW_HEIGHT / 2, 300, 'center')
     end
 
 end
