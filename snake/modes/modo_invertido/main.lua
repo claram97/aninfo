@@ -83,7 +83,7 @@ function love.update(dt)
         return
     end
 
-    move.get_direction(true)
+    move.get_direction(true, direction)
     -- move snake
     if love.timer.getTime() - timer > 0.1 then
         timer = love.timer.getTime()
