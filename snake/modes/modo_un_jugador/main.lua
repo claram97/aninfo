@@ -55,6 +55,8 @@ obstacles = {}
 obstacleCount = 0
 
 FuncionesAuxiliares = require("pantalla_final")
+local move = require("move")
+
 -- function to place a fruit in a random location without obstacles
 function placeFruit()
     local fruitX = Love.math.random(GAME_AREA_WIDTH - 1)
@@ -143,36 +145,23 @@ function Love.update(dt)
     end
 
     -- check for input
-    if Love.keyboard.isDown('up') and direction ~= 'down' then
-        direction = 'up'
-    elseif Love.keyboard.isDown('down') and direction ~= 'up' then
-        direction = 'down'
-    elseif Love.keyboard.isDown('left') and direction ~= 'right' then
-        direction = 'left'
-    elseif Love.keyboard.isDown('right') and direction ~= 'left' then
-        direction = 'right'
-    end
+    -- if Love.keyboard.isDown('up') and direction ~= 'down' then
+    --     direction = 'up'
+    -- elseif Love.keyboard.isDown('down') and direction ~= 'up' then
+    --     direction = 'down'
+    -- elseif Love.keyboard.isDown('left') and direction ~= 'right' then
+    --     direction = 'left'
+    -- elseif Love.keyboard.isDown('right') and direction ~= 'left' then
+    --     direction = 'right'
+    -- end
 
+    move.get_direction(false)
     -- move snake
     if Love.timer.getTime() - timer > speed then
         timer = Love.timer.getTime()
 
-        -- move body
-        for i = #snake, 2, -1 do
-            snake[i].x = snake[i - 1].x
-            snake[i].y = snake[i - 1].y
-        end
+        move.move(snake)
 
-        -- move head
-        if direction == 'up' then
-            snake[1].y = snake[1].y - 1
-        elseif direction == 'down' then
-            snake[1].y = snake[1].y + 1
-        elseif direction == 'left' then
-            snake[1].x = snake[1].x - 1
-        elseif direction == 'right' then
-            snake[1].x = snake[1].x + 1
-        end
 
         -- check for collision with wall
         if snake[1].x < 0 or snake[1].x >= GAME_AREA_WIDTH or snake[1].y < 0 or snake[1].y >= GAME_AREA_HEIGHT then

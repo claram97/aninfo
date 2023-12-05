@@ -1,3 +1,5 @@
+Love = require('love')
+
 snakeHeadImageUp = love.graphics.newImage('assets/snake_head_up.png')
 snakeHeadImageDown = love.graphics.newImage('assets/snake_head_down.png')
 snakeHeadImageLeft = love.graphics.newImage('assets/snake_head_left.png')
@@ -8,7 +10,7 @@ snakeBodyImageLeft = love.graphics.newImage('assets/snake_body_left.png')
 snakeBodyImageRight = love.graphics.newImage('assets/snake_body_right.png')
 fruitImage = love.graphics.newImage('assets/fruit.png')
 backgroundImage = love.graphics.newImage('assets/background.png')
-
+local move = require("move")
 -- set window dimensions
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
@@ -35,9 +37,9 @@ FRUIT_START_X = 1
 FRUIT_START_Y = 1
 
 -- load Love2D libraries
-love.graphics = require('love.graphics')
-love.timer = require('love.timer')
-love.keyboard = require('love.keyboard')
+Love.graphics = require('love.graphics')
+Love.timer = require('love.timer')
+Love.keyboard = require('love.keyboard')
 local FuncionesAuxiliares = require("pantalla_final")
 
 -- initialize game variables
@@ -81,37 +83,13 @@ function love.update(dt)
         return
     end
 
-    -- check for input
-    if love.keyboard.isDown('up') and direction ~= 'down' then
-        direction = 'down'
-    elseif love.keyboard.isDown('down') and direction ~= 'up' then
-        direction = 'up'
-    elseif love.keyboard.isDown('left') and direction ~= 'right' then
-        direction = 'right'
-    elseif love.keyboard.isDown('right') and direction ~= 'left' then
-        direction = 'left'
-    end
-
+    move.get_direction(true)
     -- move snake
     if love.timer.getTime() - timer > 0.1 then
         timer = love.timer.getTime()
 
-        -- move body
-        for i = #snake, 2, -1 do
-            snake[i].x = snake[i - 1].x
-            snake[i].y = snake[i - 1].y
-        end
+        move.move(snake)
 
-        -- move head
-        if direction == 'up' then
-            snake[1].y = snake[1].y - 1
-        elseif direction == 'down' then
-            snake[1].y = snake[1].y + 1
-        elseif direction == 'left' then
-            snake[1].x = snake[1].x - 1
-        elseif direction == 'right' then
-            snake[1].x = snake[1].x + 1
-        end
 
         -- check for collision with wall
         if snake[1].x < 0 or snake[1].x >= GAME_AREA_WIDTH or snake[1].y < 0 or snake[1].y >= GAME_AREA_HEIGHT then
