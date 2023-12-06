@@ -74,7 +74,6 @@ function love.update(dt)
 end
 
 function love.draw()
-
     if gameState == "menu" then
         -- Set background color
         love.graphics.setColor(1, 1, 1)
@@ -107,6 +106,8 @@ function love.draw()
         labyrinth.draw()
     elseif gameState == "inverted" then
         inverted.draw()
+    elseif gameState == "configuracion" then
+        configuracion.draw()
     end
 end
 
@@ -132,6 +133,8 @@ function love.mousepressed(x, y, button, istouch, presses)
                 configuracion.load()
                 gameState = "configuracion"
             end
+        elseif gameState == "configuracion" then
+            configuracion.mousepressed(x, y, button, istouch, presses)
         end
     end
 end
