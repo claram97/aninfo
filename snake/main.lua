@@ -1,8 +1,11 @@
 -- main.lua
+
+-- Variables to store window dimensions
 local setWidth = 1200
 local setHeight = 800
 
-local columnWidth = setWidth / 2 --Genera 2 columnas para ubicar los botones y una columna en el medio para que queden separados.
+-- Generate 2 columns to locate the buttons.
+local columnWidth = setWidth / 2 
 
 -- Variables to store button dimensions
 local buttonWidth, buttonHeight = 200, 50
@@ -14,11 +17,10 @@ local button3X, button3Y = columnWidth + 150, setHeight / 3
 local button4X, button4Y = columnWidth + 150, setHeight / 2
 local button5X, button5Y = columnWidth, (setHeight / 2) + 100
 
-
-
 -- Colors
-local backgroundColor = {0.95, 0.95, 0.9}
+local backgroundColor = {0.95, 0.95, 0.9, 0.5}
 local buttonColor = {0.4, 0.4, 0.8}
+local buttonConfigColor = {0.2, 0.7, 0.2}
 local buttonHoverColor = {0.6, 0.6, 1}
 local backgroundImage = love.graphics.newImage('assets/imagen-snake.png')
 
@@ -29,7 +31,7 @@ local button3Hovered = false
 
 -- variables to store fonts
 local fontTitle = love.graphics.newFont(60)
-local fontBody = love.graphics.newFont(30)
+local fontBody = love.graphics.newFont(25)
 
 -- state
 local gameState = "menu"
@@ -41,7 +43,7 @@ local labyrinth = require('snake.modes.modo_laberinto.modo_laberinto')
 local inverted = require('snake.modes.modo_invertido.modo_invertido')
 
 function love.load()
-    love.window.setTitle("Menu Example")
+    love.window.setTitle("La Viborita")
     love.window.setMode(setWidth, setHeight, {resizable=false})
 end
 
@@ -72,22 +74,22 @@ function love.draw()
         -- Set background color
         love.graphics.setColor(1, 1, 1)
 
-        love.graphics.draw(backgroundImage, 0, 0, 0, love.graphics.getWidth() / backgroundImage:getWidth(), love.graphics.getHeight() / backgroundImage:getHeight())
-        love.graphics.setColor(backgroundColor, 0.5)
+        love.graphics.draw(backgroundImage, 0, 0, 0, setWidth / backgroundImage:getWidth(), setHeight / backgroundImage:getHeight())
+        love.graphics.setColor(backgroundColor)
         love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 
         -- Draw title
         love.graphics.setColor(0, 0, 0)
         love.graphics.setFont(fontTitle)
-        love.graphics.printf("La Viborita", 0, 70, love.graphics.getWidth(), "center")
+        love.graphics.printf("La Viborita", 0, setHeight / 6, love.graphics.getWidth(), "center")
         love.graphics.setFont(fontBody)
 
         -- Draw buttons
-        drawButton(button1X, button1Y, "Clásico", button1Hovered)
-        drawButton(button2X, button2Y, "Button 2", button2Hovered)
-        drawButton(button3X, button3Y, "Button 3", button3Hovered)
-        drawButton(button4X, button4Y, "Button 4", button4Hovered)
-        drawButton(love.graphics.getWidth() / 2, (love.graphics.getHeight() / 2) + 100, "Button 5", button5Hovered)
+        drawButton(button1X, button1Y, "Clásico", button1Hovered, buttonColor)
+        drawButton(button2X, button2Y, "Invertido", button2Hovered, buttonColor)
+        drawButton(button3X, button3Y, "Libre", button3Hovered, buttonColor)
+        drawButton(button4X, button4Y, "Laberinto", button4Hovered, buttonColor)
+        drawButton(button5X, button5Y, "Configuración", button5Hovered, buttonConfigColor)
 
     elseif gameState == "one_player" then
         one_player.draw()
@@ -125,9 +127,8 @@ function love.mousepressed(x, y, button, istouch, presses)
     end
 end
 
-function drawButton(x, y, text, hovered)
+function drawButton(x, y, text, hovered, color)
     -- Set button color based on hover state
-    local color = buttonColor
     if hovered then
         color = buttonHoverColor
     end
@@ -138,7 +139,7 @@ function drawButton(x, y, text, hovered)
 
     -- Draw button text
     love.graphics.setColor(1, 1, 1)
-    love.graphics.printf(text, x - buttonWidth / 2, y + 20, buttonWidth, "center")
+    love.graphics.printf(text, x - buttonWidth / 2, y + 10, buttonWidth, "center")
 end
 
 function isMouseOver(x, y, width, height)
