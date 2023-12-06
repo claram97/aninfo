@@ -1,14 +1,20 @@
 -- main.lua
+local setWidth = 1200
+local setHeight = 800
 
--- Variables to store button positions
-local button1X, button1Y = 100, 200
-local button2X, button2Y = 100, 250
-local button3X, button3Y = 100, 300
-local button4X, button4Y = 100, 350
-local button5X, button5Y = 100, 400
+local columnWidth = setWidth / 2 --Genera 2 columnas para ubicar los botones y una columna en el medio para que queden separados.
 
 -- Variables to store button dimensions
 local buttonWidth, buttonHeight = 200, 50
+
+-- Variables to store button positions
+local button1X, button1Y = columnWidth - 150, setHeight / 3
+local button2X, button2Y = columnWidth - 150, setHeight / 2
+local button3X, button3Y = columnWidth + 150, setHeight / 3
+local button4X, button4Y = columnWidth + 150, setHeight / 2
+local button5X, button5Y = columnWidth, (setHeight / 2) + 100
+
+
 
 -- Colors
 local backgroundColor = {0.95, 0.95, 0.9}
@@ -36,7 +42,7 @@ local inverted = require('snake.modes.modo_invertido.modo_invertido')
 
 function love.load()
     love.window.setTitle("Menu Example")
-    love.window.setMode(1200, 800, {resizable=false})
+    love.window.setMode(setWidth, setHeight, {resizable=false})
 end
 
 function love.update(dt)
@@ -77,11 +83,11 @@ function love.draw()
         love.graphics.setFont(fontBody)
 
         -- Draw buttons
-        drawButton(button1X, button1Y, "Button 1", button1Hovered)
+        drawButton(button1X, button1Y, "Clásico", button1Hovered)
         drawButton(button2X, button2Y, "Button 2", button2Hovered)
         drawButton(button3X, button3Y, "Button 3", button3Hovered)
         drawButton(button4X, button4Y, "Button 4", button4Hovered)
-        drawButton(button5X, button5Y, "Button 5", button5Hovered)
+        drawButton(love.graphics.getWidth() / 2, (love.graphics.getHeight() / 2) + 100, "Button 5", button5Hovered)
 
     elseif gameState == "one_player" then
         one_player.draw()
@@ -128,11 +134,11 @@ function drawButton(x, y, text, hovered)
 
     -- Draw button background
     love.graphics.setColor(color)
-    love.graphics.rectangle("fill", x, y, buttonWidth, buttonHeight)
+    love.graphics.rectangle("fill", x - buttonWidth / 2, y, buttonWidth, buttonHeight, 15, 15)
 
     -- Draw button text
     love.graphics.setColor(1, 1, 1)
-    love.graphics.printf(text, x, y + 20, buttonWidth, "center")
+    love.graphics.printf(text, x - buttonWidth / 2, y + 20, buttonWidth, "center")
 end
 
 function isMouseOver(x, y, width, height)
