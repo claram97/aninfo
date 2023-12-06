@@ -16,6 +16,7 @@ local button2X, button2Y = columnWidth - 150, setHeight / 2
 local button3X, button3Y = columnWidth + 150, setHeight / 3
 local button4X, button4Y = columnWidth + 150, setHeight / 2
 local button5X, button5Y = columnWidth, (setHeight / 2) + 100
+local button6X, button6Y = columnWidth, button5Y + 100
 
 -- Colors
 local backgroundColor = {0.95, 0.95, 0.9, 0.5}
@@ -55,6 +56,7 @@ function love.update(dt)
         button3Hovered = isMouseOver(button3X, button3Y, buttonWidth, buttonHeight)
         button4Hovered = isMouseOver(button4X, button4Y, buttonWidth, buttonHeight)
         button5Hovered = isMouseOver(button5X, button5Y, buttonWidth, buttonHeight)
+        button6Hovered = isMouseOver(button6X, button6Y, buttonWidth, buttonHeight)
     elseif gameState == "one_player" then
         one_player.update()
     elseif gameState == "two_players" then
@@ -86,10 +88,11 @@ function love.draw()
 
         -- Draw buttons
         drawButton(button1X, button1Y, "Clásico", button1Hovered, buttonColor)
-        drawButton(button2X, button2Y, "Invertido", button2Hovered, buttonColor)
+        drawButton(button2X, button2Y, "2 Jugadores", button2Hovered, buttonColor)
         drawButton(button3X, button3Y, "Libre", button3Hovered, buttonColor)
         drawButton(button4X, button4Y, "Laberinto", button4Hovered, buttonColor)
-        drawButton(button5X, button5Y, "Configuración", button5Hovered, buttonConfigColor)
+        drawButton(button5X, button5Y, "Invertido", button5Hovered, buttonColor)
+        drawButton(button6X, button6Y, "Configuración", bu)
 
     elseif gameState == "one_player" then
         one_player.draw()
