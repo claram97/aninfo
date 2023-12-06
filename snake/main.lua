@@ -95,11 +95,7 @@ function love.draw()
         drawButton(button3X, button3Y, "Libre", button3Hovered, buttonColor)
         drawButton(button4X, button4Y, "Laberinto", button4Hovered, buttonColor)
         drawButton(button5X, button5Y, "Invertido", button5Hovered, buttonColor)
-<<<<<<< HEAD
         drawButton(button6X, button6Y, "Configuración", button6Hovered, buttonConfigColor)
-=======
-        drawButton(button6X, button6Y, "Configuración", bu)
->>>>>>> 7af1ec028a7df4ca10ef67ece2e1427a00c11f56
 
     elseif gameState == "one_player" then
         one_player.draw()
