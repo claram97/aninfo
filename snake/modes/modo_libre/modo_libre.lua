@@ -66,7 +66,18 @@ playerState = "playing"
 function draw()
     if playerState == "playing" then
         love.graphics.setColor(1, 1, 1)
-        love.graphics.draw(background, 0, 0)
+        for i = 0, GAME_AREA_WIDTH - 1 do
+            for j = 0, GAME_AREA_HEIGHT - 1 do
+                -- Alternate between white and green squares
+                if (i + j) % 2 == 0 then
+                    Love.graphics.setColor(227/255, 242/255, 200/255)
+                else
+                    Love.graphics.setColor(162/255, 208/255, 74/255)
+                end
+
+                love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+            end
+        end
         love.graphics.setColor(snake_color)
         for i, segment in ipairs(snake_segments) do
             local imageToDraw = (i == 1) and snakeHeadImage or snakeBodyImage

@@ -26,6 +26,16 @@ function M.load()
     snakeBodyImageLeft = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_body_left.png')
     snakeBodyImageRight = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_body_right.png')
 
+    snake2HeadImageUp = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_2_head_up.png')
+    snake2HeadImageDown = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_2_head_down.png')
+    snake2HeadImageLeft = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_2_head_left.png')
+    snake2HeadImageRight = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_2_head_right.png')
+    snake2BodyImageUp = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_2_body_up.png')
+    snake2BodyImageDown = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_2_body_down.png')
+    snake2BodyImageLeft = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_2_body_left.png')
+    snake2BodyImageRight = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_2_body_right.png')
+
+
     -- set window title
     love.window.setTitle('Snake Game')
 
@@ -260,13 +270,13 @@ function M.draw()
             -- draw snake head image
             love.graphics.setColor(1, 1, 1)
             if direction2 == 'up' then
-                love.graphics.draw(snakeHeadImageUp, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, 0)
+                love.graphics.draw(snake2HeadImageUp, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, 0)
             elseif direction2 == 'down' then
-                love.graphics.draw(snakeHeadImageDown, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, 0)
+                love.graphics.draw(snake2HeadImageDown, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, 0)
             elseif direction2 == 'left' then
-                love.graphics.draw(snakeHeadImageLeft, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, 0)
+                love.graphics.draw(snake2HeadImageLeft, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, 0)
             elseif direction2 == 'right' then
-                love.graphics.draw(snakeHeadImageRight, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, 0)
+                love.graphics.draw(snake2HeadImageRight, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, 0)
             end
         else
             -- draw square
@@ -277,13 +287,13 @@ function M.draw()
             love.graphics.setColor(1, 1, 1)
             local angle = 0
             if snake2[i].x < snake2[i-1].x then
-                love.graphics.draw(snakeBodyImageRight, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, angle)
+                love.graphics.draw(snake2BodyImageRight, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, angle)
             elseif snake2[i].x > snake2[i-1].x then
-                love.graphics.draw(snakeBodyImageLeft, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, angle)
+                love.graphics.draw(snake2BodyImageLeft, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, angle)
             elseif snake2[i].y < snake2[i-1].y then
-                love.graphics.draw(snakeBodyImageDown, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, angle)
+                love.graphics.draw(snake2BodyImageDown, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, angle)
             elseif snake2[i].y > snake2[i-1].y then
-                love.graphics.draw(snakeBodyImageUp, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, angle)
+                love.graphics.draw(snake2BodyImageUp, snake2[i].x * TILE_SIZE, snake2[i].y * TILE_SIZE, angle)
             end
         end
     end

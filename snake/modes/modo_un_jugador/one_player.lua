@@ -179,7 +179,7 @@ function M.draw()
                 if (i + j) % 2 == 0 then
                     Love.graphics.setColor(1, 1, 1)  -- White color
                 else
-                    Love.graphics.setColor(0, 1, 0)  -- Green color
+                    Love.graphics.setColor(9/255, 168/255, 5/255)  -- Green color
                 end
 
                 Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
