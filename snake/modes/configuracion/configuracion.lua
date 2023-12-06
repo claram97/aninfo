@@ -85,13 +85,23 @@ function loadConfig()
     config = defaultConfig
 
     if file then
-        local lines = {}
-        for line in file:gmatch("[^\r\n]+") do
-            table.insert(lines, line)
+        local content = file:read("*a")
+        local soundEnabledMatch = content:match("soundEnabled = (%a+)")
+        local fullScreenMatch = content:match("fullScreen = (%a+)")
+
+        if soundEnabledMatch then
+            config.sound = soundEnabledMatch == "true"
+        else
+            print("Error: Invalid soundEnabled value in config.txt")
+            config.sound = defaultConfig.soundEnabled
         end
 
-        config.soundEnabled = lines[1]:match("soundEnabled = (%a+)") == "true"
-        config.fullScreen = lines[2]:match("fullScreen = (%a+)") == "true"
+        if fullScreenMatch then
+            config.fullScreen = fullScreenMatch == "true"
+        else
+            print("Error: Invalid fullScreen value in config.txt")
+            config.fullScreen = defaultConfig.fullScreen
+        end
     end
 end
 
