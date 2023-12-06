@@ -11,14 +11,19 @@ local button5X, button5Y = 100, 400
 local buttonWidth, buttonHeight = 200, 50
 
 -- Colors
-local backgroundColor = {0.2, 0.2, 0.2}
+local backgroundColor = {0.95, 0.95, 0.9}
 local buttonColor = {0.4, 0.4, 0.8}
 local buttonHoverColor = {0.6, 0.6, 1}
+local backgroundImage = love.graphics.newImage('assets/imagen-snake.png')
 
 -- Variables to store button state (hovered or not)
 local button1Hovered = false
 local button2Hovered = false
 local button3Hovered = false
+
+-- variables to store fonts
+local fontTitle = love.graphics.newFont(60)
+local fontBody = love.graphics.newFont(30)
 
 -- state
 local gameState = "menu"
@@ -59,11 +64,17 @@ function love.draw()
 
     if gameState == "menu" then
         -- Set background color
-        love.graphics.setBackgroundColor(backgroundColor)
+        love.graphics.setColor(1, 1, 1)
+
+        love.graphics.draw(backgroundImage, 0, 0, 0, love.graphics.getWidth() / backgroundImage:getWidth(), love.graphics.getHeight() / backgroundImage:getHeight())
+        love.graphics.setColor(backgroundColor, 0.5)
+        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 
         -- Draw title
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.print("Menu Example", 150, 50, 0, 2, 2)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.setFont(fontTitle)
+        love.graphics.printf("La Viborita", 0, 70, love.graphics.getWidth(), "center")
+        love.graphics.setFont(fontBody)
 
         -- Draw buttons
         drawButton(button1X, button1Y, "Button 1", button1Hovered)
