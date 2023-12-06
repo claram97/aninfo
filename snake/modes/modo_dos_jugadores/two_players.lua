@@ -208,6 +208,18 @@ function M.draw()
     love.graphics.setColor(0.82, 0.553, 0.275)
     love.graphics.rectangle('fill', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
 
+    Love.graphics.setColor(1, 1, 1)
+    for i = 0, GAME_AREA_WIDTH - 1 do
+        for j = 0, GAME_AREA_HEIGHT - 1 do
+            if (i + j) % 2 == 0 then
+                Love.graphics.setColor(0, 125/255, 50/255) -- Dark green
+            else
+                Love.graphics.setColor(0, 185/255, 74/255)  -- Light green
+            end
+            Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+        end
+    end
+
     -- draw snake 1
     for i = 1, #snake1 do
         if i == 1 then

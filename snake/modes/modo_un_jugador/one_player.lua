@@ -176,7 +176,6 @@ function M.draw()
         Love.graphics.setColor(1, 1, 1)
         for i = 0, GAME_AREA_WIDTH - 1 do
             for j = 0, GAME_AREA_HEIGHT - 1 do
-                -- Alternate between white and green squares
                 if (i + j) % 2 == 0 then
                     Love.graphics.setColor(1, 1, 1)  -- White color
                 else
