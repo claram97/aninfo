@@ -1,16 +1,6 @@
 Love = require('love')
-
-snakeHeadImageUp = love.graphics.newImage('assets/snake_head_up.png')
-snakeHeadImageDown = love.graphics.newImage('assets/snake_head_down.png')
-snakeHeadImageLeft = love.graphics.newImage('assets/snake_head_left.png')
-snakeHeadImageRight = love.graphics.newImage('assets/snake_head_right.png')
-snakeBodyImageUp = love.graphics.newImage('assets/snake_body_up.png')
-snakeBodyImageDown = love.graphics.newImage('assets/snake_body_down.png')
-snakeBodyImageLeft = love.graphics.newImage('assets/snake_body_left.png')
-snakeBodyImageRight = love.graphics.newImage('assets/snake_body_right.png')
-fruitImage = love.graphics.newImage('assets/fruit.png')
-backgroundImage = love.graphics.newImage('assets/background.png')
-local move = require("move")
+local M = {}
+local move = require('snake.modes.move')
 -- set window dimensions
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
@@ -40,7 +30,7 @@ FRUIT_START_Y = 1
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
 Love.keyboard = require('love.keyboard')
-local FuncionesAuxiliares = require("pantalla_final")
+local FuncionesAuxiliares = require("snake.modes.modo_invertido.pantalla_final")
 
 -- initialize game variables
 snake = {}
@@ -48,7 +38,19 @@ fruit = {}
 gameOver = false
 score = 0
 gameState = "playing"
-function love.load()
+function M.load()
+    
+    snakeHeadImageUp = love.graphics.newImage('modes/modo_invertido/assets/snake_head_up.png')
+    snakeHeadImageDown = love.graphics.newImage('modes/modo_invertido/assets/snake_head_down.png')
+    snakeHeadImageLeft = love.graphics.newImage('modes/modo_invertido/assets/snake_head_left.png')
+    snakeHeadImageRight = love.graphics.newImage('modes/modo_invertido/assets/snake_head_right.png')
+    snakeBodyImageUp = love.graphics.newImage('modes/modo_invertido/assets/snake_body_up.png')
+    snakeBodyImageDown = love.graphics.newImage('modes/modo_invertido/assets/snake_body_down.png')
+    snakeBodyImageLeft = love.graphics.newImage('modes/modo_invertido/assets/snake_body_left.png')
+    snakeBodyImageRight = love.graphics.newImage('modes/modo_invertido/assets/snake_body_right.png')
+    fruitImage = love.graphics.newImage('modes/modo_invertido/assets/fruit.png')
+    backgroundImage = love.graphics.newImage('modes/modo_invertido/assets/background.png')
+
     -- set window title
     love.window.setTitle('Snake Game')
 
@@ -77,7 +79,7 @@ function love.load()
     timer = love.timer.getTime()
 end
 
-function love.update(dt)
+function M.update(dt)
     -- check for game over
     if gameOver then
         return
@@ -118,7 +120,7 @@ function love.update(dt)
     end
 end
 
-function love.draw()
+function M.draw()
     -- draw game area
     if gameState == "playing" then
         love.graphics.setColor(1,1,1)
@@ -197,3 +199,5 @@ function love.draw()
         FuncionesAuxiliares.mostrarPantallaFinal(score)
     end
 end
+
+return M

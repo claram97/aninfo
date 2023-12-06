@@ -4,6 +4,8 @@
 local button1X, button1Y = 100, 200
 local button2X, button2Y = 100, 250
 local button3X, button3Y = 100, 300
+local button4X, button4Y = 100, 350
+local button5X, button5Y = 100, 400
 
 -- Variables to store button dimensions
 local buttonWidth, buttonHeight = 200, 50
@@ -24,6 +26,8 @@ local gameState = "menu"
 local one_player = require('snake.modes.modo_un_jugador.one_player')
 local two_players = require('snake.modes.modo_dos_jugadores.two_players')
 local free_mode = require('snake.modes.modo_libre.modo_libre')
+local labyrinth = require('snake.modes.modo_laberinto.modo_laberinto')
+local inverted = require('snake.modes.modo_invertido.modo_invertido')
 
 function love.load()
     love.window.setTitle("Menu Example")
@@ -36,12 +40,18 @@ function love.update(dt)
         button1Hovered = isMouseOver(button1X, button1Y, buttonWidth, buttonHeight)
         button2Hovered = isMouseOver(button2X, button2Y, buttonWidth, buttonHeight)
         button3Hovered = isMouseOver(button3X, button3Y, buttonWidth, buttonHeight)
+        button4Hovered = isMouseOver(button4X, button4Y, buttonWidth, buttonHeight)
+        button5Hovered = isMouseOver(button5X, button5Y, buttonWidth, buttonHeight)
     elseif gameState == "one_player" then
         one_player.update()
     elseif gameState == "two_players" then
         two_players.update()
     elseif gameState == "free_mode" then
         free_mode.update()
+    elseif gameState == "labyrinth" then
+        labyrinth.update()
+    elseif gameState == "inverted" then
+        inverted.update()
     end
 end
 
@@ -59,12 +69,19 @@ function love.draw()
         drawButton(button1X, button1Y, "Button 1", button1Hovered)
         drawButton(button2X, button2Y, "Button 2", button2Hovered)
         drawButton(button3X, button3Y, "Button 3", button3Hovered)
+        drawButton(button4X, button4Y, "Button 4", button4Hovered)
+        drawButton(button5X, button5Y, "Button 5", button5Hovered)
+
     elseif gameState == "one_player" then
         one_player.draw()
     elseif gameState == "two_players" then
         two_players.draw()
     elseif gameState == "free_mode" then
         free_mode.draw()
+    elseif gameState == "labyrinth" then
+        labyrinth.draw()
+    elseif gameState == "inverted" then
+        inverted.draw()
     end
 end
 
@@ -80,6 +97,12 @@ function love.mousepressed(x, y, button, istouch, presses)
             elseif isMouseOver(button3X, button3Y, buttonWidth, buttonHeight) then
                 free_mode.load()
                 gameState = "free_mode"
+            elseif isMouseOver(button4X, button4Y, buttonWidth, buttonHeight) then
+                labyrinth.load()
+                gameState = "labyrinth"
+            elseif isMouseOver(button5X, button5Y, buttonWidth, buttonHeight) then
+                inverted.load()
+                gameState = "inverted"
             end
         end
     end

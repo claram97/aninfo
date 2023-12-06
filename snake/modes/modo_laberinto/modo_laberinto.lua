@@ -1,23 +1,12 @@
 Love = require('love')
-
-snakeHeadImageUp = love.graphics.newImage('assets/snake_head_up.png')
-snakeHeadImageDown = love.graphics.newImage('assets/snake_head_down.png')
-snakeHeadImageLeft = love.graphics.newImage('assets/snake_head_left.png')
-snakeHeadImageRight = love.graphics.newImage('assets/snake_head_right.png')
-snakeBodyImageUp = love.graphics.newImage('assets/snake_body_up.png')
-snakeBodyImageDown = love.graphics.newImage('assets/snake_body_down.png')
-snakeBodyImageLeft = love.graphics.newImage('assets/snake_body_left.png')
-snakeBodyImageRight = love.graphics.newImage('assets/snake_body_right.png')
-fruitImage = love.graphics.newImage('assets/fruit.png')
-backgroundImage = love.graphics.newImage('assets/background.png')
-
+local M = {}
 local gameState = "playing"
 local level = 1
 local fruitsToChangeWalls = {3, 6}  -- Number of fruits to collect before walls change
 local wallsChanged = false
 local gameOverHandled = false
 
-local move = require("move")
+local move = require('snake.modes.move')
 -- set window dimensions
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
@@ -52,7 +41,7 @@ local staticVerticalLine2X, staticVerticalLine2Y
 local staticWalls = {}
 local staticVerticalLines = {}
 
-local FuncionesAuxiliares = require("pantalla_final")
+local FuncionesAuxiliares = require("snake.modes.modo_laberinto.pantalla_final")
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
@@ -64,7 +53,18 @@ fruit = {}
 gameOver = false
 score = 0
 
-function love.load()
+function M.load()
+    snakeHeadImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_up.png')
+    snakeHeadImageDown = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_down.png')
+    snakeHeadImageLeft = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_left.png')
+    snakeHeadImageRight = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_right.png')
+    snakeBodyImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_up.png')
+    snakeBodyImageDown = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_down.png')
+    snakeBodyImageLeft = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_left.png')
+    snakeBodyImageRight = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_right.png')
+    fruitImage = love.graphics.newImage('modes/modo_laberinto/assets/fruit.png')
+    backgroundImage = love.graphics.newImage('modes/modo_laberinto/assets/background.png')
+
     -- set window title
     Love.window.setTitle('Snake Game')
 
@@ -132,7 +132,7 @@ function change_level()
     end
 end
 
-function Love.update(dt)
+function M.update(dt)
     -- check for game over
 
     if gameOver then
@@ -388,7 +388,7 @@ function checkCollisionWithStaticLines()
     end
 end
 
-function Love.draw()
+function M.draw()
     -- draw game area
     --wallColor = {1,0,1}
     if gameState == "playing" then
@@ -476,3 +476,5 @@ function Love.draw()
 
     end
 end
+
+return M
