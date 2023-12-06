@@ -98,7 +98,7 @@ function M.load(loadGame)
     -- check for saved game
     local savedSnake = savegame.loadSnakeState('one_player')
     if savedSnake and loadGame then
-        snake = savedSnake
+        snake = savedSnake.snake
         -- get the score by counting the number of segments in the snake
         score = #snake - SNAKE_START_LENGTH
         speed = 0.1 - (score * SPEED_INCREMENT)
@@ -116,6 +116,7 @@ function M.load(loadGame)
                 direction = 'right'
             end
         end
+        obstacles = savedSnake.obstacles
         timer = Love.timer.getTime()
         fruit.x = FRUIT_START_X
         fruit.y = FRUIT_START_Y
@@ -281,7 +282,7 @@ function M.quit()
     if gameOver then
         return
     end
-    savegame.saveSnakeState(snake, score, 'one_player')
+    savegame.saveSnakeState(snake, obstacles, score, 'one_player')
 end
 
 function M.isSavedGame()
