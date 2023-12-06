@@ -55,7 +55,7 @@ obstacles = {}
 obstacleCount = 0
 
 FuncionesAuxiliares = require("pantalla_final")
-local move = require("move")
+local move = require('snake.modes.move')
 
 -- function to place a fruit in a random location without obstacles
 function placeFruit()
