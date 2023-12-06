@@ -1,7 +1,12 @@
 -- Import the body of the snake from assets
 local love = require("love")
-local snakeBodyImage = love.graphics.newImage('assets/snake_body.png')
-local snakeHeadImage = love.graphics.newImage('assets/snake_head.png')
+
+snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png')
+snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')
+fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
+background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
+
+local M = {}
 
 -- Define screen size
 local screen_width = 1200
@@ -49,20 +54,17 @@ local snake_segments = {
     {x=snake_x, y=snake_y},
     {x=snake_x - segment_distance, y=snake_y}
 }
-local fruitImage = love.graphics.newImage('assets/fruit_image.png')
--- Define function to draw snake and fruit
-local background = love.graphics.newImage('assets/sprite_libre2.png')
 
 -- Define table to store obstacles
 local obstacles = {
     {x = 200, y = 300, radius = 50},
 }
 
-FuncionesAuxiliares = require("pantalla_final")
-gameState = "playing"
+FuncionesAuxiliares = require("snake.modes.modo_libre.pantalla_final")
+playerState = "playing"
 
 function draw()
-    if gameState == "playing" then
+    if playerState == "playing" then
         love.graphics.setColor(1, 1, 1)
         love.graphics.draw(background, 0, 0)
         love.graphics.setColor(snake_color)
@@ -81,7 +83,7 @@ function draw()
     end
 
     if game_over then
-        gameState= "not"
+        playerState = "not"
         FuncionesAuxiliares.mostrarPantallaFinal(score)
 
     end
@@ -190,11 +192,11 @@ local function keyreleased(key)
 end
 
 -- Call update and draw functions in main loop
-function love.draw()
+function M.draw()
     draw()
 end
 
-function love.update(dt)
+function M.update(dt)
     update(dt)
 end
 
@@ -207,7 +209,12 @@ function love.keyreleased(key)
 end
 
 -- Define function to load game assets
-function love.load()
+function M.load()
+    local snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png')
+    local snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')
+    local fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
+    local background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
+
     -- Adjust window size and title
     love.window.setMode(screen_width, screen_height)
 
@@ -274,3 +281,5 @@ function updateObstacles()
         table.insert(obstacles, {x = obstacle_x, y = obstacle_y, radius = obstacle_radius})
     end
 end
+
+return M

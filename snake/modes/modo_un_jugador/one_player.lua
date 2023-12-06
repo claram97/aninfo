@@ -1,42 +1,5 @@
 Love = require('love')
 gameState = "playing"
-snakeHeadImageUp = Love.graphics.newImage('assets/snake_head_up.png')
-snakeHeadImageDown = Love.graphics.newImage('assets/snake_head_down.png')
-snakeHeadImageLeft = Love.graphics.newImage('assets/snake_head_left.png')
-snakeHeadImageRight = Love.graphics.newImage('assets/snake_head_right.png')
-snakeBodyImageUp = Love.graphics.newImage('assets/snake_body_up.png')
-snakeBodyImageDown = Love.graphics.newImage('assets/snake_body_down.png')
-snakeBodyImageLeft = Love.graphics.newImage('assets/snake_body_left.png')
-snakeBodyImageRight = Love.graphics.newImage('assets/snake_body_right.png')
-fruitImage = Love.graphics.newImage('assets/fruit.png')
-backgroundImage = Love.graphics.newImage('assets/background.png')
-
--- set window dimensions
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
-
--- set tile dimensions
-TILE_SIZE = 50
-
--- set game area dimensions
-GAME_AREA_WIDTH = 24
-GAME_AREA_HEIGHT = 16
-
--- set initial snake position
-SNAKE_START_X = 12
-SNAKE_START_Y = 8
-
--- set initial snake length
-SNAKE_START_LENGTH = 3
-
--- set initial snake direction
-SNAKE_START_DIRECTION = 'right'
-
--- set initial fruit position
-FRUIT_START_X = 1
-FRUIT_START_Y = 1
-
-SPEED_INCREMENT = 0.001
 
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
@@ -54,8 +17,10 @@ speed = 0.1
 obstacles = {}
 obstacleCount = 0
 
-FuncionesAuxiliares = require("pantalla_final")
+FuncionesAuxiliares = require("snake.modes.modo_un_jugador.pantalla_final")
 local move = require('snake.modes.move')
+
+local M = {}
 
 -- function to place a fruit in a random location without obstacles
 function placeFruit()
@@ -103,7 +68,20 @@ function placeObstacle()
     table.insert(obstacles, obstacle)
 end
 
-function Love.load()
+function M.load()
+    require('snake.modes.constants')
+
+    snakeHeadImageUp = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_up.png')
+    snakeHeadImageDown = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_down.png')
+    snakeHeadImageLeft = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_left.png')
+    snakeHeadImageRight = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_right.png')
+    snakeBodyImageUp = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_body_up.png')
+    snakeBodyImageDown = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_body_down.png')
+    snakeBodyImageLeft = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_body_left.png')
+    snakeBodyImageRight = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_body_right.png')
+    fruitImage = Love.graphics.newImage('modes/modo_un_jugador/assets/fruit.png')
+    backgroundImage = Love.graphics.newImage('modes/modo_un_jugador/assets/background.png')
+
     -- set window title
     Love.window.setTitle('Snake Game')
 
@@ -138,22 +116,11 @@ function Love.load()
     timer = Love.timer.getTime()
 end
 
-function Love.update(dt)
+function M.update(dt)
     -- check for game over
     if gameOver then
         return
     end
-
-    -- check for input
-    -- if Love.keyboard.isDown('up') and direction ~= 'down' then
-    --     direction = 'up'
-    -- elseif Love.keyboard.isDown('down') and direction ~= 'up' then
-    --     direction = 'down'
-    -- elseif Love.keyboard.isDown('left') and direction ~= 'right' then
-    --     direction = 'left'
-    -- elseif Love.keyboard.isDown('right') and direction ~= 'left' then
-    --     direction = 'right'
-    -- end
 
     move.get_direction(false)
     -- move snake
@@ -161,7 +128,6 @@ function Love.update(dt)
         timer = Love.timer.getTime()
 
         move.move(snake)
-
 
         -- check for collision with wall
         if snake[1].x < 0 or snake[1].x >= GAME_AREA_WIDTH or snake[1].y < 0 or snake[1].y >= GAME_AREA_HEIGHT then
@@ -204,7 +170,7 @@ function Love.update(dt)
     end
 end
 
-function Love.draw()
+function M.draw()
     -- draw game area
     if gameState == "playing" then
         Love.graphics.setColor(1, 1, 1)
@@ -286,3 +252,5 @@ function Love.draw()
         FuncionesAuxiliares.mostrarPantallaFinal(score)
     end
 end
+
+return M

@@ -1,41 +1,3 @@
-snakeHeadImageUp = love.graphics.newImage('assets/snake_head_up.png')
-snakeHeadImageDown = love.graphics.newImage('assets/snake_head_down.png')
-snakeHeadImageLeft = love.graphics.newImage('assets/snake_head_left.png')
-snakeHeadImageRight = love.graphics.newImage('assets/snake_head_right.png')
-snakeBodyImageUp = love.graphics.newImage('assets/snake_body_up.png')
-snakeBodyImageDown = love.graphics.newImage('assets/snake_body_down.png')
-snakeBodyImageLeft = love.graphics.newImage('assets/snake_body_left.png')
-snakeBodyImageRight = love.graphics.newImage('assets/snake_body_right.png')
-
--- set window dimensions
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
-
--- set tile dimensions
-TILE_SIZE = 50
-
--- set game area dimensions
-GAME_AREA_WIDTH = 24
-GAME_AREA_HEIGHT = 16
-
--- set initial snake position
-SNAKE_1_START_X = 4
-SNAKE_1_START_Y = 4
-
-SNAKE_2_START_X = 12
-SNAKE_2_START_Y = 12
-
--- set initial snake length
-SNAKE_START_LENGTH = 3
-
--- set initial snake direction
-SNAKE_1_START_DIRECTION = 'left'
-SNAKE_2_START_DIRECTION = 'right'
-
--- set initial fruit position
-FRUIT_START_X = 1
-FRUIT_START_Y = 1
-
 -- load Love2D libraries
 love.graphics = require('love.graphics')
 love.timer = require('love.timer')
@@ -49,7 +11,21 @@ gameOver = false
 score1 = 0
 score2 = 0
 
-function love.load()
+local M = {}
+
+function M.load()
+    -- load constants
+    require('snake.modes.constants')
+
+    snakeHeadImageUp = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_head_up.png')
+    snakeHeadImageDown = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_head_down.png')
+    snakeHeadImageLeft = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_head_left.png')
+    snakeHeadImageRight = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_head_right.png')
+    snakeBodyImageUp = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_body_up.png')
+    snakeBodyImageDown = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_body_down.png')
+    snakeBodyImageLeft = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_body_left.png')
+    snakeBodyImageRight = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_body_right.png')
+
     -- set window title
     love.window.setTitle('Snake Game')
 
@@ -84,7 +60,7 @@ function love.load()
     timer = love.timer.getTime()
 end
 
-function love.update(dt)
+function M.update(dt)
     -- check for game over
     if gameOver then
         return
@@ -226,7 +202,7 @@ function love.update(dt)
     end
 end
 
-function love.draw()
+function M.draw()
     -- draw game area
 
     love.graphics.setColor(0.82, 0.553, 0.275)
@@ -317,3 +293,5 @@ function love.draw()
         love.graphics.print('Game Over', WINDOW_WIDTH / 2 - font:getWidth('Game Over') / 2, WINDOW_HEIGHT / 2 - font:getHeight() / 2)
     end
 end
+
+return M
