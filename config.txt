@@ -1,0 +1,2 @@
+soundEnabled = true
+fullScreen = true

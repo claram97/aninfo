@@ -1,24 +1,38 @@
 -- main.lua
 
--- Variables to store button positions
-local button1X, button1Y = 100, 200
-local button2X, button2Y = 100, 250
-local button3X, button3Y = 100, 300
-local button4X, button4Y = 100, 350
-local button5X, button5Y = 100, 400
+-- Variables to store window dimensions
+local setWidth = 1200
+local setHeight = 800
+
+-- Generate 2 columns to locate the buttons.
+local columnWidth = setWidth / 2
 
 -- Variables to store button dimensions
 local buttonWidth, buttonHeight = 200, 50
 
+-- Variables to store button positions
+local button1X, button1Y = columnWidth - 150, setHeight / 3
+local button2X, button2Y = columnWidth - 150, setHeight / 2
+local button3X, button3Y = columnWidth + 150, setHeight / 3
+local button4X, button4Y = columnWidth + 150, setHeight / 2
+local button5X, button5Y = columnWidth, (setHeight / 2) + 100
+local button6X, button6Y = columnWidth, button5Y + 100
+
 -- Colors
-local backgroundColor = {0.2, 0.2, 0.2}
+local backgroundColor = {0.95, 0.95, 0.9, 0.5}
 local buttonColor = {0.4, 0.4, 0.8}
+local buttonConfigColor = {0.2, 0.7, 0.2}
 local buttonHoverColor = {0.6, 0.6, 1}
+local backgroundImage = love.graphics.newImage('assets/imagen-snake.png')
 
 -- Variables to store button state (hovered or not)
 local button1Hovered = false
 local button2Hovered = false
 local button3Hovered = false
+
+-- variables to store fonts
+local fontTitle = love.graphics.newFont(60)
+local fontBody = love.graphics.newFont(25)
 
 -- state
 local gameState = "menu"
@@ -28,10 +42,11 @@ local two_players = require('snake.modes.modo_dos_jugadores.two_players')
 local free_mode = require('snake.modes.modo_libre.modo_libre')
 local labyrinth = require('snake.modes.modo_laberinto.modo_laberinto')
 local inverted = require('snake.modes.modo_invertido.modo_invertido')
+local configuracion = require('snake.modes.configuracion.configuracion')
 
 function love.load()
-    love.window.setTitle("Menu Example")
-    love.window.setMode(1200, 800, {resizable=false})
+    love.window.setTitle("La Viborita")
+    love.window.setMode(setWidth, setHeight, {resizable=false})
 end
 
 function love.update(dt)
@@ -42,6 +57,7 @@ function love.update(dt)
         button3Hovered = isMouseOver(button3X, button3Y, buttonWidth, buttonHeight)
         button4Hovered = isMouseOver(button4X, button4Y, buttonWidth, buttonHeight)
         button5Hovered = isMouseOver(button5X, button5Y, buttonWidth, buttonHeight)
+        button6Hovered = isMouseOver(button6X, button6Y, buttonWidth, buttonHeight)
     elseif gameState == "one_player" then
         one_player.update()
     elseif gameState == "two_players" then
@@ -52,25 +68,33 @@ function love.update(dt)
         labyrinth.update()
     elseif gameState == "inverted" then
         inverted.update()
+    elseif gameState == "configuracion" then
+        configuracion.update()
     end
 end
 
 function love.draw()
-
     if gameState == "menu" then
         -- Set background color
-        love.graphics.setBackgroundColor(backgroundColor)
+        love.graphics.setColor(1, 1, 1)
+
+        love.graphics.draw(backgroundImage, 0, 0, 0, setWidth / backgroundImage:getWidth(), setHeight / backgroundImage:getHeight())
+        love.graphics.setColor(backgroundColor)
+        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 
         -- Draw title
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.print("Menu Example", 150, 50, 0, 2, 2)
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.setFont(fontTitle)
+        love.graphics.printf("La Viborita", 0, setHeight / 6, love.graphics.getWidth(), "center")
+        love.graphics.setFont(fontBody)
 
         -- Draw buttons
-        drawButton(button1X, button1Y, "Button 1", button1Hovered)
-        drawButton(button2X, button2Y, "Button 2", button2Hovered)
-        drawButton(button3X, button3Y, "Button 3", button3Hovered)
-        drawButton(button4X, button4Y, "Button 4", button4Hovered)
-        drawButton(button5X, button5Y, "Button 5", button5Hovered)
+        drawButton(button1X, button1Y, "Clásico", button1Hovered, buttonColor)
+        drawButton(button2X, button2Y, "2 Jugadores", button2Hovered, buttonColor)
+        drawButton(button3X, button3Y, "Libre", button3Hovered, buttonColor)
+        drawButton(button4X, button4Y, "Laberinto", button4Hovered, buttonColor)
+        drawButton(button5X, button5Y, "Invertido", button5Hovered, buttonColor)
+        drawButton(button6X, button6Y, "Configuración", button6Hovered, buttonConfigColor)
 
     elseif gameState == "one_player" then
         one_player.draw()
@@ -82,6 +106,8 @@ function love.draw()
         labyrinth.draw()
     elseif gameState == "inverted" then
         inverted.draw()
+    elseif gameState == "configuracion" then
+        configuracion.draw()
     end
 end
 
@@ -103,25 +129,29 @@ function love.mousepressed(x, y, button, istouch, presses)
             elseif isMouseOver(button5X, button5Y, buttonWidth, buttonHeight) then
                 inverted.load()
                 gameState = "inverted"
+            elseif isMouseOver(button6X, button6Y, buttonWidth, buttonHeight) then
+                configuracion.load()
+                gameState = "configuracion"
             end
+        elseif gameState == "configuracion" then
+            configuracion.mousepressed(x, y, button, istouch, presses)
         end
     end
 end
 
-function drawButton(x, y, text, hovered)
+function drawButton(x, y, text, hovered, color)
     -- Set button color based on hover state
-    local color = buttonColor
     if hovered then
         color = buttonHoverColor
     end
 
     -- Draw button background
     love.graphics.setColor(color)
-    love.graphics.rectangle("fill", x, y, buttonWidth, buttonHeight)
+    love.graphics.rectangle("fill", x - buttonWidth / 2, y, buttonWidth, buttonHeight, 15, 15)
 
     -- Draw button text
     love.graphics.setColor(1, 1, 1)
-    love.graphics.printf(text, x, y + 20, buttonWidth, "center")
+    love.graphics.printf(text, x - buttonWidth / 2, y + 10, buttonWidth, "center")
 end
 
 function isMouseOver(x, y, width, height)
