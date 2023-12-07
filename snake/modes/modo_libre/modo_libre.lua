@@ -158,6 +158,8 @@ local function update(dt)
         if distance < snake_radius + fruit_radius then
             -- Update score, add new segment to snake, and move fruit to new location
             score = score + 1
+            love.audio.play(sonido_comer)
+
             -- get the last segment of the snake
             local lastSegment = snake_segments[#snake_segments - 1]
             -- add a new segment to the snake

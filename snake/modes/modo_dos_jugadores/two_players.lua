@@ -203,6 +203,7 @@ function M.update(dt)
         if snake1[1].x == fruit.x and snake1[1].y == fruit.y then
             -- add to score
             score1 = score1 + 1
+            love.audio.play(sonido_comer)
 
             -- add to snake length
             table.insert(snake1, {x = snake1[#snake1].x, y = snake1[#snake1].y})
@@ -246,6 +247,7 @@ function M.update(dt)
         if snake2[1].x == fruit.x and snake2[1].y == fruit.y then
             -- add to score
             score2 = score2 + 1
+            love.audio.play(sonido_comer)
 
             -- add to snake length
             table.insert(snake2, {x = snake2[#snake2].x, y = snake2[#snake2].y})
