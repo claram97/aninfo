@@ -38,6 +38,23 @@ fruit = {}
 gameOver = false
 score = 0
 gameState = "playing"
+
+
+function reiniciarJuego()
+    -- Reinicia todas las variables del juego
+    gameOver = false
+    score = 0
+    direction = SNAKE_START_DIRECTION
+    snake = {}
+    for i = 1, SNAKE_START_LENGTH do
+        table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
+    end
+    fruit.x = FRUIT_START_X
+    fruit.y = FRUIT_START_Y
+end
+
+
+
 function M.load()
     
     snakeHeadImageUp = love.graphics.newImage('modes/modo_invertido/assets/snake_head_up.png')
@@ -80,10 +97,28 @@ function M.load()
 end
 
 function M.update(dt)
-    -- check for game over
-    if gameOver then
-        return
+    --  -- check for game over
+    --  if Love.keyboard.isDown('m') and gameState == "not playing" then
+    --     love.event.quit("restart")
+    -- end
+
+    -- if Love.keyboard.isDown('z')  and  gameState == "not playing" then
+    --     gameState = "playing"
+    --     reiniciarJuego()
+    -- end
+
+    if Love.keyboard.isDown('m') and gameOver then
+        love.event.quit("restart")
     end
+
+    if Love.keyboard.isDown('z')  and gameOver then
+        gameState = "playing"
+        reiniciarJuego()
+    end
+    -- -- check for game over
+    -- if gameOver then
+    --     return
+    -- end
 
     move.get_direction(true, direction)
     -- move snake

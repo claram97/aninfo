@@ -1,44 +1,36 @@
+local restartButtonPressed = false
+local ganador = ""
+local perdedor = ""
+
 local function dibujarFondo()
     love.graphics.setBackgroundColor(1, 0.6, 0) 
 end
 
+local function dibujarGanadorPerdedor(ganador, perdedor)
+    love.graphics.setColor(0, 0, 0)
+    
+    local font = love.graphics.getFont()
+    
+    love.graphics.printf("JUGADOR GANADOR", 50, 270, love.graphics.getWidth() - 100, "center")
+    love.graphics.printf(ganador, 50, 320, love.graphics.getWidth() - 100, "center")
+
+    love.graphics.printf("JUGADOR PERDEDOR", 50, 370, love.graphics.getWidth() - 100, "center")
+    love.graphics.printf(perdedor, 50, 420, love.graphics.getWidth() - 100, "center")
+end
+
 local function dibujarRectangulo()
     love.graphics.setColor(0.8, 0.8, 0.6) 
-    love.graphics.rectangle("fill", 50, 200, love.graphics.getWidth() - 100, 200, 10, 10)
+    love.graphics.rectangle("fill", 50, 200, love.graphics.getWidth() - 100, 300, 10, 10)
 end
 
 local function dibujarTexto()
     love.graphics.setColor(0, 0, 0)
     love.graphics.printf("El juego ha finalizado!", 0, 100, love.graphics.getWidth(), "center")
-    love.graphics.printf("En esta partida has conseguido", 100, 220, love.graphics.getWidth() - 200, "center")
-end
-
-local function dibujarCirculo(score)
-    love.graphics.setColor(1, 1, 0) 
-    local circleRadius = 30
-    local circleX = love.graphics.getWidth() / 2
-    local circleY = 350  
-    love.graphics.circle("fill", circleX, circleY, circleRadius)
-
-    love.graphics.setColor(0, 0, 0)
-    love.graphics.setFont(font)
-    
-    local scoreText = tostring(score)
-    local scoreTextWidth = font:getWidth(scoreText)
-    local scoreTextHeight = font:getHeight(scoreText)
-    
-    local textX = circleX - scoreTextWidth / 2
-    local textY = circleY - scoreTextHeight / 2
-    
-    love.graphics.print(scoreText, textX, textY)
-
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.printf("Puntaje", circleX + circleRadius + 10, circleY - 10, love.graphics.getWidth(), "left")
 end
 
 local function dibujarBotones()
-    local buttonWidth = 220  -- Aumenta el ancho del botón
-    local buttonHeight = 70   -- Aumenta la altura del botón
+    local buttonWidth = 220
+    local buttonHeight = 70
     local cornerRadius = 10
     local restartButtonX = (love.graphics.getWidth() - buttonWidth) / 4
     local restartButtonY = 500
@@ -61,7 +53,6 @@ local function dibujarBotones()
     love.graphics.printf("Menú principal (M)", menuButtonX, menuButtonY + 15, buttonWidth, "center")
 end
 
-
 local function manejarClic(x, y, button)
     local restartButtonX = (love.graphics.getWidth() - 200) / 4
     local restartButtonY = 500
@@ -74,13 +65,13 @@ local function manejarClic(x, y, button)
     end
 end
 
-local FuncionesExtras = {}
+local FuncionesAuxiliares = {}
 
-function FuncionesExtras.mostrarPantallaFinal(score)
+function FuncionesAuxiliares.mostrarPantallaFinal(score, ganador, perdedor)
     dibujarFondo()
     dibujarRectangulo()
     dibujarTexto()
-    dibujarCirculo(score)
+    dibujarGanadorPerdedor(ganador, perdedor)
     dibujarBotones()
 end
 
@@ -88,4 +79,4 @@ function love.mousepressed(x, y, button, istouch, presses)
     manejarClic(x, y, button)
 end
 
-return FuncionesExtras
+return FuncionesAuxiliares

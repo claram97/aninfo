@@ -37,24 +37,30 @@ local function dibujarCirculo(score)
 end
 
 local function dibujarBotones()
-    local buttonWidth = 200
-    local buttonHeight = 50
+    local buttonWidth = 220  -- Aumenta el ancho del botón
+    local buttonHeight = 70   -- Aumenta la altura del botón
     local cornerRadius = 10
     local restartButtonX = (love.graphics.getWidth() - buttonWidth) / 4
     local restartButtonY = 500
-    
-    love.graphics.setColor(0.1, 0.5, 0.1) -- Verde oscuro
-    love.graphics.rectangle("fill", restartButtonX, restartButtonY, buttonWidth, buttonHeight, cornerRadius, cornerRadius) 
 
-    love.graphics.setColor(1, 1, 1) -- Blanco para el texto
-    love.graphics.printf("Volver a jugar", restartButtonX, restartButtonY + 10, buttonWidth, "center") 
+    -- Botón "Volver a Jugar"
+    love.graphics.setColor(0.1, 0.5, 0.1)
+    love.graphics.rectangle("fill", restartButtonX, restartButtonY, buttonWidth, buttonHeight, cornerRadius, cornerRadius)
 
-    love.graphics.setColor(0.1, 0.5, 0.1) -- Verde oscuro
-    love.graphics.rectangle("fill", 2 * (love.graphics.getWidth() - buttonWidth) / 4 + buttonWidth, 500, buttonWidth, buttonHeight, cornerRadius, cornerRadius) 
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.printf("Volver a jugar (Z)", restartButtonX, restartButtonY + 15, buttonWidth, "center")
 
-    love.graphics.setColor(1, 1, 1) -- Blanco para el texto
-    love.graphics.printf("Menu principal", 2 * (love.graphics.getWidth() - buttonWidth) / 4 + buttonWidth, 510, buttonWidth, "center") 
+    -- Botón "Menú"
+    local menuButtonX = 2 * (love.graphics.getWidth() - buttonWidth) / 4 + buttonWidth
+    local menuButtonY = 500
+
+    love.graphics.setColor(0.1, 0.5, 0.1)
+    love.graphics.rectangle("fill", menuButtonX, menuButtonY, buttonWidth, buttonHeight, cornerRadius, cornerRadius)
+
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.printf("Menú principal (M)", menuButtonX, menuButtonY + 15, buttonWidth, "center")
 end
+
 
 local function manejarClic(x, y, button)
     local restartButtonX = (love.graphics.getWidth() - 200) / 4

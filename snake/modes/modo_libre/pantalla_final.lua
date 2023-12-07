@@ -51,13 +51,13 @@ local function dibujarBotones()
     love.graphics.rectangle("fill", restartButtonX, restartButtonY, buttonWidth, buttonHeight, cornerRadius, cornerRadius) 
 
     love.graphics.setColor(1, 1, 1) -- Blanco para el texto
-    love.graphics.printf("Volver a jugar", restartButtonX, restartButtonY + 10, buttonWidth, "center") 
+    love.graphics.printf("Volver a jugar(Z)", restartButtonX, restartButtonY + 10, buttonWidth, "center") 
 
     love.graphics.setColor(0.1, 0.5, 0.1) -- Verde oscuro
     love.graphics.rectangle("fill", 2 * (love.graphics.getWidth() - buttonWidth) / 4 + buttonWidth, 500, buttonWidth, buttonHeight, cornerRadius, cornerRadius) 
 
     love.graphics.setColor(1, 1, 1) -- Blanco para el texto
-    love.graphics.printf("Menu principal", 2 * (love.graphics.getWidth() - buttonWidth) / 4 + buttonWidth, 510, buttonWidth, "center") 
+    love.graphics.printf("Menu principal(M)", 2 * (love.graphics.getWidth() - buttonWidth) / 4 + buttonWidth, 510, buttonWidth, "center") 
 end
 
 local function manejarClic(x, y, button)

@@ -10,9 +10,13 @@ fruit = {}
 gameOver = false
 score1 = 0
 score2 = 0
-
+local gameState = "playing"
 local M = {}
-
+player_1 = "jugador1"
+player_2 = "jugador2"
+ganador = ""
+perdedor = ""
+FuncionesExtras = require("snake.modes.modo_dos_jugadores.pantalla_final")
 function M.load()
     -- load constants
     require('snake.modes.constants')
@@ -70,10 +74,51 @@ function M.load()
     timer = love.timer.getTime()
 end
 
+
+function reiniciarJuego()
+    snake1 = {}
+    snake2 = {}
+    score1 = 0
+    score2 = 0
+    gameOver = false
+    gameState = "playing"
+    ganador = ""
+    perdedor = ""
+
+    for i = 1, SNAKE_START_LENGTH do
+        table.insert(snake1, {x = SNAKE_1_START_X + i, y = SNAKE_1_START_Y})
+    end
+
+    -- initialize snake 2
+    for i = 1, SNAKE_START_LENGTH do
+        table.insert(snake2, {x = SNAKE_2_START_X - i, y = SNAKE_2_START_Y})
+    end
+
+    -- initialize fruit
+    fruit.x = FRUIT_START_X
+    fruit.y = FRUIT_START_Y
+
+    -- set initial direction
+    direction1 = SNAKE_1_START_DIRECTION
+    direction2 = SNAKE_2_START_DIRECTION
+
+    -- set timer for snake movement
+    timer = love.timer.getTime()
+end
+
 function M.update(dt)
     -- check for game over
-    if gameOver then
-        return
+    -- if gameOver then
+    --     return
+    -- end
+
+    if Love.keyboard.isDown('m') and gameOver then
+        love.event.quit("restart")
+    end
+
+    if Love.keyboard.isDown('z')  and  gameOver then
+        gameState = "playing"
+        reiniciarJuego()
     end
 
     -- check for input
@@ -312,7 +357,8 @@ function M.draw()
     if gameOver then
         love.graphics.setColor(1, 1, 1)
         love.graphics.setFont(font)
-        love.graphics.print('Game Over', WINDOW_WIDTH / 2 - font:getWidth('Game Over') / 2, WINDOW_HEIGHT / 2 - font:getHeight() / 2)
+        --love.graphics.print('Game Over', WINDOW_WIDTH / 2 - font:getWidth('Game Over') / 2, WINDOW_HEIGHT / 2 - font:getHeight() / 2)
+        FuncionesExtras.mostrarPantallaFinal(score, ganador, perdedor)
     end
 end
 
