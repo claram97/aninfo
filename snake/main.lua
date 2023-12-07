@@ -18,6 +18,9 @@ local button4X, button4Y = columnWidth + 150, setHeight / 2
 local button5X, button5Y = columnWidth, (setHeight / 2) + 100
 local button6X, button6Y = columnWidth, button5Y + 100
 
+local buttonLoadX, buttonLoadY = setWidth/2, setHeight/3
+local buttonStartX, buttonStartY = setWidth/2, setHeight/2
+
 -- Colors
 local backgroundColor = {0.95, 0.95, 0.9, 0.5}
 local buttonColor = {0.4, 0.4, 0.8}
@@ -29,6 +32,10 @@ local backgroundImage = love.graphics.newImage('assets/imagen-snake.png')
 local button1Hovered = false
 local button2Hovered = false
 local button3Hovered = false
+
+-- Variables to store the load game button state
+local onePlayerButton1Hovered = false
+local onePlayerButton2Hovered = false
 
 -- variables to store fonts
 local fontTitle = love.graphics.newFont(60)
@@ -58,6 +65,9 @@ function love.update(dt)
         button4Hovered = isMouseOver(button4X, button4Y, buttonWidth, buttonHeight)
         button5Hovered = isMouseOver(button5X, button5Y, buttonWidth, buttonHeight)
         button6Hovered = isMouseOver(button6X, button6Y, buttonWidth, buttonHeight)
+    elseif gameState == "loading_one_player" then
+        onePlayerButton1Hovered = isMouseOver(button1X, button1Y, buttonWidth, buttonHeight)
+        onePlayerButton2Hovered = isMouseOver(button2X, button2Y, buttonWidth, buttonHeight)
     elseif gameState == "one_player" then
         one_player.update()
     elseif gameState == "two_players" then
@@ -96,6 +106,23 @@ function love.draw()
         drawButton(button5X, button5Y, "Invertido", button5Hovered, buttonColor)
         drawButton(button6X, button6Y, "Configuración", button6Hovered, buttonConfigColor)
 
+    elseif gameState == "loading_one_player" then
+        -- Set background color
+        love.graphics.setColor(1, 1, 1)
+
+        love.graphics.draw(backgroundImage, 0, 0, 0, setWidth / backgroundImage:getWidth(), setHeight / backgroundImage:getHeight())
+        love.graphics.setColor(backgroundColor)
+        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+
+        -- Draw title
+        love.graphics.setColor(0, 0, 0)
+        love.graphics.setFont(fontTitle)
+        love.graphics.printf("¿Queres continuar tu ultima partida?", 0, setHeight / 6, love.graphics.getWidth(), "center")
+        love.graphics.setFont(fontBody)
+
+        -- Draw buttons
+        drawButton(buttonLoadX, buttonLoadY, "Yes", onePlayerButton1Hovered, buttonColor)
+        drawButton(buttonStartX, buttonStartY, "No", onePlayerButton2Hovered, buttonColor)
     elseif gameState == "one_player" then
         one_player.draw()
     elseif gameState == "two_players" then
@@ -115,13 +142,17 @@ function love.mousepressed(x, y, button, istouch, presses)
     if button == 1 then
         if gameState == "menu" then
             if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
-                one_player.load()
-                gameState = "one_player"
+                if one_player.isSavedGame() then
+                    gameState = "loading_one_player"
+                else
+                    one_player.load(false)
+                    gameState = "one_player"
+                end
             elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
                 two_players.load()
                 gameState = "two_players"
             elseif isMouseOver(button3X, button3Y, buttonWidth, buttonHeight) then
-                free_mode.load()
+                free_mode.load(false)
                 gameState = "free_mode"
             elseif isMouseOver(button4X, button4Y, buttonWidth, buttonHeight) then
                 labyrinth.load()
@@ -135,6 +166,14 @@ function love.mousepressed(x, y, button, istouch, presses)
             end
         elseif gameState == "configuracion" then
             configuracion.mousepressed(x, y, button, istouch, presses)
+        elseif gameState == "loading_one_player" then
+            if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+                one_player.load(true)
+                gameState = "one_player"
+            elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+                one_player.load(false)
+                gameState = "one_player"
+            end
         end
     end
 end
@@ -157,4 +196,10 @@ end
 function isMouseOver(x, y, width, height)
     local mouseX, mouseY = love.mouse.getPosition()
     return mouseX >= x and mouseX <= x + width and mouseY >= y and mouseY <= y + height
+end
+
+function love.quit()
+    if gameState == "one_player" then
+        one_player.quit()
+    end
 end

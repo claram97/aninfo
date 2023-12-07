@@ -244,6 +244,7 @@ function M.load()
             fruit_x, fruit_y = getRandomFruitPosition()
         end
     end
+
 end
 
 -- Define function to get a random position for the snake

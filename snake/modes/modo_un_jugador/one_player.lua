@@ -18,6 +18,7 @@ obstacles = {}
 obstacleCount = 0
 
 FuncionesAuxiliares = require("snake.modes.modo_un_jugador.pantalla_final")
+savegame = require('snake.modes.savegame')
 local move = require('snake.modes.move')
 
 local M = {}
@@ -68,7 +69,7 @@ function placeObstacle()
     table.insert(obstacles, obstacle)
 end
 
-function M.load()
+function M.load(loadGame)
     require('snake.modes.constants')
 
     snakeHeadImageUp = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_up.png')
@@ -94,26 +95,49 @@ function M.load()
     -- set font for score display
     font = Love.graphics.newFont(24)
 
-    -- initialize snake
-    for i = 1, SNAKE_START_LENGTH do
-        table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
+    -- check for saved game
+    local savedSnake = savegame.loadSnakeState('one_player')
+    if savedSnake and loadGame then
+        snake = savedSnake.snake
+        -- get the score by counting the number of segments in the snake
+        score = #snake - SNAKE_START_LENGTH
+        speed = 0.1 - (score * SPEED_INCREMENT)
+        gameState = "playing"
+        if snake[1].x == snake[2].x then
+            if snake[1].y < snake[2].y then
+                direction = 'up'
+            else
+                direction = 'down'
+            end
+        else
+            if snake[1].x < snake[2].x then
+                direction = 'left'
+            else
+                direction = 'right'
+            end
+        end
+        obstacles = savedSnake.obstacles
+        timer = Love.timer.getTime()
+        fruit.x = FRUIT_START_X
+        fruit.y = FRUIT_START_Y
+    else
+        -- initialize snake
+        for i = 1, SNAKE_START_LENGTH do
+            table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
+        end
+        -- initialize fruit
+        fruit.x = FRUIT_START_X
+        fruit.y = FRUIT_START_Y
+        -- initialize obstacles
+        for i = 1, obstacleCount do
+            local obstacle = {x = Love.math.random(GAME_AREA_WIDTH - 1), y = Love.math.random(GAME_AREA_HEIGHT - 1)}
+            table.insert(obstacles, obstacle)
+        end
+        -- set initial direction
+        direction = SNAKE_START_DIRECTION
+        timer = Love.timer.getTime()
+        -- set timer for snake movement
     end
-
-    -- initialize fruit
-    fruit.x = FRUIT_START_X
-    fruit.y = FRUIT_START_Y
-
-    -- initialize obstacles
-    for i = 1, obstacleCount do
-        local obstacle = {x = Love.math.random(GAME_AREA_WIDTH - 1), y = Love.math.random(GAME_AREA_HEIGHT - 1)}
-        table.insert(obstacles, obstacle)
-    end
-
-    -- set initial direction
-    direction = SNAKE_START_DIRECTION
-
-    -- set timer for snake movement
-    timer = Love.timer.getTime()
 end
 
 function M.update(dt)
@@ -250,6 +274,18 @@ function M.draw()
         gameState = "not"
         FuncionesAuxiliares.mostrarPantallaFinal(score)
     end
+end
+
+function M.quit()
+    -- if the game is over, don't save the snake state
+    if gameOver then
+        return
+    end
+    savegame.saveSnakeState(snake, obstacles, score, 'one_player')
+end
+
+function M.isSavedGame()
+    return savegame.loadSnakeState('one_player') ~= nil
 end
 
 return M
