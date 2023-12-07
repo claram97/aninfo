@@ -133,9 +133,9 @@ function M.draw()
             for j = 0, GAME_AREA_HEIGHT - 1 do
                 -- Alternate between white and green squares
                 if (i + j) % 2 == 0 then
-                    love.graphics.setColor(1, 1, 1)  -- White color
+                    Love.graphics.setColor(0, 108/255, 44/255)
                 else
-                    love.graphics.setColor(0, 1, 0)  -- Green color
+                    Love.graphics.setColor(175/255, 1, 206/255)
                 end
 
                 love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)

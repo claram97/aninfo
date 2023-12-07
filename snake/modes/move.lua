@@ -2,23 +2,23 @@ local M = {}
 
 function M.get_direction(invertido)
     if invertido then
-        if Love.keyboard.isDown('up') and direction ~= 'down' then
+        if Love.keyboard.isDown('up') and direction ~= 'up' then
             direction = 'down'
-        elseif Love.keyboard.isDown('down') and direction ~= 'up' then
+        elseif Love.keyboard.isDown('down') and direction ~= 'down' then
             direction = 'up'
-        elseif Love.keyboard.isDown('left') and direction ~= 'right' then
+        elseif Love.keyboard.isDown('left') and direction ~= 'left' then
             direction = 'right'
-        elseif Love.keyboard.isDown('right') and direction ~= 'left' then
+        elseif Love.keyboard.isDown('right') and direction ~= 'right' then
             direction = 'left'
         end
 
-        if Love.keyboard.isDown('w') and direction ~= 'down' then
+        if Love.keyboard.isDown('w') and direction ~= 'up' then
             direction = 'down'
-        elseif Love.keyboard.isDown('s') and direction ~= 'up' then
+        elseif Love.keyboard.isDown('s') and direction ~= 'down' then
             direction = 'up'
-        elseif Love.keyboard.isDown('a') and direction ~= 'right' then
+        elseif Love.keyboard.isDown('a') and direction ~= 'left' then
             direction = 'right'
-        elseif Love.keyboard.isDown('d') and direction ~= 'left' then
+        elseif Love.keyboard.isDown('d') and direction ~= 'right' then
             direction = 'left'
         end
     else

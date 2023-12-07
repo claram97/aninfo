@@ -176,11 +176,10 @@ function M.draw()
         Love.graphics.setColor(1, 1, 1)
         for i = 0, GAME_AREA_WIDTH - 1 do
             for j = 0, GAME_AREA_HEIGHT - 1 do
-                -- Alternate between white and green squares
                 if (i + j) % 2 == 0 then
                     Love.graphics.setColor(1, 1, 1)  -- White color
                 else
-                    Love.graphics.setColor(0, 1, 0)  -- Green color
+                    Love.graphics.setColor(9/255, 168/255, 5/255)  -- Green color
                 end
 
                 Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)

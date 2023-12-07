@@ -225,19 +225,19 @@ function draw_border()
     for i = 0, GAME_AREA_WIDTH - 1 do
         for j = 0, GAME_AREA_HEIGHT - 1 do
             if i == 0 then
-                love.graphics.setColor(1, 1, 0)
+                love.graphics.setColor(0, 108/255, 44/255)
                 love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
             if j == 0 then
-                love.graphics.setColor(1, 1, 0)
+                love.graphics.setColor(0, 108/255, 44/255)
                 love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
             if i == GAME_AREA_WIDTH -1 then
-                love.graphics.setColor(1, 1, 0)
+                love.graphics.setColor(0, 108/255, 44/255)
                 love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
             if j == GAME_AREA_HEIGHT -1 then
-                love.graphics.setColor(1, 1, 0)
+                love.graphics.setColor(0, 108/255, 44/255)
                 love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
         end
@@ -277,19 +277,19 @@ function draw_rectangle(start, finish)
     for i = (GAME_AREA_WIDTH / 2) - start, (GAME_AREA_WIDTH / 2) + finish do
         for j = (GAME_AREA_HEIGHT / 2) - start, (GAME_AREA_HEIGHT / 2) + finish do
             if i == (GAME_AREA_WIDTH / 2) - start then
-                Love.graphics.setColor(1, 1, 0)
+                Love.graphics.setColor(0, 108/255, 44/255)
                 Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE) 
             end
             if i == (GAME_AREA_WIDTH / 2) + finish then
-                Love.graphics.setColor(1, 1, 0)
+                Love.graphics.setColor(0, 108/255, 44/255)
                 Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
             if j == (GAME_AREA_HEIGHT / 2) - start then 
-                Love.graphics.setColor(1, 1, 0)
+                Love.graphics.setColor(0, 108/255, 44/255)
                 Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
             if j == (GAME_AREA_HEIGHT / 2) + finish then
-                Love.graphics.setColor(1, 1, 0)
+                Love.graphics.setColor(0, 108/255, 44/255)
                 Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
         end
@@ -314,14 +314,14 @@ end
 
 function draw_horizontal_line(start, finish, j)
     for i = start, finish do
-        Love.graphics.setColor(1, 1, 0)
+        Love.graphics.setColor(0, 108/255, 44/255)
         Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
     end
 end
 
 function draw_vertical_line(start, finish, j)
     for i = start, finish do
-        Love.graphics.setColor(1, 1, 0)
+        Love.graphics.setColor(0, 108/255, 44/255)
         Love.graphics.rectangle('fill', j * TILE_SIZE, i * TILE_SIZE, TILE_SIZE, TILE_SIZE)
     end
 end
@@ -355,7 +355,7 @@ function draw_random_lines()
 end
 
 function drawStaticWalls()
-    Love.graphics.setColor(1, 1, 0)
+    Love.graphics.setColor(0, 108/255, 44/255)
     for _, wall in ipairs(staticWalls) do
         Love.graphics.rectangle('fill', wall.x * TILE_SIZE, wall.y * TILE_SIZE, TILE_SIZE * 4, TILE_SIZE)
     end
@@ -363,7 +363,7 @@ end
 
 -- Function to draw static vertical lines
 function drawStaticVerticalLines()
-    Love.graphics.setColor(1, 1, 0)
+    Love.graphics.setColor(0, 108/255, 44/255)
     for _, line in ipairs(staticVerticalLines) do
         Love.graphics.rectangle('fill', line.x * TILE_SIZE, line.y * TILE_SIZE, TILE_SIZE, TILE_SIZE * 4)
     end
@@ -390,14 +390,18 @@ end
 
 function M.draw()
     -- draw game area
-    --wallColor = {1,0,1}
+    wallColor1 = {15/255, 202/255, 81/255}
+    wallColor = {175/255, 1, 206/255} 
     if gameState == "playing" then
         if level == 1 then
-            wallColor = {0, 1, 0}  -- Set wall and line color for level 1
+            wallColor1 = {15/255, 202/255, 81/255}
+            wallColor = {175/255, 1, 206/255} 
         elseif level == 2 then
-            wallColor = {1, 0, 0} 
+            wallColor1 = {162/255, 208/255, 74/255}
+            wallColor = {170/255, 216/255, 82/255} 
         elseif level == 3 then
-            wallColor = {1, 0.75, 0.8} 
+            wallColor1 = {1, 1, 1}
+            wallColor = {0, 185/255, 74/255}
         end
         
         Love.graphics.setBackgroundColor(1, 1, 1)  -- Set background color to white
@@ -405,7 +409,7 @@ function M.draw()
             for j = 0, GAME_AREA_HEIGHT - 1 do
                 -- Alternate between white and green squares
                 if (i + j) % 2 == 0 then
-                    Love.graphics.setColor(1, 1, 1)  -- White color
+                    Love.graphics.setColor(wallColor1)  -- White color
                 else
                     Love.graphics.setColor(wallColor)
                 end
