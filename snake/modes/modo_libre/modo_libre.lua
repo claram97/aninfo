@@ -209,7 +209,7 @@ function love.keyreleased(key)
 end
 
 -- Define function to load game assets
-function M.load(loadGame)
+function M.load()
     local snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png')
     local snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')
     local fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
@@ -218,35 +218,21 @@ function M.load(loadGame)
     -- Adjust window size and title
     love.window.setMode(screen_width, screen_height)
 
-    savedSnake = savegame.loadSnakeState('free_mode')
-
-    if loadGame and savedSnake then
-        snake_segments = savedSnake.snake
-        obstacles = savedSnake.obstacles
-        score = savedSnake.score
-
-        for _, obstacle in ipairs(obstacles) do
-            obstacle.radius = 15
-        end
-    else
-        -- Check if snake spawns near an obstacle and reposition it if necessary
-        for _, obstacle in ipairs(obstacles) do
-            local distance = math.sqrt((snake_x - obstacle.x)^2 + (snake_y - obstacle.y)^2)
-            if distance < snake_radius + obstacle.radius then
-                snake_x, snake_y = getRandomSnakePosition()
-            end
-        end
-    
-        -- Check if fruit spawns on an obstacle and reposition it if necessary
-        for _, obstacle in ipairs(obstacles) do
-            local distance = math.sqrt((fruit_x - obstacle.x)^2 + (fruit_y - obstacle.y)^2)
-            if distance < fruit_radius + obstacle.radius then
-                fruit_x, fruit_y = getRandomFruitPosition()
-            end
+    -- Check if snake spawns near an obstacle and reposition it if necessary
+    for _, obstacle in ipairs(obstacles) do
+        local distance = math.sqrt((snake_x - obstacle.x)^2 + (snake_y - obstacle.y)^2)
+        if distance < snake_radius + obstacle.radius then
+            snake_x, snake_y = getRandomSnakePosition()
         end
     end
 
-
+    -- Check if fruit spawns on an obstacle and reposition it if necessary
+    for _, obstacle in ipairs(obstacles) do
+        local distance = math.sqrt((fruit_x - obstacle.x)^2 + (fruit_y - obstacle.y)^2)
+        if distance < fruit_radius + obstacle.radius then
+            fruit_x, fruit_y = getRandomFruitPosition()
+        end
+    end
 
 end
 
@@ -295,17 +281,6 @@ function updateObstacles()
         end
         table.insert(obstacles, {x = obstacle_x, y = obstacle_y, radius = obstacle_radius})
     end
-end
-
-function M.isSavedGame()
-    return savegame.loadSnakeState('free_mode') ~= nil
-end
-
-function M.quit()
-    if gameOver then
-        return
-    end
-    savegame.saveSnakeState(snake_segments, obstacles, score, 'free_mode')
 end
 
 return M
