@@ -140,11 +140,44 @@ function M.load(loadGame)
     end
 end
 
-function M.update(dt)
-    -- check for game over
-    if gameOver then
-        return
+local function reiniciarJuego()
+    gamestate = "playing"
+    snake = {}
+    fruit = {}
+    gameOver = false
+    score = 0
+    speed = 0.1
+    obstacles = {}
+    obstacleCount = 0
+
+    direction = SNAKE_START_DIRECTION
+    timer = Love.timer.getTime()
+
+    for i = 1, SNAKE_START_LENGTH do
+        table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
     end
+
+    placeFruit()
+
+    for i = 1, obstacleCount do
+        placeObstacle()
+    end
+end
+
+function M.update(dt)
+
+    if Love.keyboard.isDown('m') and gameOver then
+        love.event.quit("restart")
+    end
+
+    if Love.keyboard.isDown('z')  and  gameOver then
+        reiniciarJuego()
+    end
+    
+    -- -- check for game over
+    -- if gameOver then
+    --     return
+    -- end
 
     move.get_direction(false)
     -- move snake
@@ -176,6 +209,7 @@ function M.update(dt)
         if snake[1].x == fruit.x and snake[1].y == fruit.y then
             -- add to score
             score = score + 1
+            love.audio.play(sonido_comer)
 
             -- add to snake length
             table.insert(snake, {x = snake[#snake].x, y = snake[#snake].y})

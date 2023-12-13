@@ -1,4 +1,3 @@
--- Import the body of the snake from assets
 local love = require("love")
 
 snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png')
@@ -62,6 +61,32 @@ local obstacles = {
 
 FuncionesAuxiliares = require("snake.modes.modo_libre.pantalla_final")
 playerState = "playing"
+local gameState = "playing"
+
+function reiniciarTodo()
+    -- Reiniciar todas las variables y estados a sus valores iniciales
+    game_over = false
+    snake_x = screen_width / 2
+    snake_y = screen_height / 2
+    fruit_x, fruit_y = getRandomFruitPosition()
+    snake_speed = 3
+    snake_angle = 0
+    left_pressed = false
+    right_pressed = false
+    score = 0
+    gameState = "playing"
+
+    -- Reiniciar segmentos de la serpiente
+    snake_segments = {
+        {x = snake_x, y = snake_y},
+        {x = snake_x - segment_distance, y = snake_y}
+    }
+
+    -- Reiniciar obstáculos
+    obstacles = {
+        {x = 200, y = 300, radius = 50},
+    }
+end
 
 function draw()
     if playerState == "playing" then
@@ -103,6 +128,16 @@ end
 
 -- Define function to update position of snake and fruit
 local function update(dt)
+    if Love.keyboard.isDown('m') and gameState == "not playing" then
+        love.event.quit("restart")
+    end
+
+    if Love.keyboard.isDown('z')  and  gameState == "not playing" then
+        gameState = "playing"
+        reiniciarTodo()
+        print(gameState)
+    end
+    
     if game_over then
         return
     end
@@ -122,6 +157,8 @@ local function update(dt)
         if distance < snake_radius + fruit_radius then
             -- Update score, add new segment to snake, and move fruit to new location
             score = score + 1
+            love.audio.play(sonido_comer)
+
             -- get the last segment of the snake
             local lastSegment = snake_segments[#snake_segments - 1]
             -- add a new segment to the snake

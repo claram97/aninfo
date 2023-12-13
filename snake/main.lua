@@ -54,6 +54,10 @@ local configuracion = require('snake.modes.configuracion.configuracion')
 function love.load()
     love.window.setTitle("La Viborita")
     love.window.setMode(setWidth, setHeight, {resizable=false})
+    musica_fondo = love.audio.newSource("musica.mp3", "stream")
+    sonido_comer = love.audio.newSource("valentin.mp3", "static")
+    musica_fondo:setLooping(true) 
+    musica_fondo:play()
 end
 
 function love.update(dt)

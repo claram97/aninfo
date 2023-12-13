@@ -132,35 +132,85 @@ function change_level()
     end
 end
 
+function wallsOverlapWithFruit()
+    for _, wall in ipairs(staticWalls) do
+        if wall.x >= fruit.x and wall.x < fruit.x + 4 and wall.y == fruit.y then
+            return true  -- Overlap with the fruit
+        end
+    end
+    
+    return false
+end
+
+local function reiniciarJuego()
+    gameOver = false
+    score = 0
+    direction = SNAKE_START_DIRECTION
+    snake = {}
+    for i = 1, SNAKE_START_LENGTH do
+        table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
+    end
+    level = 1
+    fruit.x = FRUIT_START_X
+    fruit.y = FRUIT_START_Y
+ 
+    staticWall1X, staticWall1Y = get_random_position()
+    staticWall2X, staticWall2Y = get_random_position()
+    staticWall3X, staticWall3Y = get_random_position()
+    staticWall4X, staticWall4Y = get_random_position()
+    staticVerticalLine1X, staticVerticalLine1Y = get_random_position()
+    staticVerticalLine2X, staticVerticalLine2Y = get_random_position()
+    generateStaticWalls()
+    generateStaticVerticalLines()
+
+    -- initialize fruit
+    fruit.x = FRUIT_START_X
+    fruit.y = FRUIT_START_Y
+
+    -- set initial direction
+    direction = SNAKE_START_DIRECTION
+    -- set timer for snake movement
+    timer = love.timer.getTime()
+end
+
 function M.update(dt)
     -- check for game over
 
-    if gameOver then
-        -- check for space key press to restart the game
-        if Love.keyboard.isDown('space') then
-            -- reset game variables
-            snake = {}
-            fruit = {}
-            gameOver = false
-            score = 0
-
-            -- initialize snake
-            for i = 1, SNAKE_START_LENGTH do
-                table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
-            end
-
-            -- initialize fruit
-            fruit.x = FRUIT_START_X
-            fruit.y = FRUIT_START_Y
-
-            -- set initial direction
-            direction = SNAKE_START_DIRECTION
-
-            -- set timer for snake movement
-            timer = love.timer.getTime()
-        end
-    return
+    if Love.keyboard.isDown('m') and gameOver then
+        love.event.quit("restart")
     end
+
+    if Love.keyboard.isDown('z')  and  gameOver then
+        gameState = "playing"
+        reiniciarJuego()
+    end
+
+    -- if gameOver then
+    --     -- check for space key press to restart the game
+    --     if Love.keyboard.isDown('space') then
+    --         -- reset game variables
+    --         snake = {}
+    --         fruit = {}
+    --         gameOver = false
+    --         score = 0
+
+    --         -- initialize snake
+    --         for i = 1, SNAKE_START_LENGTH do
+    --             table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
+    --         end
+
+    --         -- initialize fruit
+    --         fruit.x = FRUIT_START_X
+    --         fruit.y = FRUIT_START_Y
+
+    --         -- set initial direction
+    --         direction = SNAKE_START_DIRECTION
+
+    --         -- set timer for snake movement
+    --         timer = love.timer.getTime()
+    --     end
+    -- return
+    -- end
 
     move.get_direction(false)
 
@@ -210,6 +260,7 @@ function M.update(dt)
         if snake[1].x == fruit.x and snake[1].y == fruit.y then
             -- add to score
             score = score + 1
+            love.audio.play(sonido_comer)
 
             -- add to snake length
             table.insert(snake, {x = snake[#snake].x, y = snake[#snake].y})
