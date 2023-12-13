@@ -1,4 +1,3 @@
--- Import the body of the snake from assets
 local love = require("love")
 
 snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png')
