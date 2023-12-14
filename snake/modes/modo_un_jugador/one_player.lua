@@ -150,27 +150,18 @@ function M.load(loadGame)
 end
 
 local function reiniciarJuego()
-    gamestate = "playing"
+    gameState = "playing"
+    gameOver = false
+
     snake = {}
     fruit = {}
     gameOver = false
     score = 0
     speed = 0.1
+
     obstacles = {}
     obstacleCount = 0
-
-    direction = SNAKE_START_DIRECTION
-    timer = Love.timer.getTime()
-
-    for i = 1, SNAKE_START_LENGTH do
-        table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
-    end
-
-    placeFruit()
-
-    for i = 1, obstacleCount do
-        placeObstacle()
-    end
+    M.load(false)
 end
 
 function M.update(dt)
@@ -183,11 +174,6 @@ function M.update(dt)
         reiniciarJuego()
     end
     
-    -- -- check for game over
-    -- if gameOver then
-    --     return
-    -- end
-
     move.get_direction(false)
     -- move snake
     if Love.timer.getTime() - timer > speed then
