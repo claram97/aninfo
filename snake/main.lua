@@ -191,14 +191,12 @@ function love.mousepressed(x, y, button, istouch, presses)
                     gameState = "one_player"
                 end
             elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
-                -- if two_players.isSavedGame() then
-                --     gameState = "loading_two_players"
-                -- else
-                --     two_players.load(false)
-                --     gameState = "two_players"
-                -- end
-                two_players.load()
-                gameState = "two_players"
+                if two_players.isSavedGame() then
+                    gameState = "loading_two_players"
+                else
+                    two_players.load(false)
+                    gameState = "two_players"
+                end
             elseif isMouseOver(button3X, button3Y, buttonWidth, buttonHeight) then
                 if free_mode.isSavedGame() then
                     gameState = "loading_free_mode"
@@ -244,13 +242,13 @@ function love.mousepressed(x, y, button, istouch, presses)
                 gameState = "one_player"
             end
         elseif gameState == "loading_two_players" then
-            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
-            --     two_players.load(true)
-            --     gameState = "two_players"
-            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
-            --     two_players.load(false)
-            --     gameState = "two_players"
-            -- end
+            if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+                two_players.load(true)
+                gameState = "two_players"
+            elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+                two_players.load(false)
+                gameState = "two_players"
+            end
         elseif gameState == "loading_free_mode" then
             if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
                 free_mode.load(true)
@@ -302,8 +300,8 @@ end
 function love.quit()
     if gameState == "one_player" then
         one_player.quit()
-    -- elseif gameState == "two_players" then
-    --     two_players.quit()
+    elseif gameState == "two_players" then
+        two_players.quit()
     elseif gameState == "free_mode" then
         free_mode.quit()
     -- elseif gameState == "labyrinth" then
