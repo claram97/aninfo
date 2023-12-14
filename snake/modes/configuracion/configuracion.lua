@@ -103,10 +103,12 @@ function loadConfig()
             config.fullScreen = defaultConfig.fullScreen
         end
     end
+    return config
 end
 
 function configuracion.load()
-    loadConfig()
+    config = loadConfig()
+    return config
 end
 
 function configuracion.update()

@@ -7,6 +7,11 @@ local wallsChanged = false
 local gameOverHandled = false
 
 local move = require('snake.modes.move')
+local configuracion = require('snake.modes.configuracion.configuracion')
+
+FIRST_LEVEL_END_SCORE = 50
+SECOND_LEVEL_END_SCORE = 130
+
 -- set window dimensions
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
@@ -53,18 +58,7 @@ fruit = {}
 gameOver = false
 score = 0
 
-function M.load()
-    snakeHeadImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_up.png')
-    snakeHeadImageDown = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_down.png')
-    snakeHeadImageLeft = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_left.png')
-    snakeHeadImageRight = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_right.png')
-    snakeBodyImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_up.png')
-    snakeBodyImageDown = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_down.png')
-    snakeBodyImageLeft = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_left.png')
-    snakeBodyImageRight = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_right.png')
-    fruitImage = love.graphics.newImage('modes/modo_laberinto/assets/fruit.png')
-    backgroundImage = love.graphics.newImage('modes/modo_laberinto/assets/background.png')
-
+function initializeWindow()
     -- set window title
     Love.window.setTitle('Snake Game')
 
@@ -76,12 +70,9 @@ function M.load()
 
     -- set font for score display
     font = Love.graphics.newFont(24)
+end
 
-    -- initialize snake
-    for i = 1, SNAKE_START_LENGTH do
-        table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
-    end
-
+function initializeWalls()
     staticWall1X, staticWall1Y = get_random_position()
     staticWall2X, staticWall2Y = get_random_position()
     staticWall3X, staticWall3Y = get_random_position()
@@ -90,19 +81,44 @@ function M.load()
     staticVerticalLine2X, staticVerticalLine2Y = get_random_position()
     generateStaticWalls()
     generateStaticVerticalLines()
+end
 
-    -- initialize fruit
+function M.load()
+    local config = configuracion.load()
+    if config.sound == true then
+        print("Sound")
+    end
+    if config.sound == false then
+        print("No sound")
+    end
+    snakeHeadImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_up.png')
+    snakeHeadImageDown = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_down.png')
+    snakeHeadImageLeft = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_left.png')
+    snakeHeadImageRight = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_right.png')
+    snakeBodyImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_up.png')
+    snakeBodyImageDown = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_down.png')
+    snakeBodyImageLeft = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_left.png')
+    snakeBodyImageRight = love.graphics.newImage('modes/modo_laberinto/assets/snake_body_right.png')
+    fruitImage = love.graphics.newImage('modes/modo_laberinto/assets/fruit.png')
+    backgroundImage = love.graphics.newImage('modes/modo_laberinto/assets/background.png')
+
+    initializeWindow()
+
+    for i = 1, SNAKE_START_LENGTH do
+        table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
+    end
+    direction = SNAKE_START_DIRECTION
+
+    initializeWalls()
+
     fruit.x = FRUIT_START_X
     fruit.y = FRUIT_START_Y
 
-    -- set initial direction
-    direction = SNAKE_START_DIRECTION
-    -- set timer for snake movement
     timer = love.timer.getTime()
 end
 
 function generateStaticVerticalLines()
-    staticVerticalLines = {}  -- Reset the list
+    staticVerticalLines = {}
 
     for _ = 1, 2 do
         local x, y = get_random_position()
@@ -111,7 +127,7 @@ function generateStaticVerticalLines()
 end
 
 function generateStaticWalls()
-    staticWalls = {}  -- Reset the list
+    staticWalls = {}
 
     for _ = 1, 4 do
         local x, y = get_random_position()
@@ -120,29 +136,29 @@ function generateStaticWalls()
 end
 
 function change_level()
-    if score == 3 or score == 6 then
+    if score == FIRST_LEVEL_END_SCORE or score == SECOND_LEVEL_END_SCORE then
         if not wallsChanged then
             level = level + 1
-            wallsChanged = true  -- Set this to true only when the level changes
+            wallsChanged = true
             generateStaticWalls()
             generateStaticVerticalLines()
         end
     else
-        wallsChanged = false  -- Reset when the score is not 3 or 6
+        wallsChanged = false
     end
 end
 
 function wallsOverlapWithFruit()
     for _, wall in ipairs(staticWalls) do
         if wall.x >= fruit.x and wall.x < fruit.x + 4 and wall.y == fruit.y then
-            return true  -- Overlap with the fruit
+            return true
         end
     end
     
     return false
 end
 
-local function reiniciarJuego()
+local function reloadGame()
     gameOver = false
     score = 0
     direction = SNAKE_START_DIRECTION
@@ -163,26 +179,21 @@ local function reiniciarJuego()
     generateStaticWalls()
     generateStaticVerticalLines()
 
-    -- initialize fruit
     fruit.x = FRUIT_START_X
     fruit.y = FRUIT_START_Y
 
-    -- set initial direction
     direction = SNAKE_START_DIRECTION
-    -- set timer for snake movement
     timer = love.timer.getTime()
 end
 
 function M.update(dt)
-    -- check for game over
-
     if Love.keyboard.isDown('m') and gameOver then
         love.event.quit("restart")
     end
 
     if Love.keyboard.isDown('z')  and  gameOver then
         gameState = "playing"
-        reiniciarJuego()
+        reloadGame()
     end
 
     move.get_direction(false)
@@ -211,16 +222,12 @@ function M.update(dt)
             end
         end
 
-        -- check for collision with fruit
         if snake[1].x == fruit.x and snake[1].y == fruit.y then
-            -- add to score
-            score = score + 1
+            score = score + math.random(5, 13)
             love.audio.play(sonido_comer)
 
-            -- add to snake length
             table.insert(snake, {x = snake[#snake].x, y = snake[#snake].y})
 
-            -- move fruit to new location
             moveFruitToSafePosition()
         end
  
