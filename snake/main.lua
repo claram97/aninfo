@@ -16,7 +16,8 @@ local button2X, button2Y = columnWidth - 150, setHeight / 2
 local button3X, button3Y = columnWidth + 150, setHeight / 3
 local button4X, button4Y = columnWidth + 150, setHeight / 2
 local button5X, button5Y = columnWidth, (setHeight / 2) + 100
-local button6X, button6Y = columnWidth, button5Y + 100
+local button6X, button6Y = columnWidth + 150, button5Y + 100
+local button7X, button7Y = columnWidth - 150, button5Y + 100
 
 local buttonLoadX, buttonLoadY = setWidth/2, setHeight/3
 local buttonStartX, buttonStartY = setWidth/2, setHeight/2
@@ -50,6 +51,7 @@ local free_mode = require('snake.modes.modo_libre.modo_libre')
 local labyrinth = require('snake.modes.modo_laberinto.modo_laberinto')
 local inverted = require('snake.modes.modo_invertido.modo_invertido')
 local configuracion = require('snake.modes.configuracion.configuracion')
+local scores = require('snake.modes.scores.scores')
 
 function love.load()
     love.window.setTitle("La Viborita")
@@ -76,6 +78,7 @@ function love.update(dt)
         button4Hovered = isMouseOver(button4X, button4Y, buttonWidth, buttonHeight)
         button5Hovered = isMouseOver(button5X, button5Y, buttonWidth, buttonHeight)
         button6Hovered = isMouseOver(button6X, button6Y, buttonWidth, buttonHeight)
+        button7Hovered = isMouseOver(button7X, button7Y, buttonWidth, buttonHeight)
     elseif gameState == "loading_one_player" then
         onePlayerButton1Hovered = isMouseOver(button1X, button1Y, buttonWidth, buttonHeight)
         onePlayerButton2Hovered = isMouseOver(button2X, button2Y, buttonWidth, buttonHeight)
@@ -91,7 +94,28 @@ function love.update(dt)
         inverted.update()
     elseif gameState == "configuracion" then
         configuracion.update()
+    elseif gameState == "scores" then
+        scores.update()
     end
+end
+
+function drawLoadingSavedGame()
+    -- Set background color
+    love.graphics.setColor(1, 1, 1)
+
+    love.graphics.draw(backgroundImage, 0, 0, 0, setWidth / backgroundImage:getWidth(), setHeight / backgroundImage:getHeight())
+    love.graphics.setColor(backgroundColor)
+    love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+
+    -- Draw title
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.setFont(fontTitle)
+    love.graphics.printf("¿Queres continuar tu ultima partida?", 0, setHeight / 6, love.graphics.getWidth(), "center")
+    love.graphics.setFont(fontBody)
+
+    -- Draw buttons
+    drawButton(buttonLoadX, buttonLoadY, "Yes", onePlayerButton1Hovered, buttonColor)
+    drawButton(buttonStartX, buttonStartY, "No", onePlayerButton2Hovered, buttonColor)
 end
 
 function love.draw()
@@ -116,24 +140,18 @@ function love.draw()
         drawButton(button4X, button4Y, "Laberinto", button4Hovered, buttonColor)
         drawButton(button5X, button5Y, "Invertido", button5Hovered, buttonColor)
         drawButton(button6X, button6Y, "Configuración", button6Hovered, buttonConfigColor)
+        drawButton(button7X, button7Y, "High scores", button7Hovered, buttonConfigColor)
 
     elseif gameState == "loading_one_player" then
-        -- Set background color
-        love.graphics.setColor(1, 1, 1)
-
-        love.graphics.draw(backgroundImage, 0, 0, 0, setWidth / backgroundImage:getWidth(), setHeight / backgroundImage:getHeight())
-        love.graphics.setColor(backgroundColor)
-        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
-
-        -- Draw title
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.setFont(fontTitle)
-        love.graphics.printf("¿Queres continuar tu ultima partida?", 0, setHeight / 6, love.graphics.getWidth(), "center")
-        love.graphics.setFont(fontBody)
-
-        -- Draw buttons
-        drawButton(buttonLoadX, buttonLoadY, "Yes", onePlayerButton1Hovered, buttonColor)
-        drawButton(buttonStartX, buttonStartY, "No", onePlayerButton2Hovered, buttonColor)
+        drawLoadingSavedGame()
+    elseif gameState == "loading_two_players" then
+        drawLoadingSavedGame()
+    elseif gameState == "loading_free_mode" then
+        drawLoadingSavedGame()
+    elseif gameState == "loading_labyrinth_mode" then
+        drawLoadingSavedGame()
+    elseif gameState == "loading_inverted_mode" then
+        drawLoadingSavedGame()    
     elseif gameState == "one_player" then
         one_player.draw()
     elseif gameState == "two_players" then
@@ -146,6 +164,8 @@ function love.draw()
         inverted.draw()
     elseif gameState == "configuracion" then
         configuracion.draw()
+    elseif gameState == "scores" then
+        scores.draw()
     end
 end
 
@@ -160,20 +180,50 @@ function love.mousepressed(x, y, button, istouch, presses)
                     gameState = "one_player"
                 end
             elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+                -- if two_players.isSavedGame() then
+                --     gameState = "loading_two_players"
+                -- else
+                --     two_players.load(false)
+                --     gameState = "two_players"
+                -- end
                 two_players.load()
                 gameState = "two_players"
             elseif isMouseOver(button3X, button3Y, buttonWidth, buttonHeight) then
+                -- if modo_libre.isSavedGame() then
+                --     gameState = "loading_free_mode"
+                -- else
+                --     modo_libre.load(false)
+                --     gameState = "free_mode"
+                -- end
+                -- Acá no sé dónde iría "free_mode" y donde "modo_libre" JAJAN'T
                 free_mode.load(false)
                 gameState = "free_mode"
             elseif isMouseOver(button4X, button4Y, buttonWidth, buttonHeight) then
+                -- if labyrinth.isSavedGame() then
+                --     gameState = "loading_labyrinth_mode"
+                -- else
+                --     labyrinth.load(false)
+                --     gameState = "labyrinth"
+                -- end
+                --Acá no sé dónde poner labyrinth y dónde modo_laberinto
                 labyrinth.load()
                 gameState = "labyrinth"
             elseif isMouseOver(button5X, button5Y, buttonWidth, buttonHeight) then
+                -- if inverted.isSavedGame() then
+                --     gameState = "loading_inverted_mode"
+                -- else
+                --     inverted.load(false)
+                --     gameState = "inverted"
+                -- end
+                -- Acá no sé dónde poner inverted y dónde modo_invertido
                 inverted.load()
                 gameState = "inverted"
             elseif isMouseOver(button6X, button6Y, buttonWidth, buttonHeight) then
                 configuracion.load()
                 gameState = "configuracion"
+            elseif isMouseOver(button7X, button7Y, buttonWidth, buttonHeight) then
+                scores.load()
+                gameState = "scores"
             end
         elseif gameState == "configuracion" then
             configuracion.mousepressed(x, y, button, istouch, presses)
@@ -185,6 +235,38 @@ function love.mousepressed(x, y, button, istouch, presses)
                 one_player.load(false)
                 gameState = "one_player"
             end
+        elseif gameState == "loading_two_players" then
+            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            --     two_players.load(true)
+            --     gameState = "two_players"
+            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            --     two_players.load(false)
+            --     gameState = "two_players"
+            -- end
+        elseif gameState == "loading_free_mode" then
+            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            --     free_mode.load(true)
+            --     gameState = "free_mode"
+            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            --     free_mode.load(false)
+            --     gameState = "free_mode"
+            -- end
+        elseif gameState == "loading_labyrinth_mode" then
+            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            --     labyrinth.load(true)
+            --     gameState = "labyrinth"
+            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            --     labyrinth.load(false)
+            --     gameState = "labyrinth"
+            -- end
+        elseif gameState == "loading_inverted_mode" then
+            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            --     inverted.load(true)
+            --     gameState = "inverted"
+            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            --     inverted.load(false)
+            --     gameState = "inverted"
+            -- end
         end
     end
 end
@@ -212,5 +294,13 @@ end
 function love.quit()
     if gameState == "one_player" then
         one_player.quit()
+    -- elseif gameState == "two_players" then
+    --     two_players.quit()
+    -- elseif gameState == "free_mode" then
+    --     free_mode.quit()
+    -- elseif gameState == "labyrinth" then
+    --     labyrinth.quit()
+    -- elseif gameState == "inverted" then
+    --     inverted.quit()
     end
 end
