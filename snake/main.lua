@@ -16,7 +16,8 @@ local button2X, button2Y = columnWidth - 150, setHeight / 2
 local button3X, button3Y = columnWidth + 150, setHeight / 3
 local button4X, button4Y = columnWidth + 150, setHeight / 2
 local button5X, button5Y = columnWidth, (setHeight / 2) + 100
-local button6X, button6Y = columnWidth, button5Y + 100
+local button6X, button6Y = columnWidth + 150, button5Y + 100
+local button7X, button7Y = columnWidth - 150, button5Y + 100
 
 local buttonLoadX, buttonLoadY = setWidth/2, setHeight/3
 local buttonStartX, buttonStartY = setWidth/2, setHeight/2
@@ -50,6 +51,7 @@ local free_mode = require('snake.modes.modo_libre.modo_libre')
 local labyrinth = require('snake.modes.modo_laberinto.modo_laberinto')
 local inverted = require('snake.modes.modo_invertido.modo_invertido')
 local configuracion = require('snake.modes.configuracion.configuracion')
+--local scores = require('snake.modes.scores.scores')
 
 function love.load()
     love.window.setTitle("La Viborita")
@@ -76,6 +78,7 @@ function love.update(dt)
         button4Hovered = isMouseOver(button4X, button4Y, buttonWidth, buttonHeight)
         button5Hovered = isMouseOver(button5X, button5Y, buttonWidth, buttonHeight)
         button6Hovered = isMouseOver(button6X, button6Y, buttonWidth, buttonHeight)
+        button7Hovered = isMouseOver(button7X, button7Y, buttonWidth, buttonHeight)
     elseif gameState == "loading_one_player" then
         onePlayerButton1Hovered = isMouseOver(button1X, button1Y, buttonWidth, buttonHeight)
         onePlayerButton2Hovered = isMouseOver(button2X, button2Y, buttonWidth, buttonHeight)
@@ -91,7 +94,28 @@ function love.update(dt)
         inverted.update()
     elseif gameState == "configuracion" then
         configuracion.update()
+    -- elseif gameState == "scores" then
+    --     scores.update()
     end
+end
+
+function drawLoadingOnePlayer()
+    -- Set background color
+    love.graphics.setColor(1, 1, 1)
+
+    love.graphics.draw(backgroundImage, 0, 0, 0, setWidth / backgroundImage:getWidth(), setHeight / backgroundImage:getHeight())
+    love.graphics.setColor(backgroundColor)
+    love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+
+    -- Draw title
+    love.graphics.setColor(0, 0, 0)
+    love.graphics.setFont(fontTitle)
+    love.graphics.printf("¿Queres continuar tu ultima partida?", 0, setHeight / 6, love.graphics.getWidth(), "center")
+    love.graphics.setFont(fontBody)
+
+    -- Draw buttons
+    drawButton(buttonLoadX, buttonLoadY, "Yes", onePlayerButton1Hovered, buttonColor)
+    drawButton(buttonStartX, buttonStartY, "No", onePlayerButton2Hovered, buttonColor)
 end
 
 function love.draw()
@@ -116,24 +140,10 @@ function love.draw()
         drawButton(button4X, button4Y, "Laberinto", button4Hovered, buttonColor)
         drawButton(button5X, button5Y, "Invertido", button5Hovered, buttonColor)
         drawButton(button6X, button6Y, "Configuración", button6Hovered, buttonConfigColor)
+        drawButton(button7X, button7Y, "High scores", button7Hovered, buttonConfigColor)
 
     elseif gameState == "loading_one_player" then
-        -- Set background color
-        love.graphics.setColor(1, 1, 1)
-
-        love.graphics.draw(backgroundImage, 0, 0, 0, setWidth / backgroundImage:getWidth(), setHeight / backgroundImage:getHeight())
-        love.graphics.setColor(backgroundColor)
-        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
-
-        -- Draw title
-        love.graphics.setColor(0, 0, 0)
-        love.graphics.setFont(fontTitle)
-        love.graphics.printf("¿Queres continuar tu ultima partida?", 0, setHeight / 6, love.graphics.getWidth(), "center")
-        love.graphics.setFont(fontBody)
-
-        -- Draw buttons
-        drawButton(buttonLoadX, buttonLoadY, "Yes", onePlayerButton1Hovered, buttonColor)
-        drawButton(buttonStartX, buttonStartY, "No", onePlayerButton2Hovered, buttonColor)
+        drawLoadingOnePlayer()
     elseif gameState == "one_player" then
         one_player.draw()
     elseif gameState == "two_players" then
