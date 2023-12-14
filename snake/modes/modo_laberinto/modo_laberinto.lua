@@ -41,7 +41,7 @@ local staticVerticalLine2X, staticVerticalLine2Y
 local staticWalls = {}
 local staticVerticalLines = {}
 
-local FuncionesAuxiliares = require("snake.modes.modo_laberinto.pantalla_final")
+local FuncionesAuxiliares = require("snake.pantalla_final")
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
@@ -222,27 +222,9 @@ function M.update(dt)
         timer = Love.timer.getTime()
         move.move(snake)
 
-        -- move body
-        -- for i = #snake, 2, -1 do
-        --     snake[i].x = snake[i - 1].x
-        --     snake[i].y = snake[i - 1].y
-        -- end
-
-        -- -- move head
-        -- if direction == 'up' then
-        --     snake[1].y = snake[1].y - 1
-        -- elseif direction == 'down' then
-        --     snake[1].y = snake[1].y + 1
-        -- elseif direction == 'left' then
-        --     snake[1].x = snake[1].x - 1
-        -- elseif direction == 'right' then
-        --     snake[1].x = snake[1].x + 1
-        -- end
-
-
         change_level()
-       checkCollisionWithStaticWalls()
-       checkCollisionWithStaticLines()
+        checkCollisionWithStaticWalls()
+        checkCollisionWithStaticLines()
 
         -- check for collision with wall
         if snake[1].x < 1 or snake[1].x >= GAME_AREA_WIDTH-1 or snake[1].y < 1 or snake[1].y >= GAME_AREA_HEIGHT-1 then

@@ -30,7 +30,7 @@ FRUIT_START_Y = 1
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
 Love.keyboard = require('love.keyboard')
-local FuncionesAuxiliares = require("snake.modes.modo_invertido.pantalla_final")
+local FuncionesAuxiliares = require("snake.pantalla_final")
 
 -- initialize game variables
 snake = {}

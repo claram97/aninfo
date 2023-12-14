@@ -17,7 +17,7 @@ speed = 0.1
 obstacles = {}
 obstacleCount = 0
 
-FuncionesAuxiliares = require("snake.modes.modo_un_jugador.pantalla_final")
+FuncionesAuxiliares = require("snake.pantalla_final")
 savegame = require('snake.modes.savegame')
 local move = require('snake.modes.move')
 
