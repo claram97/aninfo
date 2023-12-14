@@ -108,11 +108,6 @@ function reiniciarJuego()
 end
 
 function M.update(dt)
-    -- check for game over
-    -- if gameOver then
-    --     return
-    -- end
-
     if Love.keyboard.isDown('m') and gameOver then
         love.event.quit("restart")
     end

@@ -205,9 +205,7 @@ function M.draw()
         -- draw fruit
         love.graphics.setColor(1, 1, 1)
         love.graphics.draw(fruitImage, fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, 0, TILE_SIZE/fruitImage:getWidth(), TILE_SIZE/fruitImage:getHeight())
-        -- love.graphics.setColor(1, 0, 0)
-        -- love.graphics.rectangle('fill', fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-
+       
         -- draw score
         love.graphics.setColor(0,0,0)
         love.graphics.setFont(font)

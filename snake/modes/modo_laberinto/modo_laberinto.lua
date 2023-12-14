@@ -185,33 +185,6 @@ function M.update(dt)
         reiniciarJuego()
     end
 
-    -- if gameOver then
-    --     -- check for space key press to restart the game
-    --     if Love.keyboard.isDown('space') then
-    --         -- reset game variables
-    --         snake = {}
-    --         fruit = {}
-    --         gameOver = false
-    --         score = 0
-
-    --         -- initialize snake
-    --         for i = 1, SNAKE_START_LENGTH do
-    --             table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
-    --         end
-
-    --         -- initialize fruit
-    --         fruit.x = FRUIT_START_X
-    --         fruit.y = FRUIT_START_Y
-
-    --         -- set initial direction
-    --         direction = SNAKE_START_DIRECTION
-
-    --         -- set timer for snake movement
-    --         timer = love.timer.getTime()
-    --     end
-    -- return
-    -- end
-
     move.get_direction(false)
 
     -- move snake
@@ -498,8 +471,6 @@ function M.draw()
         -- draw fruit
         Love.graphics.setColor(1, 1, 1)
         Love.graphics.draw(fruitImage, fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, 0, TILE_SIZE/fruitImage:getWidth(), TILE_SIZE/fruitImage:getHeight())
-        -- love.graphics.setColor(1, 0, 0)
-        -- love.graphics.rectangle('fill', fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
 
         -- draw score
         draw_border()
