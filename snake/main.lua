@@ -99,7 +99,7 @@ function love.update(dt)
     end
 end
 
-function drawLoadingOnePlayer()
+function drawLoadingSavedGame()
     -- Set background color
     love.graphics.setColor(1, 1, 1)
 
@@ -143,7 +143,7 @@ function love.draw()
         drawButton(button7X, button7Y, "High scores", button7Hovered, buttonConfigColor)
 
     elseif gameState == "loading_one_player" then
-        drawLoadingOnePlayer()
+        drawLoadingSavedGame()
     elseif gameState == "one_player" then
         one_player.draw()
     elseif gameState == "two_players" then
