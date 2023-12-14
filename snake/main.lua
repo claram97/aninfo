@@ -215,15 +215,12 @@ function love.mousepressed(x, y, button, istouch, presses)
                 labyrinth.load()
                 gameState = "labyrinth"
             elseif isMouseOver(button5X, button5Y, buttonWidth, buttonHeight) then
-                -- if inverted.isSavedGame() then
-                --     gameState = "loading_inverted_mode"
-                -- else
-                --     inverted.load(false)
-                --     gameState = "inverted"
-                -- end
-                -- Acá no sé dónde poner inverted y dónde modo_invertido
-                inverted.load()
-                gameState = "inverted"
+                if inverted.isSavedGame() then
+                    gameState = "loading_inverted_mode"
+                else
+                    inverted.load(false)
+                    gameState = "inverted"
+                end
             elseif isMouseOver(button6X, button6Y, buttonWidth, buttonHeight) then
                 configuracion.load()
                 gameState = "configuracion"
@@ -266,13 +263,13 @@ function love.mousepressed(x, y, button, istouch, presses)
             --     gameState = "labyrinth"
             -- end
         elseif gameState == "loading_inverted_mode" then
-            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
-            --     inverted.load(true)
-            --     gameState = "inverted"
-            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
-            --     inverted.load(false)
-            --     gameState = "inverted"
-            -- end
+            if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+                inverted.load(true)
+                gameState = "inverted"
+            elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+                inverted.load(false)
+                gameState = "inverted"
+            end
         end
     end
 end
@@ -306,7 +303,7 @@ function love.quit()
         free_mode.quit()
     -- elseif gameState == "labyrinth" then
     --     labyrinth.quit()
-    -- elseif gameState == "inverted" then
-    --     inverted.quit()
+    elseif gameState == "inverted" then
+        inverted.quit()
     end
 end
