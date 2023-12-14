@@ -5,8 +5,9 @@ snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png'
 snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')
 fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
 background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
-FuncionesAuxiliares = require("snake.pantalla_final")
+FuncionesAuxiliares = require("snake.modes.modo_libre.pantalla_final")
 local configuracion = require('snake.modes.configuracion.configuracion')
+local savegame = require('snake.modes.savegame')
 
 local M = {}
 
@@ -45,10 +46,8 @@ local right_pressed = false
 local score = 0
 
 -- Define obstacle variables
-local OBSTACLE_MIN_RADIUS = 20
-local OBSTACLE_MAX_RADIUS = 50
+local OBSTACLE_RADIUS = 35
 local OBSTACLE_APPARITION_FREQUENCY = 5
-
 
 -- Define table to store snake segments
 local segment_distance = 45
@@ -59,12 +58,8 @@ local snake_segments = {
 
 -- Define table to store obstacles
 local obstacles = {
-    {x = 200, y = 300, radius = 50},
+    {x = 200, y = 300},
 }
-
-FuncionesAuxiliares = require("snake.modes.modo_libre.pantalla_final")
-playerState = "playing"
-local gameState = "playing"
 
 function reiniciarTodo()
     -- Reiniciar todas las variables y estados a sus valores iniciales
@@ -77,7 +72,6 @@ function reiniciarTodo()
     left_pressed = false
     right_pressed = false
     score = 0
-    gameState = "playing"
 
     -- Reiniciar segmentos de la serpiente
     snake_segments = {
@@ -87,12 +81,12 @@ function reiniciarTodo()
 
     -- Reiniciar obstáculos
     obstacles = {
-        {x = 200, y = 300, radius = 50},
+        {x = 200, y = 300},
     }
 end
 
 function draw()
-    if playerState == "playing" then
+    if not game_over then
         love.graphics.setColor(1, 1, 1)
         for i = 0, GAME_AREA_WIDTH - 1 do
             for j = 0, GAME_AREA_HEIGHT - 1 do
@@ -117,28 +111,35 @@ function draw()
         -- Draw obstacles
         love.graphics.setColor(0, 0, 0)
         for _, obstacle in ipairs(obstacles) do
-            love.graphics.circle('fill', obstacle.x, obstacle.y, obstacle.radius)
+            love.graphics.circle('fill', obstacle.x, obstacle.y, OBSTACLE_RADIUS)
         end
+
+        -- Print debug information
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.setFont(font)
+        love.graphics.print("Score: " .. score, 10, 10)
+        -- Snake speed
+        love.graphics.print("Snake speed: " .. snake_speed, 10, 60)
+        -- Snake angle
+        love.graphics.print("Snake angle: " .. snake_angle, 10, 110)
+
+
     end
 
     if game_over then
-        playerState = "not"
         FuncionesAuxiliares.mostrarPantallaFinal(score)
-
     end
 
 end
 
 -- Define function to update position of snake and fruit
 local function update(dt)
-    if Love.keyboard.isDown('m') and gameState == "not playing" then
+    if Love.keyboard.isDown('m') and game_over then
         love.event.quit("restart")
     end
 
-    if Love.keyboard.isDown('z')  and  gameState == "not playing" then
-        gameState = "playing"
+    if Love.keyboard.isDown('z')  and  game_over then
         reiniciarTodo()
-        print(gameState)
     end
     
     if game_over then
@@ -196,13 +197,13 @@ local function update(dt)
         -- Check if snake has collided with obstacles
         for _, obstacle in ipairs(obstacles) do
             local distance = math.sqrt((snake_x - obstacle.x)^2 + (snake_y - obstacle.y)^2)
-            if distance < snake_radius + obstacle.radius then
+            if distance < snake_radius + OBSTACLE_RADIUS then
                 game_over = true
             end
         end
 
         -- Check if snake has collided with itself
-        for i = 4, #snake_segments do
+        for i = 5, #snake_segments do
             local segment = snake_segments[i]
             local distance = math.sqrt((snake_x - segment.x)^2 + (snake_y - segment.y)^2)
             if distance < snake_radius * 2 then
@@ -260,7 +261,7 @@ function love.keyreleased(key)
 end
 
 -- Define function to load game assets
-function M.load()
+function M.load(loadGame)
     local config = configuracion.load()
     if config.sound == true then
         love.audio.play(musica_fondo)
@@ -277,10 +278,32 @@ function M.load()
     -- Adjust window size and title
     love.window.setMode(screen_width, screen_height)
 
+    local savedSnake = savegame.loadSnakeState('free_mode')
+    if loadGame and savedSnake then
+        snake_segments = savedSnake.snake
+        obstacles = savedSnake.obstacles
+        score = savedSnake.score
+        
+        local head = snake_segments[1]
+        local secondSegment = snake_segments[2]
+        local dx = head.x - secondSegment.x
+        local dy = head.y - secondSegment.y
+        snake_angle = math.atan2(dy, dx)
+    else
+        snake_segments = {
+            {x = snake_x, y = snake_y},
+            {x = snake_x - segment_distance, y = snake_y}
+        }
+        obstacles = {
+            {x = 200, y = 300, radius = 50},
+        }
+        score = 0
+    end
+
     -- Check if snake spawns near an obstacle and reposition it if necessary
     for _, obstacle in ipairs(obstacles) do
         local distance = math.sqrt((snake_x - obstacle.x)^2 + (snake_y - obstacle.y)^2)
-        if distance < snake_radius + obstacle.radius then
+        if distance < snake_radius + OBSTACLE_RADIUS then
             snake_x, snake_y = getRandomSnakePosition()
         end
     end
@@ -288,7 +311,7 @@ function M.load()
     -- Check if fruit spawns on an obstacle and reposition it if necessary
     for _, obstacle in ipairs(obstacles) do
         local distance = math.sqrt((fruit_x - obstacle.x)^2 + (fruit_y - obstacle.y)^2)
-        if distance < fruit_radius + obstacle.radius then
+        if distance < fruit_radius + OBSTACLE_RADIUS then
             fruit_x, fruit_y = getRandomFruitPosition()
         end
     end
@@ -301,7 +324,7 @@ function getRandomSnakePosition()
     local y = math.random(screen_height)
     for _, obstacle in ipairs(obstacles) do
         local distance = math.sqrt((x - obstacle.x)^2 + (y - obstacle.y)^2)
-        if distance < snake_radius + obstacle.radius then
+        if distance < snake_radius + OBSTACLE_RADIUS then
             return getRandomSnakePosition()
         end
     end
@@ -314,7 +337,7 @@ function getRandomFruitPosition()
     local y = math.random(screen_height)
     for _, obstacle in ipairs(obstacles) do
         local distance = math.sqrt((x - obstacle.x)^2 + (y - obstacle.y)^2)
-        if distance < fruit_radius + obstacle.radius then
+        if distance < fruit_radius + OBSTACLE_RADIUS then
             return getRandomFruitPosition()
         end
     end
@@ -323,10 +346,7 @@ end
 
 function updateObstacles()
     if score % OBSTACLE_APPARITION_FREQUENCY == 0 then
-        local obstacle_radius = math.random(OBSTACLE_MAX_RADIUS)
-        if obstacle_radius < OBSTACLE_MIN_RADIUS then
-            obstacle_radius = OBSTACLE_MIN_RADIUS
-        end
+        local obstacle_radius = OBSTACLE_RADIUS
         obstacle_max_x = screen_width - obstacle_radius
         local obstacle_x = math.random(obstacle_max_x)
         if obstacle_x < obstacle_radius then
@@ -338,8 +358,19 @@ function updateObstacles()
         if obstacle_y < obstacle_radius then
             obstacle_y = obstacle_radius
         end
-        table.insert(obstacles, {x = obstacle_x, y = obstacle_y, radius = obstacle_radius})
+        table.insert(obstacles, {x = obstacle_x, y = obstacle_y})
     end
+end
+
+function M.isSavedGame()
+    return savegame.loadSnakeState('free_mode') ~= nil
+end
+
+function M.quit()
+    if game_over then
+        return true
+    end
+    savegame.saveSnakeState(snake_segments, obstacles, score, 'free_mode')
 end
 
 return M
