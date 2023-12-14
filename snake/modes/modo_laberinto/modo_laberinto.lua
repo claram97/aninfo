@@ -122,6 +122,9 @@ function generateStaticVerticalLines()
 
     for _ = 1, 2 do
         local x, y = get_random_position()
+        while isPositionTooCloseToSnake(x, y) do
+            x, y = get_random_position()
+        end
         table.insert(staticVerticalLines, {x = x, y = y})
     end
 end
@@ -131,12 +134,27 @@ function generateStaticWalls()
 
     for _ = 1, 4 do
         local x, y = get_random_position()
+        while isPositionTooCloseToSnake(x, y) do
+            x, y = get_random_position()
+        end
         table.insert(staticWalls, {x = x, y = y})
     end
 end
 
+function isPositionTooCloseToSnake(x, y)
+    local minDistance = 5
+
+    for _, segment in ipairs(snake) do
+        local distance = math.abs(x - segment.x) + math.abs(y - segment.y)
+        if distance < minDistance then
+            return true
+        end
+    end
+
+    return false
+end
 function change_level()
-    if score == FIRST_LEVEL_END_SCORE or score == SECOND_LEVEL_END_SCORE then
+    if score > FIRST_LEVEL_END_SCORE or score == SECOND_LEVEL_END_SCORE then
         if not wallsChanged then
             level = level + 1
             wallsChanged = true
@@ -199,7 +217,7 @@ function M.update(dt)
     move.get_direction(false)
 
     -- move snake
-    local speed = 0.1 - 0.01 * (score - 1)
+    local speed = 0.1 - 0.001 * (score - 1)
     speed = math.max(speed, 0.05)  -- Ensure the speed doesn't go below a certain threshold (e.g., 0.05)
     
     if Love.timer.getTime() - timer > speed then
