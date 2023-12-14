@@ -17,6 +17,7 @@ player_1 = "jugador1"
 player_2 = "jugador2"
 ganador = ""
 perdedor = ""
+
 function M.load()
     -- load constants
     require('snake.modes.constants')

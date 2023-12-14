@@ -97,16 +97,6 @@ function M.load()
 end
 
 function M.update(dt)
-    --  -- check for game over
-    --  if Love.keyboard.isDown('m') and gameState == "not playing" then
-    --     love.event.quit("restart")
-    -- end
-
-    -- if Love.keyboard.isDown('z')  and  gameState == "not playing" then
-    --     gameState = "playing"
-    --     reiniciarJuego()
-    -- end
-
     if Love.keyboard.isDown('m') and gameOver then
         love.event.quit("restart")
     end
@@ -115,10 +105,6 @@ function M.update(dt)
         gameState = "playing"
         reiniciarJuego()
     end
-    -- -- check for game over
-    -- if gameOver then
-    --     return
-    -- end
 
     move.get_direction(true, direction)
     -- move snake
@@ -160,9 +146,7 @@ function M.draw()
     -- draw game area
     if gameState == "playing" then
         love.graphics.setColor(1,1,1)
-        --love.graphics.rectangle('fill', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
-        --love.graphics.draw(backgroundImage, 0, 0, 0, WINDOW_WIDTH / backgroundImage:getWidth(), WINDOW_HEIGHT / backgroundImage:getHeight())
-        
+       
         love.graphics.setBackgroundColor(1, 1, 1)  -- Set background color to white
 
         for i = 0, GAME_AREA_WIDTH - 1 do
