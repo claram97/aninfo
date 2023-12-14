@@ -138,7 +138,7 @@ function M.update(dt)
         -- check for collision with fruit
         if snake[1].x == fruit.x and snake[1].y == fruit.y then
             -- add to score
-            score = score + 1
+            score = score + math.random(5, 13)
             love.audio.play(sonido_comer)
 
             -- add to snake length
