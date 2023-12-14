@@ -51,7 +51,7 @@ local free_mode = require('snake.modes.modo_libre.modo_libre')
 local labyrinth = require('snake.modes.modo_laberinto.modo_laberinto')
 local inverted = require('snake.modes.modo_invertido.modo_invertido')
 local configuracion = require('snake.modes.configuracion.configuracion')
---local scores = require('snake.modes.scores.scores')
+local scores = require('snake.modes.scores.scores')
 
 function love.load()
     love.window.setTitle("La Viborita")
@@ -94,8 +94,8 @@ function love.update(dt)
         inverted.update()
     elseif gameState == "configuracion" then
         configuracion.update()
-    -- elseif gameState == "scores" then
-    --     scores.update()
+    elseif gameState == "scores" then
+        scores.update()
     end
 end
 
@@ -164,6 +164,8 @@ function love.draw()
         inverted.draw()
     elseif gameState == "configuracion" then
         configuracion.draw()
+    elseif gameState == "scores" then
+        scores.draw()
     end
 end
 
@@ -220,7 +222,7 @@ function love.mousepressed(x, y, button, istouch, presses)
                 configuracion.load()
                 gameState = "configuracion"
             elseif isMouseOver(button7X, button7Y, buttonWidth, buttonHeight) then
-                -- scores.load()
+                scores.load()
                 gameState = "scores"
             end
         elseif gameState == "configuracion" then
@@ -233,6 +235,38 @@ function love.mousepressed(x, y, button, istouch, presses)
                 one_player.load(false)
                 gameState = "one_player"
             end
+        elseif gameState == "loading_two_players" then
+            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            --     two_players.load(true)
+            --     gameState = "two_players"
+            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            --     two_players.load(false)
+            --     gameState = "two_players"
+            -- end
+        elseif gameState == "loading_free_mode" then
+            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            --     free_mode.load(true)
+            --     gameState = "free_mode"
+            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            --     free_mode.load(false)
+            --     gameState = "free_mode"
+            -- end
+        elseif gameState == "loading_labyrinth_mode" then
+            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            --     labyrinth.load(true)
+            --     gameState = "labyrinth"
+            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            --     labyrinth.load(false)
+            --     gameState = "labyrinth"
+            -- end
+        elseif gameState == "loading_inverted_mode" then
+            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            --     inverted.load(true)
+            --     gameState = "inverted"
+            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            --     inverted.load(false)
+            --     gameState = "inverted"
+            -- end
         end
     end
 end
@@ -260,5 +294,13 @@ end
 function love.quit()
     if gameState == "one_player" then
         one_player.quit()
+    -- elseif gameState == "two_players" then
+    --     two_players.quit()
+    -- elseif gameState == "free_mode" then
+    --     free_mode.quit()
+    -- elseif gameState == "labyrinth" then
+    --     labyrinth.quit()
+    -- elseif gameState == "inverted" then
+    --     inverted.quit()
     end
 end
