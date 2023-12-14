@@ -77,6 +77,11 @@ function saveConfig()
     local file = io.open("config.txt", "w")
     file:write(content)
     file:close()
+    if config.sound == false then
+        love.audio.stop(musica_fondo)
+    else
+        love.audio.play(musica_fondo)
+    end
     love.event.quit('restart')
 end
 
