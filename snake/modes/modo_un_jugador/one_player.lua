@@ -109,7 +109,7 @@ function M.load(loadGame)
     if savedSnake and loadGame then
         snake = savedSnake.snake
         -- get the score by counting the number of segments in the snake
-        score = #snake - SNAKE_START_LENGTH
+        score = savedSnake.score
         speed = 0.1 - (score * SPEED_INCREMENT)
         gameState = "playing"
         if snake[1].x == snake[2].x then

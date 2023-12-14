@@ -200,15 +200,12 @@ function love.mousepressed(x, y, button, istouch, presses)
                 two_players.load()
                 gameState = "two_players"
             elseif isMouseOver(button3X, button3Y, buttonWidth, buttonHeight) then
-                -- if modo_libre.isSavedGame() then
-                --     gameState = "loading_free_mode"
-                -- else
-                --     modo_libre.load(false)
-                --     gameState = "free_mode"
-                -- end
-                -- Acá no sé dónde iría "free_mode" y donde "modo_libre" JAJAN'T
-                free_mode.load(false)
-                gameState = "free_mode"
+                if free_mode.isSavedGame() then
+                    gameState = "loading_free_mode"
+                else
+                    free_mode.load(false)
+                    gameState = "free_mode"
+                end
             elseif isMouseOver(button4X, button4Y, buttonWidth, buttonHeight) then
                 -- if labyrinth.isSavedGame() then
                 --     gameState = "loading_labyrinth_mode"
@@ -255,13 +252,13 @@ function love.mousepressed(x, y, button, istouch, presses)
             --     gameState = "two_players"
             -- end
         elseif gameState == "loading_free_mode" then
-            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
-            --     free_mode.load(true)
-            --     gameState = "free_mode"
-            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
-            --     free_mode.load(false)
-            --     gameState = "free_mode"
-            -- end
+            if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+                free_mode.load(true)
+                gameState = "free_mode"
+            elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+                free_mode.load(false)
+                gameState = "free_mode"
+            end
         elseif gameState == "loading_labyrinth_mode" then
             -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
             --     labyrinth.load(true)
@@ -307,8 +304,8 @@ function love.quit()
         one_player.quit()
     -- elseif gameState == "two_players" then
     --     two_players.quit()
-    -- elseif gameState == "free_mode" then
-    --     free_mode.quit()
+    elseif gameState == "free_mode" then
+        free_mode.quit()
     -- elseif gameState == "labyrinth" then
     --     labyrinth.quit()
     -- elseif gameState == "inverted" then
