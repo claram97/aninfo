@@ -53,6 +53,9 @@ local inverted = require('snake.modes.modo_invertido.modo_invertido')
 local configuracion = require('snake.modes.configuracion.configuracion')
 local scores = require('snake.modes.scores.scores')
 
+local ticks = 1/60
+local acumulador = 0
+
 function love.load()
     love.window.setTitle("La Viborita")
     love.window.setMode(setWidth, setHeight, {resizable=false})
@@ -70,6 +73,14 @@ function love.load()
 end
 
 function love.update(dt)
+    acumulador = acumulador + dt
+    if acumulador >= ticks then
+        update()
+        acumulador = acumulador - ticks
+    end
+end
+
+function update()
     -- Check if the mouse is over the buttons
     if gameState == "menu" then
         button1Hovered = isMouseOver(button1X, button1Y, buttonWidth, buttonHeight)
