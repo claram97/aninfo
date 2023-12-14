@@ -1,2 +1,2 @@
-soundEnabled = false
+soundEnabled = true
 fullScreen = false

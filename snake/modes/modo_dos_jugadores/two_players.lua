@@ -3,6 +3,7 @@ love.graphics = require('love.graphics')
 love.timer = require('love.timer')
 love.keyboard = require('love.keyboard')
 local FuncionesExtras = require("snake.pantalla_final")
+local configuracion = require('snake.modes.configuracion.configuracion')
 
 -- initialize game variables
 snake1 = {}
@@ -19,8 +20,15 @@ ganador = ""
 perdedor = ""
 
 function M.load()
-    -- load constants
     require('snake.modes.constants')
+
+    local config = configuracion.load()
+    if config.sound == true then
+        love.audio.play(musica_fondo)
+    end
+    if config.sound == false then
+        love.audio.stop(musica_fondo)
+    end
 
     snakeHeadImageUp = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_head_down.png')

@@ -86,10 +86,10 @@ end
 function M.load()
     local config = configuracion.load()
     if config.sound == true then
-        print("Sound")
+        love.audio.play(musica_fondo)
     end
     if config.sound == false then
-        print("No sound")
+        love.audio.stop(musica_fondo)
     end
     snakeHeadImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_down.png')

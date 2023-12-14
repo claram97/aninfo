@@ -77,6 +77,7 @@ function saveConfig()
     local file = io.open("config.txt", "w")
     file:write(content)
     file:close()
+    love.event.quit('restart')
 end
 
 

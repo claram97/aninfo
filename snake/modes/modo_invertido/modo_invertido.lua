@@ -1,6 +1,8 @@
 Love = require('love')
 local M = {}
 local move = require('snake.modes.move')
+local configuracion = require('snake.modes.configuracion.configuracion')
+
 -- set window dimensions
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
@@ -56,7 +58,14 @@ end
 
 
 function M.load()
-    
+    local config = configuracion.load()
+    if config.sound == true then
+        love.audio.play(musica_fondo)
+    end
+    if config.sound == false then
+        love.audio.stop(musica_fondo)
+    end
+
     snakeHeadImageUp = love.graphics.newImage('modes/modo_invertido/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_invertido/assets/snake_head_down.png')
     snakeHeadImageLeft = love.graphics.newImage('modes/modo_invertido/assets/snake_head_left.png')
