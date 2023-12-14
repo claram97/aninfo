@@ -144,6 +144,14 @@ function love.draw()
 
     elseif gameState == "loading_one_player" then
         drawLoadingSavedGame()
+    elseif gameState == "loading_two_players" then
+        drawLoadingSavedGame()
+    elseif gameState == "loading_free_mode" then
+        drawLoadingSavedGame()
+    elseif gameState == "loading_labyrinth_mode" then
+        drawLoadingSavedGame()
+    elseif gameState == "loading_inverted_mode" then
+        drawLoadingSavedGame()    
     elseif gameState == "one_player" then
         one_player.draw()
     elseif gameState == "two_players" then
@@ -170,20 +178,50 @@ function love.mousepressed(x, y, button, istouch, presses)
                     gameState = "one_player"
                 end
             elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+                -- if two_players.isSavedGame() then
+                --     gameState = "loading_two_players"
+                -- else
+                --     two_players.load(false)
+                --     gameState = "two_players"
+                -- end
                 two_players.load()
                 gameState = "two_players"
             elseif isMouseOver(button3X, button3Y, buttonWidth, buttonHeight) then
+                -- if modo_libre.isSavedGame() then
+                --     gameState = "loading_free_mode"
+                -- else
+                --     modo_libre.load(false)
+                --     gameState = "free_mode"
+                -- end
+                -- Acá no sé dónde iría "free_mode" y donde "modo_libre" JAJAN'T
                 free_mode.load(false)
                 gameState = "free_mode"
             elseif isMouseOver(button4X, button4Y, buttonWidth, buttonHeight) then
+                -- if labyrinth.isSavedGame() then
+                --     gameState = "loading_labyrinth_mode"
+                -- else
+                --     labyrinth.load(false)
+                --     gameState = "labyrinth"
+                -- end
+                --Acá no sé dónde poner labyrinth y dónde modo_laberinto
                 labyrinth.load()
                 gameState = "labyrinth"
             elseif isMouseOver(button5X, button5Y, buttonWidth, buttonHeight) then
+                -- if inverted.isSavedGame() then
+                --     gameState = "loading_inverted_mode"
+                -- else
+                --     inverted.load(false)
+                --     gameState = "inverted"
+                -- end
+                -- Acá no sé dónde poner inverted y dónde modo_invertido
                 inverted.load()
                 gameState = "inverted"
             elseif isMouseOver(button6X, button6Y, buttonWidth, buttonHeight) then
                 configuracion.load()
                 gameState = "configuracion"
+            elseif isMouseOver(button7X, button7Y, buttonWidth, buttonHeight) then
+                -- scores.load()
+                gameState = "scores"
             end
         elseif gameState == "configuracion" then
             configuracion.mousepressed(x, y, button, istouch, presses)
