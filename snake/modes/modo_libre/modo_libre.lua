@@ -1,9 +1,12 @@
+-- Import the body of the snake from assets
 local love = require("love")
 
 snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png')
 snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')
 fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
 background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
+FuncionesAuxiliares = require("snake.pantalla_final")
+local configuracion = require('snake.modes.configuracion.configuracion')
 
 local M = {}
 
@@ -258,6 +261,14 @@ end
 
 -- Define function to load game assets
 function M.load()
+    local config = configuracion.load()
+    if config.sound == true then
+        love.audio.play(musica_fondo)
+    end
+    if config.sound == false then
+        love.audio.stop(musica_fondo)
+    end
+
     local snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png')
     local snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')
     local fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')

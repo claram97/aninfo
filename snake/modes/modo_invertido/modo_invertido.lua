@@ -1,6 +1,8 @@
 Love = require('love')
 local M = {}
 local move = require('snake.modes.move')
+local configuracion = require('snake.modes.configuracion.configuracion')
+
 -- set window dimensions
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
@@ -30,7 +32,7 @@ FRUIT_START_Y = 1
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
 Love.keyboard = require('love.keyboard')
-local FuncionesAuxiliares = require("snake.modes.modo_invertido.pantalla_final")
+local FuncionesAuxiliares = require("snake.pantalla_final")
 
 -- initialize game variables
 snake = {}
@@ -56,7 +58,14 @@ end
 
 
 function M.load()
-    
+    local config = configuracion.load()
+    if config.sound == true then
+        love.audio.play(musica_fondo)
+    end
+    if config.sound == false then
+        love.audio.stop(musica_fondo)
+    end
+
     snakeHeadImageUp = love.graphics.newImage('modes/modo_invertido/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_invertido/assets/snake_head_down.png')
     snakeHeadImageLeft = love.graphics.newImage('modes/modo_invertido/assets/snake_head_left.png')
@@ -97,16 +106,6 @@ function M.load()
 end
 
 function M.update(dt)
-    --  -- check for game over
-    --  if Love.keyboard.isDown('m') and gameState == "not playing" then
-    --     love.event.quit("restart")
-    -- end
-
-    -- if Love.keyboard.isDown('z')  and  gameState == "not playing" then
-    --     gameState = "playing"
-    --     reiniciarJuego()
-    -- end
-
     if Love.keyboard.isDown('m') and gameOver then
         love.event.quit("restart")
     end
@@ -115,10 +114,6 @@ function M.update(dt)
         gameState = "playing"
         reiniciarJuego()
     end
-    -- -- check for game over
-    -- if gameOver then
-    --     return
-    -- end
 
     move.get_direction(true, direction)
     -- move snake
@@ -160,9 +155,7 @@ function M.draw()
     -- draw game area
     if gameState == "playing" then
         love.graphics.setColor(1,1,1)
-        --love.graphics.rectangle('fill', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
-        --love.graphics.draw(backgroundImage, 0, 0, 0, WINDOW_WIDTH / backgroundImage:getWidth(), WINDOW_HEIGHT / backgroundImage:getHeight())
-        
+       
         love.graphics.setBackgroundColor(1, 1, 1)  -- Set background color to white
 
         for i = 0, GAME_AREA_WIDTH - 1 do
@@ -221,9 +214,7 @@ function M.draw()
         -- draw fruit
         love.graphics.setColor(1, 1, 1)
         love.graphics.draw(fruitImage, fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, 0, TILE_SIZE/fruitImage:getWidth(), TILE_SIZE/fruitImage:getHeight())
-        -- love.graphics.setColor(1, 0, 0)
-        -- love.graphics.rectangle('fill', fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-
+       
         -- draw score
         love.graphics.setColor(0,0,0)
         love.graphics.setFont(font)

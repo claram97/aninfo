@@ -58,6 +58,13 @@ function love.load()
     sonido_comer = love.audio.newSource("valentin.mp3", "static")
     musica_fondo:setLooping(true) 
     musica_fondo:play()
+    local config = configuracion.load()
+    if config.sound == true then
+        love.audio.play(musica_fondo)
+    end
+    if config.sound == false then
+        love.audio.stop(musica_fondo)
+    end
 end
 
 function love.update(dt)

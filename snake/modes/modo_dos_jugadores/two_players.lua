@@ -2,6 +2,8 @@
 love.graphics = require('love.graphics')
 love.timer = require('love.timer')
 love.keyboard = require('love.keyboard')
+local FuncionesExtras = require("snake.pantalla_final")
+local configuracion = require('snake.modes.configuracion.configuracion')
 
 -- initialize game variables
 snake1 = {}
@@ -16,10 +18,17 @@ player_1 = "jugador1"
 player_2 = "jugador2"
 ganador = ""
 perdedor = ""
-FuncionesExtras = require("snake.modes.modo_dos_jugadores.pantalla_final")
+
 function M.load()
-    -- load constants
     require('snake.modes.constants')
+
+    local config = configuracion.load()
+    if config.sound == true then
+        love.audio.play(musica_fondo)
+    end
+    if config.sound == false then
+        love.audio.stop(musica_fondo)
+    end
 
     snakeHeadImageUp = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_head_down.png')
@@ -107,11 +116,6 @@ function reiniciarJuego()
 end
 
 function M.update(dt)
-    -- check for game over
-    -- if gameOver then
-    --     return
-    -- end
-
     if Love.keyboard.isDown('m') and gameOver then
         love.event.quit("restart")
     end
@@ -167,12 +171,14 @@ function M.update(dt)
         -- check for collision with wall
         if snake1[1].x < 0 or snake1[1].x >= GAME_AREA_WIDTH or snake1[1].y < 0 or snake1[1].y >= GAME_AREA_HEIGHT then
             gameOver = true
+            FuncionesAuxiliares.mostrarPantallaFinal(score)
         end
 
         -- check for collision with self snake 1
         for i = 2, #snake1 do
             if snake1[1].x == snake1[i].x and snake1[1].y == snake1[i].y then
                 gameOver = true
+                FuncionesAuxiliares.mostrarPantallaFinal(score)
             end
         end
 
@@ -180,6 +186,7 @@ function M.update(dt)
         for i = 2, #snake2 do
             if snake1[1].x == snake2[i].x and snake1[1].y == snake2[i].y then
                 gameOver = true
+                FuncionesAuxiliares.mostrarPantallaFinal(score)
             end
         end
 
@@ -187,6 +194,7 @@ function M.update(dt)
         for i = 2, #snake2 do
             if snake1[1].x == snake2[i].x and snake1[1].y == snake2[i].y then
                 gameOver = true
+                FuncionesAuxiliares.mostrarPantallaFinal(score)
             end
         end
 
@@ -194,6 +202,7 @@ function M.update(dt)
         for i = 2, #snake1 do
             if snake2[1].x == snake1[i].x and snake2[1].y == snake1[i].y then
                 gameOver = true
+                FuncionesAuxiliares.mostrarPantallaFinal(score)
             end
         end
 
@@ -234,12 +243,14 @@ function M.update(dt)
         -- check for collision with wall
         if snake2[1].x < 0 or snake2[1].x >= GAME_AREA_WIDTH or snake2[1].y < 0 or snake2[1].y >= GAME_AREA_HEIGHT then
             gameOver = true
+            FuncionesAuxiliares.mostrarPantallaFinal(score)
         end
 
         -- check for collision with self
         for i = 2, #snake2 do
             if snake2[1].x == snake2[i].x and snake2[1].y == snake2[i].y then
                 gameOver = true
+                FuncionesAuxiliares.mostrarPantallaFinal(score)
             end
         end
 

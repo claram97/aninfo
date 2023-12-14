@@ -5,6 +5,7 @@ gameState = "playing"
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
 Love.keyboard = require('love.keyboard')
+local configuracion = require('snake.modes.configuracion.configuracion')
 
 -- initialize game variables
 snake = {}
@@ -17,7 +18,7 @@ speed = 0.1
 obstacles = {}
 obstacleCount = 0
 
-FuncionesAuxiliares = require("snake.modes.modo_un_jugador.pantalla_final")
+FuncionesAuxiliares = require("snake.pantalla_final")
 savegame = require('snake.modes.savegame')
 local move = require('snake.modes.move')
 
@@ -71,6 +72,14 @@ end
 
 function M.load(loadGame)
     require('snake.modes.constants')
+
+    local config = configuracion.load()
+    if config.sound == true then
+        love.audio.play(musica_fondo)
+    end
+    if config.sound == false then
+        love.audio.stop(musica_fondo)
+    end
 
     snakeHeadImageUp = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_up.png')
     snakeHeadImageDown = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_down.png')
