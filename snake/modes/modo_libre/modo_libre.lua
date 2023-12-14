@@ -150,12 +150,10 @@ local function update(dt)
 
     if Love.keyboard.isDown('f12') and game_over and not pressed then
         print("Se tocó f12. Debería guardarse el score.")
-        pressed = not pressed
         if FuncionesAuxiliares.getTextLenght() > 0 then
             local text = FuncionesAuxiliares.getText()
             scores.writeCsv(text, score)
-        else
-            print("La longitud es 0")
+            pressed = not pressed
         end
     end
 
