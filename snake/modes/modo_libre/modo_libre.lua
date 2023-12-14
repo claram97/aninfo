@@ -202,7 +202,7 @@ local function update(dt)
         end
 
         -- Check if snake has collided with itself
-        for i = 4, #snake_segments do
+        for i = 5, #snake_segments do
             local segment = snake_segments[i]
             local distance = math.sqrt((snake_x - segment.x)^2 + (snake_y - segment.y)^2)
             if distance < snake_radius * 2 then
