@@ -196,6 +196,8 @@ function M.update(dt)
         reloadGame()
     end
 
+--    if Love.keyboard.isDown('')
+
     move.get_direction(false)
 
     -- move snake

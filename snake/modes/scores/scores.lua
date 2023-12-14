@@ -22,6 +22,36 @@ function scores.readCsv()
     return datos
 end
 
+function scores.writeCsv(nombre, puntuacion)
+    print("Se llamó a writecsv. Nombre y puntuación: ", nombre, puntuacion)
+    -- -- Abrir el archivo CSV en modo de lectura
+    -- local file = io.open(".scores", "r")
+
+    -- if file then
+    --     -- El archivo existe, haz algo aquí si es necesario
+    --     print("El archivo existe.")
+        
+    --     -- Cierra el archivo después de realizar las operaciones necesarias
+    --     file:close()
+    -- else
+    --     -- El archivo no existe, haz algo aquí si es necesario
+    --     print("El archivo no existe.")
+    --     local newFile = io.open(".scores", "w")
+
+    --     if newFile then
+    --         -- El archivo se creó con éxito, haz algo aquí si es necesario
+    --         print("El archivo se creó con éxito.")
+
+    --         -- Cierra el archivo después de realizar las operaciones necesarias
+    --         newFile:close()
+    --     else
+    --         -- Hubo un error al crear el archivo, maneja el error según sea necesario
+    --         print("Error al crear el archivo.")
+    --     end
+    -- end
+end
+
+
 function scores.establecerFondo()
     love.graphics.setBackgroundColor(0.95, 0.95, 0.9)
     love.graphics.setColor(251/255, 180/255, 69/255, 100)
