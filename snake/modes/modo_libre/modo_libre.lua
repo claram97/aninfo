@@ -5,7 +5,7 @@ snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png'
 snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')
 fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
 background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
-FuncionesAuxiliares = require("snake.pantalla_final")
+FuncionesAuxiliares = require("snake.modes.modo_libre.pantalla_final")
 local configuracion = require('snake.modes.configuracion.configuracion')
 
 local M = {}
@@ -62,7 +62,6 @@ local obstacles = {
     {x = 200, y = 300, radius = 50},
 }
 
-FuncionesAuxiliares = require("snake.modes.modo_libre.pantalla_final")
 playerState = "playing"
 local gameState = "playing"
 
