@@ -24,7 +24,8 @@ local move = require('snake.modes.move')
 
 local M = {}
 
--- function to place a fruit in a random location without obstacles
+--pre:
+--pos: POne la fruta en una posicion valida
 function placeFruit()
     local fruitX = Love.math.random(GAME_AREA_WIDTH - 1)
     local fruitY = Love.math.random(GAME_AREA_HEIGHT - 1)
@@ -48,7 +49,8 @@ function placeFruit()
     fruit.y = fruitY
 end
 
--- function to place an obstacle in a random location without fruit or snake every certain amount of fruit eaten
+--pre:
+--pos: Pone un obstaculo en un lugar aleatoria donde no este la serpiente o un obstaculo cada cierto score
 function placeObstacle()
     local obstacleX = Love.math.random(GAME_AREA_WIDTH - 1)
     local obstacleY = Love.math.random(GAME_AREA_HEIGHT - 1)
@@ -70,6 +72,9 @@ function placeObstacle()
     table.insert(obstacles, obstacle)
 end
 
+--pre: Se espera que las imágenes y recursos necesarios estén disponibles
+-- Pos: La función inicializa el juego, cargando las imágenes necesarias, estableciendo el título y las dimensiones de la ventana, 
+--inicializando las serpientes y la fruta, y configurando la dirección inicial de las serpiente.
 function M.load(loadGame)
     require('snake.modes.constants')
 
@@ -149,6 +154,8 @@ function M.load(loadGame)
     end
 end
 
+--pre:
+--pos: reinicia las variables a valores iniciables para "reiniciar" el juego
 local function reiniciarJuego()
     gameState = "playing"
     gameOver = false
@@ -164,6 +171,9 @@ local function reiniciarJuego()
     M.load(false)
 end
 
+-- pre:
+-- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
+-- y actualiza la puntuación y la posición de la fruta
 function M.update(dt)
 
     if Love.keyboard.isDown('m') and gameOver then
@@ -223,6 +233,8 @@ function M.update(dt)
     end
 end
 
+--pre:
+--pos: si el gameState es "playing" dibuja toda la pantalla, la snake, los obstaculos y fruta sino dibuja la pantalla final
 function M.draw()
     -- draw game area
     if gameState == "playing" then
@@ -305,6 +317,8 @@ function M.draw()
     end
 end
 
+-- pre: 
+-- pos: Se guardan los datos del juego si la aplicacion se cierra
 function M.quit()
     -- if the game is over, don't save the snake state
     if gameOver then
@@ -313,6 +327,8 @@ function M.quit()
     savegame.saveSnakeState(snake, obstacles, score, 'one_player')
 end
 
+-- pre:
+-- pos: Devuelve true si hay un juego guardado
 function M.isSavedGame()
     return savegame.loadSnakeState('one_player') ~= nil
 end
