@@ -8,6 +8,7 @@ background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
 FuncionesAuxiliares = require("snake.modes.modo_libre.pantalla_final")
 local configuracion = require('snake.modes.configuracion.configuracion')
 local savegame = require('snake.modes.savegame')
+Love.keyboard = require('love.keyboard')
 
 local M = {}
 
@@ -148,13 +149,11 @@ local function update(dt)
 
     if not game_over then
         -- Update position of snake based on velocity
-        if left_pressed then
+        if Love.keyboard.isDown('left') then
             snake_angle = snake_angle - math.pi / 64
-        elseif right_pressed then
+        elseif Love.keyboard.isDown('right') then
             snake_angle = snake_angle + math.pi / 64
         end
-        snake_x = snake_x + snake_speed * math.cos(snake_angle)
-        snake_y = snake_y + snake_speed * math.sin(snake_angle)
 
         -- Check if snake has collided with fruit
         local distance = math.sqrt((snake_x - fruit_x)^2 + (snake_y - fruit_y)^2)
@@ -226,22 +225,6 @@ local function update(dt)
     end
 end
 
--- Define function to handle arrow key inputs and update velocity of snake
-local function keypressed(key)
-    if key == "left" then
-        left_pressed = true
-    elseif key == "right" then
-        right_pressed = true
-    end
-end
-
-local function keyreleased(key)
-    if key == "left" then
-        left_pressed = false
-    elseif key == "right" then
-        right_pressed = false
-    end
-end
 
 -- Call update and draw functions in main loop
 function M.draw()
@@ -252,13 +235,6 @@ function M.update(dt)
     update(dt)
 end
 
-function love.keypressed(key)
-    keypressed(key)
-end
-
-function love.keyreleased(key)
-    keyreleased(key)
-end
 
 -- Define function to load game assets
 function M.load(loadGame)

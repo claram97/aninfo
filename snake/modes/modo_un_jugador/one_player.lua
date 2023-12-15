@@ -14,6 +14,7 @@ gameOver = false
 score = 0
 speed = 0.1
 
+
 -- initialize obstacles
 obstacles = {}
 obstacleCount = 0
@@ -21,6 +22,7 @@ obstacleCount = 0
 FuncionesAuxiliares = require("snake.pantalla_final")
 savegame = require('snake.modes.savegame')
 local move = require('snake.modes.move')
+PantallaPausa = require("snake.pantalla_pausa")
 
 local M = {}
 
@@ -164,16 +166,17 @@ local function reiniciarJuego()
     M.load(false)
 end
 
+
 function M.update(dt)
 
     if Love.keyboard.isDown('m') and gameOver then
         love.event.quit("restart")
     end
 
-    if Love.keyboard.isDown('z')  and  gameOver then
+    if Love.keyboard.isDown('z') and gameOver then
         reiniciarJuego()
     end
-    
+
     move.get_direction(false)
     -- move snake
     if Love.timer.getTime() - timer > speed then
@@ -219,9 +222,11 @@ function M.update(dt)
 
             -- increase speed
             speed = math.max(speed - SPEED_INCREMENT, 0.05)
-        end
+        end        
     end
 end
+
+
 
 function M.draw()
     -- draw game area
@@ -283,6 +288,11 @@ function M.draw()
             end
         end
 
+        -- draw button of pause
+        Love.graphics.setColor(0, 0, 0)
+        Love.graphics.setFont(font)
+        Love.graphics.print(gamePaused and "Reanudar (P)" or "Pausar (P)", 10, 130)
+
         -- draw fruit
         Love.graphics.setColor(1, 1, 1)
         Love.graphics.draw(fruitImage, fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, 0, TILE_SIZE/fruitImage:getWidth(), TILE_SIZE/fruitImage:getHeight())
@@ -298,11 +308,21 @@ function M.draw()
         Love.graphics.print('Direction: ' .. direction, 10, 100)
 
         -- draw game over message
+    elseif gameState == "pausa" then
+        dibujarPantallaPausa()
     end
     if gameOver then
         gameState = "not"
         FuncionesAuxiliares.mostrarPantallaFinal(score)
     end
+end
+
+function dibujarPantallaPausa()
+    Love.graphics.setBackgroundColor(1, 0.6, 0)
+    Love.graphics.setColor(0.8, 0.8, 0.6) 
+    Love.graphics.rectangle("fill", 50, 200, Love.graphics.getWidth() - 100, 200, 10, 10)
+    Love.graphics.setColor(0, 0, 0)
+    Love.graphics.printf("El juego está en pausa. Presione P para volver al juego", 100, 220, Love.graphics.getWidth() - 200, "center")
 end
 
 function M.quit()

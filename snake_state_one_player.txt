@@ -1,7 +1,7 @@
 Snake:
-20,8
-19,8
-18,8
+8,3
+7,3
+6,3
 
 Obstacles:
 Score: 0
