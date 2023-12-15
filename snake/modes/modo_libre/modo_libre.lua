@@ -61,8 +61,9 @@ local obstacles = {
     {x = 200, y = 300},
 }
 
+--pre:
+--pos: reinicia las variables para "reiniciar" el juego
 function reiniciarTodo()
-    -- Reiniciar todas las variables y estados a sus valores iniciales
     game_over = false
     snake_x = screen_width / 2
     snake_y = screen_height / 2
@@ -73,18 +74,18 @@ function reiniciarTodo()
     right_pressed = false
     score = 0
 
-    -- Reiniciar segmentos de la serpiente
     snake_segments = {
         {x = snake_x, y = snake_y},
         {x = snake_x - segment_distance, y = snake_y}
     }
 
-    -- Reiniciar obstáculos
     obstacles = {
         {x = 200, y = 300},
     }
 end
 
+--pre:
+--pos: dibuja toda la pantalla, la snake, los obstaculos etc
 function draw()
     if not game_over then
         love.graphics.setColor(1, 1, 1)
@@ -132,7 +133,9 @@ function draw()
 
 end
 
--- Define function to update position of snake and fruit
+-- pre:
+-- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
+-- y actualiza la puntuación y la posición de la fruta
 local function update(dt)
     if Love.keyboard.isDown('m') and game_over then
         love.event.quit("restart")
@@ -226,7 +229,8 @@ local function update(dt)
     end
 end
 
--- Define function to handle arrow key inputs and update velocity of snake
+-- pre: `key` es una cadena de texto que representa la tecla presionada
+-- pos: Actualiza el estado de las variables `left_pressed` y `right_pressed` si la tecla es "left" o "right",
 local function keypressed(key)
     if key == "left" then
         left_pressed = true
@@ -235,6 +239,8 @@ local function keypressed(key)
     end
 end
 
+-- pre: `key` es una cadena de texto que representa la tecla liberada
+-- pos: Actualiza el estado de las variables `left_pressed` y `right_pressed` a falso si la tecla es "left" o "right"
 local function keyreleased(key)
     if key == "left" then
         left_pressed = false
@@ -243,24 +249,33 @@ local function keyreleased(key)
     end
 end
 
--- Call update and draw functions in main loop
+-- pre: 
+-- pos: Invoca la función 'draw' para realizar el dibujo del juego
 function M.draw()
     draw()
 end
 
+-- pre: 
+-- pos: Invoca la función 'update' para realizar el update del juego
 function M.update(dt)
     update(dt)
 end
 
+-- pre: Recibe un parámetro 'key' que representa la tecla presionada.
+-- pos: Invoca la función 'keypressed' pasando la tecla presionada como argumento
 function love.keypressed(key)
     keypressed(key)
 end
 
+-- pre: Recibe un parámetro 'key' que representa la tecla liberada
+-- pos: Invoca la función 'keypressed' pasando la tecla liberada como argumento
 function love.keyreleased(key)
     keyreleased(key)
 end
 
--- Define function to load game assets
+--pre: Se espera que las imágenes y recursos necesarios estén disponibles
+-- Pos: La función inicializa el juego, el audio, cargando las imágenes necesarias, estableciendo el título y las dimensiones de la ventana, 
+--inicializando las serpientes y la fruta, y configurando la dirección inicial de las serpientes.
 function M.load(loadGame)
     local config = configuracion.load()
     if config.sound == true then
@@ -318,7 +333,8 @@ function M.load(loadGame)
 
 end
 
--- Define function to get a random position for the snake
+--pre:
+--pos: Genera y devuelve una posición aleatoria para de la serpiente, evitando colisiones con obstáculos
 function getRandomSnakePosition()
     local x = math.random(screen_width)
     local y = math.random(screen_height)
@@ -331,7 +347,8 @@ function getRandomSnakePosition()
     return x, y
 end
 
--- Define function to get a random position for the fruit
+--pre: 
+--pos: genera y devuelve una posicion aleatoria de la fruta, evitando colisiones con obstáculos
 function getRandomFruitPosition()
     local x = math.random(screen_width)
     local y = math.random(screen_height)
@@ -344,6 +361,8 @@ function getRandomFruitPosition()
     return x, y
 end
 
+-- pre: score tiene que ser numerico 0 o positivo
+-- pos: Si el módulo de la puntuación actual entre 'OBSTACLE_APPARITION_FREQUENCY' es cero, se agrega un obstáculo aleatorio a la lista de obstáculos
 function updateObstacles()
     if score % OBSTACLE_APPARITION_FREQUENCY == 0 then
         local obstacle_radius = OBSTACLE_RADIUS
@@ -362,10 +381,14 @@ function updateObstacles()
     end
 end
 
+-- pre:
+-- pos: Devuelve true si hay un juego guardado
 function M.isSavedGame()
     return savegame.loadSnakeState('free_mode') ~= nil
 end
 
+-- pre: 
+-- pos: Se guardan los datos del juego si la aplicacion se cierra
 function M.quit()
     if game_over then
         return true
