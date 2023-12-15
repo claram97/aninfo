@@ -186,7 +186,7 @@ function M.update(dt)
         print("Se tocó f12. Debería guardarse el score.")
         if FuncionesAuxiliares.getTextLenght() > 0 then
             local text = FuncionesAuxiliares.getText()
-            scores.writeCsv(text, score)
+            scores.writeCsv(text, score, "clásico")
             pressed = not pressed
             FuncionesAuxiliares.load()
         end

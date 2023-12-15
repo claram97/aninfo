@@ -134,6 +134,7 @@ function draw()
 end
 
 local pressed = false
+local cleared = false
 
 -- Define function to update position of snake and fruit
 local function update(dt)
@@ -153,14 +154,17 @@ local function update(dt)
         print("Se tocó f12. Debería guardarse el score.")
         if FuncionesAuxiliares.getTextLenght() > 0 then
             local text = FuncionesAuxiliares.getText()
-            scores.writeCsv(text, score)
+            scores.writeCsv(text, score, "libre")
             pressed = not pressed
             FuncionesAuxiliares.load()
         end
     end
 
     if game_over then
-        FuncionesAuxiliares.load()
+        if not cleared then
+            FuncionesAuxiliares.load()
+            cleared = not cleared
+        end
         return
     end
 

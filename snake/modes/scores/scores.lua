@@ -5,21 +5,23 @@ function scores.readCsv()
     local datos = {}  -- Tabla para almacenar los datos del CSV
 
     if file then
-        local lineCount = 0  -- Contador de líneas
         for linea in file:lines() do
-            lineCount = lineCount + 1
-            if lineCount <= 10 then
-                local campos = {}  -- Tabla para almacenar los campos de cada línea
-                for valor in string.gmatch(linea, "[^;]+") do
-                    table.insert(campos, valor)  -- Agrega cada campo a la tabla
-                end
+            local campos = {}  -- Tabla para almacenar los campos de cada línea
+            for valor in string.gmatch(linea, "[^;]+") do
+                table.insert(campos, valor)  -- Agrega cada campo a la tabla
+            end
+
+            -- Verifica que la línea tenga al menos 3 campos antes de intentar acceder a ellos
+            if #campos >= 3 then
                 table.insert(datos, {
                     nombre = campos[1],
                     puntuacion = tonumber(campos[2]),
-                    fecha = campos[3]  -- Agrega el campo de fecha
+                    modo = campos[3],  -- Agrega el campo de modo
+                    fecha = campos[4]  -- Agrega el campo de fecha
                 })
             else
-                break  -- Sal del bucle después de leer las primeras 10 líneas
+                -- Manejo de error o advertencia si la línea no tiene suficientes campos
+                print("Advertencia: La línea no tiene suficientes campos.")
             end
         end
 
@@ -27,6 +29,35 @@ function scores.readCsv()
     end
     return datos
 end
+
+
+-- function scores.readCsv()
+--     local file = io.open(".scores", "r")
+--     local datos = {}  -- Tabla para almacenar los datos del CSV
+
+--     if file then
+--         local lineCount = 0  -- Contador de líneas
+--         for linea in file:lines() do
+--             lineCount = lineCount + 1
+--             if lineCount <= 10 then
+--                 local campos = {}  -- Tabla para almacenar los campos de cada línea
+--                 for valor in string.gmatch(linea, "[^;]+") do
+--                     table.insert(campos, valor)  -- Agrega cada campo a la tabla
+--                 end
+--                 table.insert(datos, {
+--                     nombre = campos[1],
+--                     puntuacion = tonumber(campos[2]),
+--                     fecha = campos[3]  -- Agrega el campo de fecha
+--                 })
+--             else
+--                 break  -- Sal del bucle después de leer las primeras 10 líneas
+--             end
+--         end
+
+--         file:close()  -- Cierra el archivo
+--     end
+--     return datos
+-- end
 
 function split(str, delimiter)
     local result = {}
@@ -50,9 +81,7 @@ function split(str, delimiter)
     return result
 end
 
-
-function scores.writeCsv(nombre, puntuacion)
-    print("Se llamó a writecsv. Nombre y puntuación: ", nombre, puntuacion)
+function scores.writeCsv(nombre, puntuacion, modo)
     -- Abrir el archivo CSV en modo de lectura
     local file = io.open(".scores", "r")
 
@@ -63,7 +92,7 @@ function scores.writeCsv(nombre, puntuacion)
         if tempFile then
             local inserted = false
             local fecha = os.date("%d/%m/%Y %H:%M:%S")
-            local nuevaLinea = nombre .. ";" .. puntuacion .. ";" .. fecha
+            local nuevaLinea = nombre .. ";" .. puntuacion .. ";" .. modo .. ";" .. fecha
             
             for line in file:lines() do
                 local result = split(line, ";")
@@ -94,9 +123,9 @@ function scores.writeCsv(nombre, puntuacion)
 
         if newFile then
             -- El archivo se creó con éxito, haz algo aquí si es necesario
-            -- Agregar la nueva línea con el nombre, puntuación y fecha
+            -- Agregar la nueva línea con el nombre, puntuación, modo y fecha
             local fecha = os.date("%d/%m/%Y %H:%M:%S")
-            local nuevaLinea = nombre .. ";" .. puntuacion .. ";" .. fecha
+            local nuevaLinea = nombre .. ";" .. puntuacion .. ";" .. modo .. ";" .. fecha
             newFile:write(nuevaLinea .. "\n")
             -- Cierra el archivo después de realizar las operaciones necesarias
             newFile:close()
@@ -106,6 +135,61 @@ function scores.writeCsv(nombre, puntuacion)
         end
     end
 end
+
+-- function scores.writeCsv(nombre, puntuacion, modo)
+--     -- Abrir el archivo CSV en modo de lectura
+--     local file = io.open(".scores", "r")
+
+--     if file then
+--         local tempFileName = ".scores_temp"
+--         local tempFile = io.open(tempFileName, "w")
+
+--         if tempFile then
+--             local inserted = false
+--             local fecha = os.date("%d/%m/%Y %H:%M:%S")
+--             local nuevaLinea = nombre .. ";" .. puntuacion .. ";" .. fecha
+            
+--             for line in file:lines() do
+--                 local result = split(line, ";")
+--                 local score = result[2]
+--                 if not inserted and puntuacion > tonumber(score) then
+--                     tempFile:write(nuevaLinea .. "\n")
+--                     inserted = true
+--                 end
+--                 tempFile:write(line .. "\n")
+--             end
+
+--             if not inserted then
+--                 tempFile:write(nuevaLinea .. "\n")
+--             end
+
+--             file:close()
+--             tempFile:close()
+
+--             os.remove(".scores")
+--             os.rename(tempFileName, ".scores")
+
+--         else
+--             print("Error al abrir el archivo temporal.")
+--         end
+--     else
+--         -- El archivo no existe, haz algo aquí si es necesario
+--         local newFile = io.open(".scores", "w")
+
+--         if newFile then
+--             -- El archivo se creó con éxito, haz algo aquí si es necesario
+--             -- Agregar la nueva línea con el nombre, puntuación y fecha
+--             local fecha = os.date("%d/%m/%Y %H:%M:%S")
+--             local nuevaLinea = nombre .. ";" .. puntuacion .. ";" .. fecha
+--             newFile:write(nuevaLinea .. "\n")
+--             -- Cierra el archivo después de realizar las operaciones necesarias
+--             newFile:close()
+--         else
+--             -- Hubo un error al crear el archivo, maneja el error según sea necesario
+--             print("Error al crear el archivo.")
+--         end
+--     end
+-- end
 
 
 function scores.establecerFondo()
@@ -138,13 +222,16 @@ function scores.draw()
     scores.dibujarTitulo()
     scores.dibujarSaveButton()
     local datos = scores.readCsv()
+    
     -- Configurar la fuente
-    local font = love.graphics.newFont(30)  -- Tamaño de letra 14
+    local font = love.graphics.newFont(25)  -- Tamaño de letra 30 (puedes ajustar según sea necesario)
     love.graphics.setFont(font)
+    
     local y = 150
     love.graphics.setColor(0, 0, 0)  -- Establecer color de texto a negro
+    
     for _, persona in ipairs(datos) do
-        love.graphics.print("Nombre: " .. persona.nombre .. ", Puntuacion: " .. persona.puntuacion.. ", Fecha: " .. persona.fecha, 200, y)
+        love.graphics.print("Nombre: " .. persona.nombre .. ", Puntuacion: " .. persona.puntuacion .. ", Modo: " .. persona.modo .. ", Fecha: " .. persona.fecha, 120, y)
         y = y + 45  -- Incrementar la posición Y para la siguiente línea
     end
 end
