@@ -58,6 +58,8 @@ fruit = {}
 gameOver = false
 score = 0
 
+--pre:
+-- pos: Inicializa la ventana del juego con los parámetros especificados
 function initializeWindow()
     -- set window title
     Love.window.setTitle('Snake Game')
@@ -72,6 +74,8 @@ function initializeWindow()
     font = Love.graphics.newFont(24)
 end
 
+-- pre: 
+-- pos: Inicializa las paredes estáticas y las líneas verticales en posiciones aleatorias
 function initializeWalls()
     staticWall1X, staticWall1Y = get_random_position()
     staticWall2X, staticWall2Y = get_random_position()
@@ -82,7 +86,10 @@ function initializeWalls()
     generateObstacles()
 end
 
-function M.load()
+--pre: Se espera que las imágenes y recursos necesarios estén disponibles
+-- Pos: La función inicializa el juego, cargando las imágenes necesarias, estableciendo el título y las dimensiones de la ventana, 
+--inicializando las serpientes y la fruta, y configurando la dirección inicial de las serpientes.
+function M.load(loadGame)
     local config = configuracion.load()
     if config.sound == true then
         love.audio.play(musica_fondo)
@@ -141,10 +148,12 @@ function M.load()
 
 end
 
+--pre:
+--pos: genera nuevas paredes verticales y horizontales
 function generateObstacles()
     obstacles = {}
 
-    -- Genera paredes horizontales
+    
     for _ = 1, 2 do
         local x, y = get_random_position_away_from_snake()
         table.insert(obstacles, {x = x, y = y})
@@ -153,7 +162,7 @@ function generateObstacles()
         table.insert(obstacles, {x = x + 3, y = y})
     end
 
-    -- Genera paredes verticales
+   
     for _ = 1, 2 do
         local x, y = get_random_position_away_from_snake()
         table.insert(obstacles, {x = x, y = y})
@@ -163,6 +172,8 @@ function generateObstacles()
     end
 end
 
+--pre:
+--pos: genera nuevas paredes y sube el nivel cuando el score alcanza ciertos parametros
 function change_level()
     if score >= FIRST_LEVEL_END_SCORE and score < SECOND_LEVEL_END_SCORE and level == 1 then
         level = 2
@@ -177,6 +188,8 @@ function change_level()
     end
 end
 
+--pre:
+--pos:devuelve un booleano que significa si la fruta esta en la misma coordenada que una pared
 function wallsOverlapWithFruit()
     for _, wall in ipairs(obstacles) do
         if wall.x >= fruit.x and wall.x < fruit.x + 4 and wall.y == fruit.y then
@@ -187,6 +200,8 @@ function wallsOverlapWithFruit()
     return false
 end
 
+--pre:
+--pos: reinicia las variables para "reiniciar" el juego
 local function reloadGame()
     gameOver = false
     score = 0
@@ -214,6 +229,9 @@ local function reloadGame()
     timer = love.timer.getTime()
 end
 
+-- pre:
+-- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
+-- y actualiza la puntuación y la posición de la fruta
 function M.update(dt)
     if Love.keyboard.isDown('m') and gameOver then
         love.event.quit("restart")
@@ -284,7 +302,8 @@ function draw_border()
         end
     end
 end
-
+--pre:
+--pos: genera nuevas coordenadas hasta que no este cerca de la snake
 function get_random_position_away_from_snake()
     local x, y
     repeat
@@ -293,6 +312,8 @@ function get_random_position_away_from_snake()
     return x, y
 end
 
+--pre:
+--pos: chequea si las coordenadas esta cerca de la snake
 function isPositionNearSnake(x, y)
     for _, segment in ipairs(snake) do
         if math.abs(x - segment.x) < 4 and math.abs(y - segment.y) < 4 then
@@ -302,6 +323,8 @@ function isPositionNearSnake(x, y)
     return false
 end
 
+--pre:
+--pos: mueve la fruta hacia una posicion nueva donde las coordenadas no coincidan con las paredes
 function moveFruitToSafePosition()
     local newFruitX, newFruitY
 
@@ -313,7 +336,8 @@ function moveFruitToSafePosition()
     fruit.y = newFruitY
 end
 
-
+--pre:
+--pos: Retorna un booleano que: si los x e y coinciden con las coordenadas de una pared entonces es verdadero, sino falso
 function isPositionOnWall(x, y)
     for _, wall in ipairs(obstacles) do
         if x == wall.x and y == wall.y then
@@ -402,7 +426,6 @@ end
 
 function draw_random_lines()
     draw_border()
-
     
 end
 
@@ -414,7 +437,8 @@ function drawStaticWalls()
 end
 
 
-
+--pre:
+--pos: chequea la colision de la serpiente con un obstaculo, si chocan gameOVer es verdadero, sino falso
 function checkCollisionWithObstacles()
     for _, wall in ipairs(obstacles) do
         if snake[1].x == wall.x and snake[1].y == wall.y then
@@ -425,8 +449,8 @@ function checkCollisionWithObstacles()
 end
 
 
-
-
+--pre: El juego está en curso, snake es válido, direction es una cadena, fruitImage y fruit son válidos, TILE_SIZE es positivo, score es no negativo, y gameOver es un booleano.
+--pos: Dibuja en la pantalla el área de juego, las paredes, la serpiente, la fruta y la puntuación según el estado actual del juego
 function M.draw()
     -- draw game area
     wallColor1 = {15/255, 202/255, 81/255}
@@ -516,10 +540,15 @@ function M.draw()
 
     end
 end
+
+-- pre:
+-- pos: Devuelve true si hay un juego guardado
 function M.isSavedGame()
     return savegame.loadSnakeState('modo_laberinto') ~= nil
 end
 
+-- pre: 
+-- pos: Se guardan los datos del juego si la aplicacion se cierra
 function M.quit()
     if game_over then
         return true
