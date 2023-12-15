@@ -85,7 +85,7 @@ function reiniciarTodo()
 end
 
 --pre:
---pos: dibuja toda la pantalla, la snake, los obstaculos etc
+--pos: si el gameState es "playing" dibuja toda la pantalla, la snake, los obstaculos y fruta sino dibuja la pantalla final
 function draw()
     if not game_over then
         love.graphics.setColor(1, 1, 1)
