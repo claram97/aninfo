@@ -1,5 +1,7 @@
 local M = {}
 
+-- pre: 'invertido' es un booleano que indica si el movimiento está invertido.
+-- pos: Actualiza la dirección del movimiento según las teclas presionadas
 function M.get_direction(invertido)
     if invertido then
         if Love.keyboard.isDown('up') and direction ~= 'up' then
@@ -44,6 +46,8 @@ function M.get_direction(invertido)
     end
 end
 
+-- pre: 'snake' es una tabla que representa la serpiente con elementos que tienen propiedades 'x' e 'y'.
+-- pos: Mueve la serpiente según la dirección actual ('direction').
 function M.move(snake)
     for i = #snake, 2, -1 do
         snake[i].x = snake[i - 1].x

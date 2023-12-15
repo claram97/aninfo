@@ -1,6 +1,8 @@
 local M = {}
 
 -- Function to save the snake state to a text file
+-- pre: 'snake' y'obstacles' son tablas, score es numerico y mode es string
+-- pos: Guarda el estado de la serpiente y otros elementos en un archivo de texto.
 function M.saveSnakeState(snake, obstacles, score, mode)
     -- format the savegame filename
     local filename = "snake_state_" .. mode .. ".txt"
@@ -25,8 +27,8 @@ function M.saveSnakeState(snake, obstacles, score, mode)
         print("Failed to open file for writing.")
     end
 end
-
--- Function to load the snake state from a text file
+--pre: mode tiene que ser un string valido
+--pos: La función carga datos del estado del juego de la serpiente desde un archivo
 function M.loadSnakeState(mode)
     local filename = "snake_state_" .. mode .. ".txt"
     local loadedData = {
