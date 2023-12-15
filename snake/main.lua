@@ -56,6 +56,8 @@ local scores = require('snake.modes.scores.scores')
 local ticks = 1/60
 local acumulador = 0
 
+--pre: los archivos de musica tienen que existir en la carpeta, setWidth, setHeight son valores numéricos definidos
+-- pos: Configura la ventana del juego, carga archivos de audio, y ajusta la configuracion de sonido
 function love.load()
     love.window.setTitle("La Viborita")
     love.window.setMode(setWidth, setHeight, {resizable=false})
@@ -72,6 +74,8 @@ function love.load()
     end
 end
 
+--pre: dt, acumulador y ticks tiene que estar definido
+--pos: Actualiza el estado del juego acumulando tiempo y llamando a la función update cuando es necesario
 function love.update(dt)
     acumulador = acumulador + dt
     if acumulador >= ticks then
@@ -80,6 +84,8 @@ function love.update(dt)
     end
 end
 
+--pre: 
+-- pos: Actualiza el estado del juego según el estado actual y la posición del mouse.
 function update()
     -- Check if the mouse is over the buttons
     if gameState == "menu" then
@@ -110,6 +116,8 @@ function update()
     end
 end
 
+--pre: 
+-- pos: Dibuja elementos para la pantalla de carga de partida guardada en la ventana de Love2D.
 function drawLoadingSavedGame()
     -- Set background color
     love.graphics.setColor(1, 1, 1)
@@ -129,6 +137,8 @@ function drawLoadingSavedGame()
     drawButton(buttonStartX, buttonStartY, "No", onePlayerButton2Hovered, buttonColor)
 end
 
+--pre: 
+--pos: Dibuja elementos en la ventana segun el estado actual del juego.
 function love.draw()
     if gameState == "menu" then
         -- Set background color
@@ -180,6 +190,8 @@ function love.draw()
     end
 end
 
+-- pre: x, y, button, istouch y presses son valores numericos
+-- pos: Actualiza el estado del juego segun la posicion del mouse y el estado actual del juego.
 function love.mousepressed(x, y, button, istouch, presses)
     if button == 1 then
         if gameState == "menu" then
@@ -274,6 +286,8 @@ function love.mousepressed(x, y, button, istouch, presses)
     end
 end
 
+-- pre: x
+-- pos: Dibuja un boton en las coordenadas x, y con el texto centrado.
 function drawButton(x, y, text, hovered, color)
     -- Set button color based on hover state
     if hovered then
@@ -289,11 +303,15 @@ function drawButton(x, y, text, hovered, color)
     love.graphics.printf(text, x - buttonWidth / 2, y + 10, buttonWidth, "center")
 end
 
+-- pre: x, y, width y height son numero reales
+-- pos: Retorna true si la posicion actual del mouse esta dentro del area definida por x, y, width y height, sino retorna false
 function isMouseOver(x, y, width, height)
     local mouseX, mouseY = love.mouse.getPosition()
     return mouseX >= x and mouseX <= x + width and mouseY >= y and mouseY <= y + height
 end
 
+--Pre: 
+--Pos: sale del juego dependiendo del modo
 function love.quit()
     if gameState == "one_player" then
         one_player.quit()
