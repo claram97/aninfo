@@ -140,11 +140,12 @@ local function update(dt)
     if Love.keyboard.isDown('f10')  and  game_over then
         reiniciarTodo()
         pressed = false
-        --FuncionesAuxiliares.load()
+        FuncionesAuxiliares.load()
     end
 
     if Love.keyboard.isDown('f11') and game_over then
         pressed = false
+        FuncionesAuxiliares.load()
         love.event.quit("restart")
     end
 
@@ -154,10 +155,12 @@ local function update(dt)
             local text = FuncionesAuxiliares.getText()
             scores.writeCsv(text, score)
             pressed = not pressed
+            FuncionesAuxiliares.load()
         end
     end
 
     if game_over then
+        FuncionesAuxiliares.load()
         return
     end
 

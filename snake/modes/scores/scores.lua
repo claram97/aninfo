@@ -28,6 +28,29 @@ function scores.readCsv()
     return datos
 end
 
+function split(str, delimiter)
+    local result = {}
+    local pattern = "(.-)" .. delimiter
+    local lastEnd = 1
+    local s, e, cap = str:find(pattern, 1)
+
+    while s do
+        if s ~= 1 or cap ~= "" then
+            table.insert(result, cap)
+        end
+        lastEnd = e + 1
+        s, e, cap = str:find(pattern, lastEnd)
+    end
+
+    if lastEnd <= #str then
+        cap = str:sub(lastEnd)
+        table.insert(result, cap)
+    end
+
+    return result
+end
+
+
 function scores.writeCsv(nombre, puntuacion)
     print("Se llamó a writecsv. Nombre y puntuación: ", nombre, puntuacion)
     -- Abrir el archivo CSV en modo de lectura
@@ -41,10 +64,11 @@ function scores.writeCsv(nombre, puntuacion)
             local inserted = false
             local fecha = os.date("%d/%m/%Y %H:%M:%S")
             local nuevaLinea = nombre .. ";" .. puntuacion .. ";" .. fecha
-
+            
             for line in file:lines() do
-                local score = tonumber(line:match(";%d+;"))
-                if not inserted and puntuacion > score then
+                local result = split(line, ";")
+                local score = result[2]
+                if not inserted and puntuacion > tonumber(score) then
                     tempFile:write(nuevaLinea .. "\n")
                     inserted = true
                 end
@@ -58,22 +82,18 @@ function scores.writeCsv(nombre, puntuacion)
             file:close()
             tempFile:close()
 
-            -- Renombrar el archivo temporal al archivo original
             os.remove(".scores")
             os.rename(tempFileName, ".scores")
 
-            print("Datos escritos correctamente en el archivo.")
         else
             print("Error al abrir el archivo temporal.")
         end
     else
         -- El archivo no existe, haz algo aquí si es necesario
-        print("El archivo no existe.")
         local newFile = io.open(".scores", "w")
 
         if newFile then
             -- El archivo se creó con éxito, haz algo aquí si es necesario
-            print("El archivo se creó con éxito.")
             -- Agregar la nueva línea con el nombre, puntuación y fecha
             local fecha = os.date("%d/%m/%Y %H:%M:%S")
             local nuevaLinea = nombre .. ";" .. puntuacion .. ";" .. fecha

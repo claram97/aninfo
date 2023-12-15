@@ -3,6 +3,8 @@ local maxCharacters = 23
 
 local function dibujarFondo()
     love.graphics.setBackgroundColor(1, 0.6, 0) 
+    love.graphics.setColor(1, 0.6, 0) 
+    love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight(), 0, 0)
 end
 
 local function dibujarRectangulo()
@@ -20,15 +22,12 @@ local function dibujarCirculo(score)
     love.graphics.setColor(1, 1, 0) 
     local circleRadius = 30
     local circleX = love.graphics.getWidth() / 2
-    local circleY = 300  
-    
+    local circleY = 300 
     love.graphics.circle("fill", circleX, circleY, circleRadius)
 
     love.graphics.setColor(0, 0, 0)
-
-    -- Utilizar la fuente predeterminada
-    local font = love.graphics.getFont()
-
+    love.graphics.setFont(font)
+    
     local scoreText = tostring(score)
     local scoreTextWidth = font:getWidth(scoreText)
     local scoreTextHeight = font:getHeight(scoreText)
@@ -41,6 +40,7 @@ local function dibujarCirculo(score)
     love.graphics.setColor(0, 0, 0)
     love.graphics.printf("puntos", circleX + circleRadius + 10, circleY - 10, love.graphics.getWidth(), "left")
 end
+
 
 local function dibujarBotones()
     local buttonWidth = 200  -- Aumenta el ancho del botón

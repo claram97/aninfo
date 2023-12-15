@@ -6,6 +6,7 @@ Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
 Love.keyboard = require('love.keyboard')
 local configuracion = require('snake.modes.configuracion.configuracion')
+local scores = require('snake.modes.scores.scores')
 
 -- initialize game variables
 snake = {}
@@ -164,16 +165,33 @@ local function reiniciarJuego()
     M.load(false)
 end
 
+local pressed = false
+local cleared = false
+
 function M.update(dt)
 
-    if Love.keyboard.isDown('m') and gameOver then
+    if Love.keyboard.isDown('f10')  and  gameOver then
+        reiniciarJuego()
+        pressed = false
+        FuncionesAuxiliares.load()
+    end
+
+    if Love.keyboard.isDown('f11') and gameOver then
+        pressed = false
+        FuncionesAuxiliares.load()
         love.event.quit("restart")
     end
 
-    if Love.keyboard.isDown('z')  and  gameOver then
-        reiniciarJuego()
+    if Love.keyboard.isDown('f12') and gameOver and not pressed then
+        print("Se tocó f12. Debería guardarse el score.")
+        if FuncionesAuxiliares.getTextLenght() > 0 then
+            local text = FuncionesAuxiliares.getText()
+            scores.writeCsv(text, score)
+            pressed = not pressed
+            FuncionesAuxiliares.load()
+        end
     end
-    
+
     move.get_direction(false)
     -- move snake
     if Love.timer.getTime() - timer > speed then
@@ -184,12 +202,20 @@ function M.update(dt)
         -- check for collision with wall
         if snake[1].x < 0 or snake[1].x >= GAME_AREA_WIDTH or snake[1].y < 0 or snake[1].y >= GAME_AREA_HEIGHT then
             gameOver = true
+            if not cleared then
+                FuncionesAuxiliares.load()
+                cleared = not cleared
+            end
         end
 
         -- check for collision with self
         for i = 2, #snake do
             if snake[1].x == snake[i].x and snake[1].y == snake[i].y then
                 gameOver = true
+                if not cleared then
+                    FuncionesAuxiliares.load()
+                    cleared = not cleared
+                end
             end
         end
 
@@ -197,6 +223,10 @@ function M.update(dt)
         for i = 1, #obstacles do
             if snake[1].x == obstacles[i].x and snake[1].y == obstacles[i].y then
                 gameOver = true
+                if not cleared then
+                    FuncionesAuxiliares.load()
+                    cleared = not cleared
+                end
             end
         end
 
