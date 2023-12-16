@@ -114,8 +114,9 @@ function update()
         button6Hovered = isMouseOver(button6X, button6Y, buttonWidth, buttonHeight)
         button7Hovered = isMouseOver(button7X, button7Y, buttonWidth, buttonHeight)
     elseif gameState == "loading_one_player" then
-        onePlayerButton1Hovered = isMouseOver(button1X, button1Y, buttonWidth, buttonHeight)
-        onePlayerButton2Hovered = isMouseOver(button2X, button2Y, buttonWidth, buttonHeight)
+        local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
+        onePlayerButton1Hovered = isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight)
+        onePlayerButton2Hovered = isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight)
     elseif gameState == "one_player" then
         one_player.update()
     elseif gameState == "two_players" then
@@ -270,10 +271,11 @@ function love.mousepressed(x, y, button, istouch, presses)
         elseif gameState == "configuracion" then
             configuracion.mousepressed(x, y, button, istouch, presses)
         elseif gameState == "loading_one_player" then
-            if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
+            if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
                 one_player.load(true)
                 gameState = "one_player"
-            elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
                 one_player.load(false)
                 gameState = "one_player"
             end

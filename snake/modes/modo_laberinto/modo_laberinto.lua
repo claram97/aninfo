@@ -9,7 +9,6 @@ local move = require('snake.modes.move')
 local configuracion = require('snake.modes.configuracion.configuracion')
 savegame = require('snake.modes.savegame')
 local constants = require('snake.modes.constants')
-local scores = require('snake.modes.scores.scores')
 FIRST_LEVEL_END_SCORE = 50
 SECOND_LEVEL_END_SCORE = 100
 local game_area_width = GAME_AREA_WIDTH
