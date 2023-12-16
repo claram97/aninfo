@@ -115,6 +115,8 @@ function update()
         configuracion.update()
     elseif gameState == "scores" then
         scores.update()
+    elseif gameState == "paused" then
+        --
     end
 end
 

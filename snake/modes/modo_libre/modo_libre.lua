@@ -118,11 +118,15 @@ function draw()
         -- -- Print debug information
         -- love.graphics.setColor(1, 1, 1)
         -- love.graphics.setFont(font)
-        -- love.graphics.print("Score: " .. score, 10, 10)
+        love.graphics.print("Score: " .. score, 10, 10)
         -- Snake speed
-        love.graphics.print("Snake speed: " .. snake_speed, 10, 60)
-        -- Snake angle
-        love.graphics.print("Snake angle: " .. snake_angle, 10, 110)
+        -- love.graphics.print("Snake speed: " .. snake_speed, 10, 60)
+        -- -- Snake angle
+        -- love.graphics.print("Snake angle: " .. snake_angle, 10, 110)
+        -- -- Head position
+        -- love.graphics.print("Head position: (" .. snake_segments[1].x .. ", " .. snake_segments[1].y .. ")", 10, 160)
+        -- -- Game state
+        -- love.graphics.print("Game over: " .. tostring(game_over), 10, 210)
 
 
     end
@@ -175,6 +179,8 @@ local function update(dt)
         elseif Love.keyboard.isDown('right') then
             snake_angle = snake_angle + math.pi / 64
         end
+        snake_x = snake_x + snake_speed * math.cos(snake_angle)
+        snake_y = snake_y + snake_speed * math.sin(snake_angle)
 
         -- Check if snake has collided with fruit
         local distance = math.sqrt((snake_x - fruit_x)^2 + (snake_y - fruit_y)^2)
@@ -255,7 +261,6 @@ end
 function M.update(dt)
     update(dt)
 end
-
 
 -- Define function to load game assets
 function M.load(loadGame)
