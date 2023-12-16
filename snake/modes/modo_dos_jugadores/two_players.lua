@@ -4,6 +4,7 @@ love.timer = require('love.timer')
 love.keyboard = require('love.keyboard')
 local FuncionesExtras = require("snake.modes.modo_dos_jugadores.pantalla_final")
 local configuracion = require('snake.modes.configuracion.configuracion')
+savegame = require('snake.modes.savegame')
 
 -- initialize game variables
 snake1 = {}
@@ -19,7 +20,7 @@ player_2 = "jugador2"
 ganador = ""
 perdedor = ""
 
-function M.load()
+function M.load(loadGame)
     require('snake.modes.constants')
 
     local config = configuracion.load()
@@ -48,7 +49,6 @@ function M.load()
     snake2BodyImageLeft = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_2_body_left.png')
     snake2BodyImageRight = love.graphics.newImage('modes/modo_dos_jugadores/assets/snake_2_body_right.png')
 
-
     -- set window title
     love.window.setTitle('Snake Game')
 
@@ -61,24 +61,61 @@ function M.load()
     -- set font for score display
     font = love.graphics.newFont(24)
 
-    -- initialize snake 1
-    for i = 1, SNAKE_START_LENGTH do
-        table.insert(snake1, {x = SNAKE_1_START_X + i, y = SNAKE_1_START_Y})
+    local savedSnake1 = savegame.loadSnakeState('two_players_snake1')
+    local savedSnake2 = savegame.loadSnakeState('two_players_snake2')
+
+    if loadGame and savedSnake1 and savedSnake2 then
+        snake1 = savedSnake1.snake
+        snake2 = savedSnake2.snake
+        score1 = savedSnake1.score
+        score2 = savedSnake2.score
+        fruit.x = FRUIT_START_X
+        fruit.y = FRUIT_START_Y
+    else 
+        -- initialize snake 1
+        for i = 1, SNAKE_START_LENGTH do
+            table.insert(snake1, {x = SNAKE_1_START_X + i, y = SNAKE_1_START_Y})
+        end
+    
+        -- initialize snake 2
+        for i = 1, SNAKE_START_LENGTH do
+            table.insert(snake2, {x = SNAKE_2_START_X - i, y = SNAKE_2_START_Y})
+        end
+        -- initialize fruit
+        fruit.x = FRUIT_START_X
+        fruit.y = FRUIT_START_Y
     end
 
-    -- initialize snake 2
-    for i = 1, SNAKE_START_LENGTH do
-        table.insert(snake2, {x = SNAKE_2_START_X - i, y = SNAKE_2_START_Y})
+    -- Infer the direction based on the first two segments of the snake
+    if snake1[1].x == snake1[2].x then
+        if snake1[1].y > snake1[2].y then
+            direction1 = 'up'
+        else
+            direction1 = 'down'
+        end
+    else
+        if snake1[1].x > snake1[2].x then
+            direction1 = 'right'
+        else
+            direction1 = 'left'
+        end
     end
 
-    -- initialize fruit
-    fruit.x = FRUIT_START_X
-    fruit.y = FRUIT_START_Y
+    if snake2[1].x == snake2[2].x then
+        if snake2[1].y > snake2[2].y then
+            direction2 = 'up'
+        else
+            direction2 = 'down'
+        end
+    else
+        if snake2[1].x > snake2[2].x then
+            direction2 = 'right'
+        else
+            direction2 = 'left'
+        end
+    end
 
-    -- set initial direction
-    direction1 = SNAKE_1_START_DIRECTION
-    direction2 = SNAKE_2_START_DIRECTION
-
+    gameOver = false
     -- set timer for snake movement
     timer = love.timer.getTime()
 end
@@ -123,6 +160,10 @@ function M.update(dt)
     if Love.keyboard.isDown('z')  and  gameOver then
         gameState = "playing"
         reiniciarJuego()
+    end
+
+    if gameOver then
+        return
     end
 
     -- check for input
@@ -171,14 +212,12 @@ function M.update(dt)
         -- check for collision with wall
         if snake1[1].x < 0 or snake1[1].x >= GAME_AREA_WIDTH or snake1[1].y < 0 or snake1[1].y >= GAME_AREA_HEIGHT then
             gameOver = true
-            FuncionesAuxiliares.mostrarPantallaFinal(score)
         end
 
         -- check for collision with self snake 1
         for i = 2, #snake1 do
             if snake1[1].x == snake1[i].x and snake1[1].y == snake1[i].y then
                 gameOver = true
-                FuncionesAuxiliares.mostrarPantallaFinal(score)
             end
         end
 
@@ -186,7 +225,6 @@ function M.update(dt)
         for i = 2, #snake2 do
             if snake1[1].x == snake2[i].x and snake1[1].y == snake2[i].y then
                 gameOver = true
-                FuncionesAuxiliares.mostrarPantallaFinal(score)
             end
         end
 
@@ -194,7 +232,6 @@ function M.update(dt)
         for i = 2, #snake2 do
             if snake1[1].x == snake2[i].x and snake1[1].y == snake2[i].y then
                 gameOver = true
-                FuncionesAuxiliares.mostrarPantallaFinal(score)
             end
         end
 
@@ -202,11 +239,8 @@ function M.update(dt)
         for i = 2, #snake1 do
             if snake2[1].x == snake1[i].x and snake2[1].y == snake1[i].y then
                 gameOver = true
-                FuncionesAuxiliares.mostrarPantallaFinal(score)
             end
         end
-
-    
 
         -- check for collision with fruit
         if snake1[1].x == fruit.x and snake1[1].y == fruit.y then
@@ -243,14 +277,12 @@ function M.update(dt)
         -- check for collision with wall
         if snake2[1].x < 0 or snake2[1].x >= GAME_AREA_WIDTH or snake2[1].y < 0 or snake2[1].y >= GAME_AREA_HEIGHT then
             gameOver = true
-            FuncionesAuxiliares.mostrarPantallaFinal(score)
         end
 
         -- check for collision with self
         for i = 2, #snake2 do
             if snake2[1].x == snake2[i].x and snake2[1].y == snake2[i].y then
                 gameOver = true
-                FuncionesAuxiliares.mostrarPantallaFinal(score)
             end
         end
 
@@ -272,6 +304,11 @@ end
 
 function M.draw()
     -- draw game area
+
+    if gameOver then
+        FuncionesAuxiliares.mostrarPantallaFinal(score)
+        return
+    end
 
     love.graphics.setColor(0.82, 0.553, 0.275)
     love.graphics.rectangle('fill', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
@@ -373,6 +410,20 @@ function M.draw()
         --love.graphics.print('Game Over', WINDOW_WIDTH / 2 - font:getWidth('Game Over') / 2, WINDOW_HEIGHT / 2 - font:getHeight() / 2)
         FuncionesExtras.mostrarPantallaFinal(score, ganador, perdedor)
     end
+end
+
+function M.quit()
+    if gameOver then
+        return
+    end
+    local obstacles = {}
+    -- save game state
+    savegame.saveSnakeState(snake1, obstacles, score, 'two_players_snake1')
+    savegame.saveSnakeState(snake2, obstacles, score, 'two_players_snake2')
+end
+
+function M.isSavedGame()
+    return savegame.loadSnakeState('two_players_snake1') ~= nil and savegame.loadSnakeState('two_players_snake2') ~= nil
 end
 
 return M

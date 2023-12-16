@@ -54,7 +54,7 @@ function reiniciarJuego()
     fruit.y = FRUIT_START_Y
 end
 
-function M.load()
+function M.load(loadGame)
     local config = configuracion.load()
     if config.sound == true then
         love.audio.play(musica_fondo)
@@ -88,17 +88,37 @@ function M.load()
     -- set font for score display
     font = love.graphics.newFont(24)
 
-    -- initialize snake
-    for i = 1, SNAKE_START_LENGTH do
-        table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
+    local savedSnake = savegame.loadSnakeState('inverted')
+    if loadGame and savedSnake then
+        snake = savedSnake.snake
+        score = savedSnake.score
+        fruit.x = FRUIT_START_X
+        fruit.y = FRUIT_START_Y
+    else
+        -- initialize snake
+        for i = 1, SNAKE_START_LENGTH do
+            table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
+        end
+    
+        -- initialize fruit
+        fruit.x = FRUIT_START_X
+        fruit.y = FRUIT_START_Y
     end
 
-    -- initialize fruit
-    fruit.x = FRUIT_START_X
-    fruit.y = FRUIT_START_Y
-
-    -- set initial direction
-    direction = SNAKE_START_DIRECTION
+    -- infer direction from the first two snake pieces
+    if snake[1].x == snake[2].x then
+        if snake[1].y < snake[2].y then
+            direction = 'up'
+        else
+            direction = 'down'
+        end
+    else
+        if snake[1].x < snake[2].x then
+            direction = 'left'
+        else
+            direction = 'right'
+        end
+    end
 
     -- set timer for snake movement
     timer = love.timer.getTime()
@@ -239,6 +259,18 @@ function M.draw()
         gameState = "not"
         FuncionesAuxiliares.mostrarPantallaFinal(score)
     end
+end
+
+function M.quit()
+    if gameOver then
+        return
+    end
+    local obstacles = {}
+    savegame.saveSnakeState(snake, obstacles, score, 'inverted')
+end
+
+function M.isSavedGame()
+    return savegame.loadSnakeState('inverted') ~= nil
 end
 
 return M
