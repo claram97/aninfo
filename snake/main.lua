@@ -1,22 +1,22 @@
 -- Generate 2 columns to locate the buttons.
 local constants = require('snake.modes.constants')
 
-local width = BIG_WINDOW_WIDTH
-local height = BIG_WINDOW_HEIGHT
+width = WINDOW_WIDTH
+height = WINDOW_HEIGHT
 
 local columnWidth = width / 2
 
 -- Variables to store button dimensions
 local buttonWidth, buttonHeight = 200, 50
 
--- Variables to store button positions
-local button1X, button1Y = columnWidth - 150, height / 3
-local button2X, button2Y = columnWidth - 150, height / 2
-local button3X, button3Y = columnWidth + 150, height / 3
-local button4X, button4Y = columnWidth + 150, height / 2
-local button5X, button5Y = columnWidth, (height / 2) + 100
-local button6X, button6Y = columnWidth + 150, button5Y + 100
-local button7X, button7Y = columnWidth - 150, button5Y + 100
+-- Nuevos valores proporcionales a la pantalla
+local button1X, button1Y = width * 0.35, height * 0.3333
+local button2X, button2Y = width * 0.35, height * 0.5
+local button3X, button3Y = width * 0.65, height * 0.3333
+local button4X, button4Y = width * 0.65, height * 0.5
+local button5X, button5Y = width * 0.5, (height * 0.5) + 100
+local button6X, button6Y = width * 0.65, button5Y + 100
+local button7X, button7Y = width * 0.35, button5Y + 100
 
 local buttonLoadX, buttonLoadY = width/2, height/3
 local buttonStartX, buttonStartY = width/2, height/2
@@ -58,7 +58,6 @@ local acumulador = 0
 
 function love.load()
     love.window.setTitle("La Viborita")
-    love.window.setMode(width, height, {resizable=false})
     musica_fondo = love.audio.newSource("musica.mp3", "stream")
     sonido_comer = love.audio.newSource("valentin.mp3", "static")
     musica_fondo:setLooping(true) 
@@ -71,13 +70,23 @@ function love.load()
         love.audio.stop(musica_fondo)
     end
 
-    if config.fullScreen then 
+    if config.fullScreen then
+        love.window.setMode(BIG_WINDOW_WIDTH, BIG_WINDOW_HEIGHT, {fullscreen = false})
         width = BIG_WINDOW_WIDTH
         height = BIG_WINDOW_HEIGHT
+        button1X, button1Y = width * 0.35 + 25, height * 0.3333
+        button2X, button2Y = width * 0.35 + 25, height * 0.5
+        button3X, button3Y = width * 0.65 + 25, height * 0.3333
+        button4X, button4Y = width * 0.65 + 25, height * 0.5
+        button5X, button5Y = width * 0.5 + 25, (height * 0.5) + 100
+        button6X, button6Y = width * 0.65 + 25, button5Y + 100
+        button7X, button7Y = width * 0.35 + 25, button5Y + 100
     else
+        love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {fullscreen = false})
         width = WINDOW_WIDTH
         height = WINDOW_HEIGHT
     end
+
     -- Define the toggle pause key for the P key
     love.keypressed = function(key)
         if key == "." then

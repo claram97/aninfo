@@ -167,9 +167,9 @@ function scores.draw()
     
     local y = 150
     love.graphics.setColor(0, 0, 0)  -- Establecer color de texto a negro
-    
+    local x = width * 0.10
     for _, persona in ipairs(datos) do
-        love.graphics.print(persona.nombre .. ", " .. persona.puntuacion .. " puntos, modo " .. persona.modo .. ", " .. persona.fecha, 120, y)
+        love.graphics.print(persona.nombre .. ", " .. persona.puntuacion .. " puntos, modo " .. persona.modo .. ", " .. persona.fecha, x, y)
         y = y + 45  -- Incrementar la posición Y para la siguiente línea
     end    
 end
