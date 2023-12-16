@@ -1,6 +1,5 @@
 Love = require('love')
 local M = {}
-local gameState = "playing"
 local level = 1
 local fruitsToChangeWalls = {3, 6}  -- Number of fruits to collect before walls change
 local wallsChanged = false
@@ -164,35 +163,14 @@ end
 local function reloadGame()
     gameOver = false
     score = 0
-    direction = SNAKE_START_DIRECTION
     snake = {}
-    for i = 1, SNAKE_START_LENGTH do
-        table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
-    end
-    level = 1
-    fruit.x = FRUIT_START_X
-    fruit.y = FRUIT_START_Y
- 
-    staticWall1X, staticWall1Y = get_random_position()
-    staticWall2X, staticWall2Y = get_random_position()
-    staticWall3X, staticWall3Y = get_random_position()
-    staticWall4X, staticWall4Y = get_random_position()
-    staticVerticalLine1X, staticVerticalLine1Y = get_random_position()
-    staticVerticalLine2X, staticVerticalLine2Y = get_random_position()
-    generateStaticWalls()
-    generateStaticVerticalLines()
-
-    fruit.x = FRUIT_START_X
-    fruit.y = FRUIT_START_Y
-
-    direction = SNAKE_START_DIRECTION
-    timer = love.timer.getTime()
+    M.load()
 end
 
 function checkEndMenuKeys()
     Love.keypressed = function(key)
         if key == 'f10' and gameOver then
-            reiniciarJuego()
+            reloadGame()
             FuncionesAuxiliares.load()
         elseif key == 'f11' and gameOver then
             FuncionesAuxiliares.load()
@@ -211,6 +189,7 @@ end
 function M.update(dt)
     if gameOver then
         checkEndMenuKeys()
+        return
     end
 
     move.get_direction(false)
@@ -380,8 +359,6 @@ end
 
 function draw_random_lines()
     draw_border()
-
-    
 end
 
 function drawStaticWalls()
@@ -422,7 +399,7 @@ function M.draw()
     -- draw game area
     wallColor1 = {15/255, 202/255, 81/255}
     wallColor = {175/255, 1, 206/255} 
-    if gameState == "playing" then
+    if not gameOver then
         if level == 1 then
             wallColor1 = {15/255, 202/255, 81/255}
             wallColor = {175/255, 1, 206/255} 
@@ -501,11 +478,8 @@ function M.draw()
         Love.graphics.setColor(0,0,0)
         Love.graphics.setFont(font)
         Love.graphics.print('Score: ' .. score, 10, 10)
-    end
-    if gameOver then
-        gameState = "not"
+    elseif gameOver then
         FuncionesAuxiliares.mostrarPantallaFinal(score)
-
     end
 end
 
