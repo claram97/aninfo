@@ -1,9 +1,3 @@
--- main.lua
-
--- Variables to store window dimensions
--- local setWidth = 1200
--- local setHeight = 800
-
 -- Generate 2 columns to locate the buttons.
 local constants = require('snake.modes.constants')
 
