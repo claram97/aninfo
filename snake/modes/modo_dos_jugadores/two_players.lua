@@ -2,7 +2,7 @@
 love.graphics = require('love.graphics')
 love.timer = require('love.timer')
 love.keyboard = require('love.keyboard')
-local FuncionesExtras = require("snake.pantalla_final")
+local FuncionesExtras = require("snake.modes.modo_dos_jugadores.pantalla_final")
 local configuracion = require('snake.modes.configuracion.configuracion')
 savegame = require('snake.modes.savegame')
 
