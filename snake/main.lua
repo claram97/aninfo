@@ -76,7 +76,7 @@ function love.load()
 
     -- Define the toggle pause key for the P key
     love.keypressed = function(key)
-        if key == "f8" then
+        if key == "." then
             togglePause()
         end
     end
