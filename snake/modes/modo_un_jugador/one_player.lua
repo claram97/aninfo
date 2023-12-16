@@ -19,7 +19,6 @@ speed = 0.1
 obstacles = {}
 obstacleCount = 0
 
-FuncionesAuxiliares = require("snake.pantalla_final")
 savegame = require('snake.modes.savegame')
 local move = require('snake.modes.move')
 
@@ -81,6 +80,8 @@ function M.load(loadGame)
     if config.sound == false then
         love.audio.stop(musica_fondo)
     end
+
+    FuncionesAuxiliares = require("snake.pantalla_final")
 
     snakeHeadImageUp = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_up.png')
     snakeHeadImageDown = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_down.png')
@@ -165,31 +166,30 @@ local function reiniciarJuego()
     M.load(false)
 end
 
-local pressed = false
 local cleared = false
 
-function M.update(dt)
-
-    if Love.keyboard.isDown('f10')  and  gameOver then
-        reiniciarJuego()
-        pressed = false
-        FuncionesAuxiliares.load()
-    end
-
-    if Love.keyboard.isDown('f11') and gameOver then
-        pressed = false
-        FuncionesAuxiliares.load()
-        love.event.quit("restart")
-    end
-
-    if Love.keyboard.isDown('f12') and gameOver and not pressed then
-        print("Se tocó f12. Debería guardarse el score.")
-        if FuncionesAuxiliares.getTextLenght() > 0 then
-            local text = FuncionesAuxiliares.getText()
-            scores.writeCsv(text, score, "clásico")
-            pressed = not pressed
+function checkEndMenuKeys()
+    Love.keypressed = function(key)
+        if key == 'f10' and gameOver then
+            reiniciarJuego()
             FuncionesAuxiliares.load()
+        elseif key == 'f11' and gameOver then
+            FuncionesAuxiliares.load()
+            love.event.quit("restart")
+        elseif key == 'f12' and gameOver then
+            print("Se tocó f12. Debería guardarse el score.")
+            if FuncionesAuxiliares.getTextLenght() > 0 then
+                local text = FuncionesAuxiliares.getText()
+                scores.writeCsv(text, score, "clásico")
+                FuncionesAuxiliares.load()
+            end
         end
+    end
+end
+
+function M.update(dt)
+    if gameOver then
+        checkEndMenuKeys()
     end
 
     move.get_direction(false)

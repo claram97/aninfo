@@ -46,7 +46,6 @@ local staticVerticalLine2X, staticVerticalLine2Y
 local staticWalls = {}
 local staticVerticalLines = {}
 
-local FuncionesAuxiliares = require("snake.pantalla_final")
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
@@ -91,6 +90,7 @@ function M.load()
     if config.sound == false then
         love.audio.stop(musica_fondo)
     end
+
     snakeHeadImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_down.png')
     snakeHeadImageLeft = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_left.png')
@@ -103,6 +103,8 @@ function M.load()
     backgroundImage = love.graphics.newImage('modes/modo_laberinto/assets/background.png')
 
     initializeWindow()
+
+    FuncionesAuxiliares = require("snake.pantalla_final")
 
     for i = 1, SNAKE_START_LENGTH do
         table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
@@ -186,17 +188,29 @@ local function reloadGame()
     timer = love.timer.getTime()
 end
 
+function checkEndMenuKeys()
+    Love.keypressed = function(key)
+        if key == 'f10' and gameOver then
+            reiniciarJuego()
+            FuncionesAuxiliares.load()
+        elseif key == 'f11' and gameOver then
+            FuncionesAuxiliares.load()
+            love.event.quit("restart")
+        elseif key == 'f12' and gameOver then
+            print("Se tocó f12. Debería guardarse el score.")
+            if FuncionesAuxiliares.getTextLenght() > 0 then
+                local text = FuncionesAuxiliares.getText()
+                scores.writeCsv(text, score, "clásico")
+                FuncionesAuxiliares.load()
+            end
+        end
+    end
+end
+
 function M.update(dt)
-    if Love.keyboard.isDown('m') and gameOver then
-        love.event.quit("restart")
+    if gameOver then
+        checkEndMenuKeys()
     end
-
-    if Love.keyboard.isDown('z')  and  gameOver then
-        gameState = "playing"
-        reloadGame()
-    end
-
---    if Love.keyboard.isDown('')
 
     move.get_direction(false)
 
