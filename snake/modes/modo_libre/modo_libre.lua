@@ -5,28 +5,23 @@ snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png'
 snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')
 fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
 background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
-FuncionesAuxiliares = require("snake.modes.modo_libre.pantalla_final")
 local configuracion = require('snake.modes.configuracion.configuracion')
 local savegame = require('snake.modes.savegame')
-
+Love.keyboard = require('love.keyboard')
+local scores = require('snake.modes.scores.scores')
 local M = {}
-
--- Define screen size
-local screen_width = 1200
-local screen_height = 800
-
-local WINDOW_WIDTH = 1200
-local WINDOW_HEIGHT = 800
+local constants = require('snake.modes.constants')
+local game_area_height = GAME_AREA_HEIGHT
+local game_area_width = GAME_AREA_WIDTH
 
 -- Define font
 local font = love.graphics.newFont(40)
 
 local game_over = false
--- Define initial position of snake and fruit
-local snake_x = screen_width / 2
-local snake_y = screen_height / 2
-local fruit_x = math.random(screen_width)
-local fruit_y = math.random(screen_height)
+local snake_x = WINDOW_WIDTH / 2
+local snake_y = WINDOW_HEIGHT / 2
+local fruit_x = math.random(WINDOW_WIDTH)
+local fruit_y = math.random(WINDOW_HEIGHT)
 
 -- Define initial velocity of snake
 local snake_speed = 3
@@ -52,8 +47,8 @@ local OBSTACLE_APPARITION_FREQUENCY = 5
 -- Define table to store snake segments
 local segment_distance = 45
 local snake_segments = {
-    {x=snake_x, y=snake_y},
-    {x=snake_x - segment_distance, y=snake_y}
+    {x = snake_x, y = snake_y},
+    {x = snake_x - segment_distance, y = snake_y}
 }
 
 -- Define table to store obstacles
@@ -65,8 +60,8 @@ local obstacles = {
 --pos: reinicia las variables para "reiniciar" el juego
 function reiniciarTodo()
     game_over = false
-    snake_x = screen_width / 2
-    snake_y = screen_height / 2
+    snake_x = WINDOW_WIDTH / 2
+    snake_y = WINDOW_HEIGHT / 2
     fruit_x, fruit_y = getRandomFruitPosition()
     snake_speed = 3
     snake_angle = 0
@@ -89,8 +84,8 @@ end
 function draw()
     if not game_over then
         love.graphics.setColor(1, 1, 1)
-        for i = 0, GAME_AREA_WIDTH - 1 do
-            for j = 0, GAME_AREA_HEIGHT - 1 do
+        for i = 0, game_area_width - 1 do
+            for j = 0, game_area_height - 1 do
                 -- Alternate between white and green squares
                 if (i + j) % 2 == 0 then
                     Love.graphics.setColor(227/255, 242/255, 200/255)
@@ -115,16 +110,8 @@ function draw()
             love.graphics.circle('fill', obstacle.x, obstacle.y, OBSTACLE_RADIUS)
         end
 
-        -- Print debug information
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.setFont(font)
         love.graphics.print("Score: " .. score, 10, 10)
-        -- Snake speed
-        love.graphics.print("Snake speed: " .. snake_speed, 10, 60)
-        -- Snake angle
-        love.graphics.print("Snake angle: " .. snake_angle, 10, 110)
-
-
+ 
     end
 
     if game_over then
@@ -136,24 +123,47 @@ end
 -- pre:
 -- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
 -- y actualiza la puntuación y la posición de la fruta
+
+local pressed = false
+local cleared = false
+
+-- Define function to update position of snake and fruit
 local function update(dt)
-    if Love.keyboard.isDown('m') and game_over then
+    if Love.keyboard.isDown('f10')  and  game_over then
+        reiniciarTodo()
+        pressed = false
+        FuncionesAuxiliares.load()
+    end
+
+    if Love.keyboard.isDown('f11') and game_over then
+        pressed = false
+        FuncionesAuxiliares.load()
         love.event.quit("restart")
     end
 
-    if Love.keyboard.isDown('z')  and  game_over then
-        reiniciarTodo()
+    if Love.keyboard.isDown('f12') and game_over and not pressed then
+        print("Se tocó f12. Debería guardarse el score.")
+        if FuncionesAuxiliares.getTextLenght() > 0 then
+            local text = FuncionesAuxiliares.getText()
+            scores.writeCsv(text, score, "libre")
+            pressed = not pressed
+            FuncionesAuxiliares.load()
+        end
     end
-    
+
     if game_over then
+        if not cleared then
+            FuncionesAuxiliares.load()
+            cleared = not cleared
+        end
         return
     end
 
     if not game_over then
         -- Update position of snake based on velocity
-        if left_pressed then
+        if Love.keyboard.isDown('left') then
             snake_angle = snake_angle - math.pi / 64
-        elseif right_pressed then
+        elseif Love.keyboard.isDown('right') then
             snake_angle = snake_angle + math.pi / 64
         end
         snake_x = snake_x + snake_speed * math.cos(snake_angle)
@@ -183,17 +193,13 @@ local function update(dt)
 
         -- Check if snake has collided with walls
         if snake_x < 0 - margin then
-            -- snake_x = screen_width - snake_radius + margin
             game_over = true
-        elseif snake_x > screen_width then
-            -- snake_x = snake_radius - margin
+        elseif snake_x > WINDOW_WIDTH then
             game_over = true
         end
         if snake_y < 0 - margin then
-            -- snake_y = screen_height - snake_radius + margin
             game_over = true
-        elseif snake_y > screen_height then
-            -- snake_y = snake_radius - margin
+        elseif snake_y > WINDOW_HEIGHT then
             game_over = true
         end
 
@@ -261,6 +267,7 @@ function M.update(dt)
     update(dt)
 end
 
+
 -- pre: Recibe un parámetro 'key' que representa la tecla presionada.
 -- pos: Invoca la función 'keypressed' pasando la tecla presionada como argumento
 function love.keypressed(key)
@@ -276,6 +283,8 @@ end
 --pre: Se espera que las imágenes y recursos necesarios estén disponibles
 -- Pos: La función inicializa el juego, el audio, cargando las imágenes necesarias, estableciendo el título y las dimensiones de la ventana, 
 --inicializando las serpientes y la fruta, y configurando la dirección inicial de las serpientes.
+
+-- Define function to load game assets
 function M.load(loadGame)
     local config = configuracion.load()
     if config.sound == true then
@@ -285,17 +294,35 @@ function M.load(loadGame)
         love.audio.stop(musica_fondo)
     end
 
+    FuncionesAuxiliares = require("snake.modes.modo_libre.pantalla_final")
+
     local snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png')
     local snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')
     local fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
     local background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
 
-    -- Adjust window size and title
-    love.window.setMode(screen_width, screen_height)
+    if config.fullScreen then
+        Love.window.setMode(BIG_WINDOW_WIDTH, BIG_WINDOW_HEIGHT)
+        game_area_height = BIG_GAME_AREA_HEIGHT
+        game_area_width = BIG_GAME_AREA_WIDTH
+        snake_x = BIG_WINDOW_WIDTH / 2
+        snake_y = BIG_WINDOW_HEIGHT / 2
+        fruit_x = math.random(BIG_WINDOW_WIDTH)
+        fruit_y = math.random(BIG_WINDOW_HEIGHT)
+    else
+        Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+        game_area_height = GAME_AREA_HEIGHT
+        game_area_width = GAME_AREA_WIDTH     
+        snake_x = WINDOW_WIDTH / 2
+        snake_y = WINDOW_HEIGHT / 2
+        fruit_x = math.random(WINDOW_WIDTH)
+        fruit_y = math.random(WINDOW_HEIGHT)
+    end
 
     local savedSnake = savegame.loadSnakeState('free_mode')
     if loadGame and savedSnake then
         snake_segments = savedSnake.snake
+        print("head: " .. snake_segments[1].x .. ", " .. snake_segments[1].y)
         obstacles = savedSnake.obstacles
         score = savedSnake.score
         
@@ -304,6 +331,8 @@ function M.load(loadGame)
         local dx = head.x - secondSegment.x
         local dy = head.y - secondSegment.y
         snake_angle = math.atan2(dy, dx)
+        snake_x = head.x
+        snake_y = head.y
     else
         snake_segments = {
             {x = snake_x, y = snake_y},
@@ -336,8 +365,8 @@ end
 --pre:
 --pos: Genera y devuelve una posición aleatoria para de la serpiente, evitando colisiones con obstáculos
 function getRandomSnakePosition()
-    local x = math.random(screen_width)
-    local y = math.random(screen_height)
+    local x = math.random(WINDOW_WIDTH)
+    local y = math.random(WINDOW_HEIGHT)
     for _, obstacle in ipairs(obstacles) do
         local distance = math.sqrt((x - obstacle.x)^2 + (y - obstacle.y)^2)
         if distance < snake_radius + OBSTACLE_RADIUS then
@@ -350,8 +379,8 @@ end
 --pre: 
 --pos: genera y devuelve una posicion aleatoria de la fruta, evitando colisiones con obstáculos
 function getRandomFruitPosition()
-    local x = math.random(screen_width)
-    local y = math.random(screen_height)
+    local x = math.random(WINDOW_WIDTH)
+    local y = math.random(WINDOW_HEIGHT)
     for _, obstacle in ipairs(obstacles) do
         local distance = math.sqrt((x - obstacle.x)^2 + (y - obstacle.y)^2)
         if distance < fruit_radius + OBSTACLE_RADIUS then
@@ -366,13 +395,13 @@ end
 function updateObstacles()
     if score % OBSTACLE_APPARITION_FREQUENCY == 0 then
         local obstacle_radius = OBSTACLE_RADIUS
-        obstacle_max_x = screen_width - obstacle_radius
+        obstacle_max_x = WINDOW_WIDTH - obstacle_radius
         local obstacle_x = math.random(obstacle_max_x)
         if obstacle_x < obstacle_radius then
             obstacle_x = obstacle_radius
         end
 
-        obstacle_max_y = screen_height - obstacle_radius
+        obstacle_max_y = WINDOW_HEIGHT - obstacle_radius
         local obstacle_y = math.random(obstacle_max_y)
         if obstacle_y < obstacle_radius then
             obstacle_y = obstacle_radius

@@ -2,37 +2,13 @@ Love = require('love')
 local M = {}
 local move = require('snake.modes.move')
 local configuracion = require('snake.modes.configuracion.configuracion')
-
--- set window dimensions
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
-
--- set tile dimensions
-TILE_SIZE = 50
-
--- set game area dimensions
-GAME_AREA_WIDTH = 24
-GAME_AREA_HEIGHT = 16
-
--- set initial snake position
-SNAKE_START_X = 12
-SNAKE_START_Y = 8
-
--- set initial snake length
-SNAKE_START_LENGTH = 3
-
--- set initial snake direction
-SNAKE_START_DIRECTION = 'right'
-
--- set initial fruit position
-FRUIT_START_X = 1
-FRUIT_START_Y = 1
-
+local constants = require('snake.modes.constants')
+local game_area_width = GAME_AREA_WIDTH
+local game_area_height = GAME_AREA_HEIGHT
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
 Love.keyboard = require('love.keyboard')
-local FuncionesAuxiliares = require("snake.pantalla_final")
 
 -- initialize game variables
 snake = {}
@@ -69,6 +45,9 @@ function M.load(loadGame)
         love.audio.stop(musica_fondo)
     end
 
+    FuncionesAuxiliares = require("snake.pantalla_final")
+    scores = require('snake.modes.scores.scores')
+
     snakeHeadImageUp = love.graphics.newImage('modes/modo_invertido/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_invertido/assets/snake_head_down.png')
     snakeHeadImageLeft = love.graphics.newImage('modes/modo_invertido/assets/snake_head_left.png')
@@ -84,7 +63,15 @@ function M.load(loadGame)
     love.window.setTitle('Snake Game')
 
     -- set window dimensions
-    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+    if config.fullScreen then
+        Love.window.setMode(BIG_WINDOW_WIDTH, BIG_WINDOW_HEIGHT)
+        game_area_height = BIG_GAME_AREA_HEIGHT
+        game_area_width = BIG_GAME_AREA_WIDTH
+    else
+        Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+        game_area_height = GAME_AREA_HEIGHT
+        game_area_width = GAME_AREA_WIDTH
+    end
 
     -- set background color to a light gray
     love.graphics.setBackgroundColor(0.5, 0.5, 0.5)
@@ -128,17 +115,33 @@ function M.load(loadGame)
     timer = love.timer.getTime()
 end
 
+
 -- pre:
 -- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
 -- y actualiza la puntuación y la posición de la fruta
-function M.update(dt)
-    if Love.keyboard.isDown('m') and gameOver then
-        love.event.quit("restart")
-    end
+function checkEndMenuKeys()
+    Love.keypressed = function(key)
+        if key == 'f10' and gameOver then
+            gameState = "playing"
+            reiniciarJuego()
+            FuncionesAuxiliares.load()
+        elseif key == 'f11' and gameOver then
+            FuncionesAuxiliares.load()
+            love.event.quit("restart")
+        elseif key == 'f12' and gameOver then
+            print("Se tocó f12. Debería guardarse el score.")
+            if FuncionesAuxiliares.getTextLenght() > 0 then
+                local text = FuncionesAuxiliares.getText()
+                scores.writeCsv(text, score, "invertido")
+                FuncionesAuxiliares.load()
+            end
+        end
+end
 
-    if Love.keyboard.isDown('z')  and gameOver then
-        gameState = "playing"
-        reiniciarJuego()
+
+function M.update(dt)
+    if gameOver then
+        checkEndMenuKeys()
     end
 
     move.get_direction(true, direction)
@@ -150,7 +153,7 @@ function M.update(dt)
 
 
         -- check for collision with wall
-        if snake[1].x < 0 or snake[1].x >= GAME_AREA_WIDTH or snake[1].y < 0 or snake[1].y >= GAME_AREA_HEIGHT then
+        if snake[1].x < 0 or snake[1].x >= game_area_width or snake[1].y < 0 or snake[1].y >= game_area_height then
             gameOver = true
         end
 
@@ -171,8 +174,8 @@ function M.update(dt)
             table.insert(snake, {x = snake[#snake].x, y = snake[#snake].y})
 
             -- move fruit to new location
-            fruit.x = love.math.random(GAME_AREA_WIDTH - 1)
-            fruit.y = love.math.random(GAME_AREA_HEIGHT - 1)
+            fruit.x = love.math.random(game_area_width - 1)
+            fruit.y = love.math.random(game_area_height - 1)
         end
     end
 end
@@ -186,8 +189,8 @@ function M.draw()
        
         love.graphics.setBackgroundColor(1, 1, 1)  -- Set background color to white
 
-        for i = 0, GAME_AREA_WIDTH - 1 do
-            for j = 0, GAME_AREA_HEIGHT - 1 do
+        for i = 0, game_area_width - 1 do
+            for j = 0, game_area_height - 1 do
                 -- Alternate between white and green squares
                 if (i + j) % 2 == 0 then
                     Love.graphics.setColor(0, 108/255, 44/255)
@@ -201,7 +204,7 @@ function M.draw()
 
         -- draw game area borders
         love.graphics.setColor(0, 0, 0)
-        love.graphics.rectangle('line', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
+        love.graphics.rectangle('line', 0, 0, game_area_width * TILE_SIZE, game_area_height * TILE_SIZE)
 
         -- draw snake
         for i = 1, #snake do

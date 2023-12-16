@@ -51,10 +51,9 @@ function M.loadSnakeState(mode)
                 loadedData.score = tonumber(line:match("Score: (%d+)"))
             else
                 -- Parse x and y coordinates for Snake and Obstacles sections
-                local x, y = line:match("(%d+),(%d+)")
+                local x, y = line:match("([%d%.]+),([%d%.]+)")
                 if x and y then
                     local element = { x = tonumber(x), y = tonumber(y) }
-
                     if currentSection == "Snake" then
                         table.insert(loadedData.snake, element)
                     elseif currentSection == "Obstacles" then

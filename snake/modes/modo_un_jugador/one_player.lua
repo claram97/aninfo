@@ -1,6 +1,11 @@
 Love = require('love')
 gameState = "playing"
 
+local constants = require('snake.modes.constants')
+
+local game_area_width = GAME_AREA_WIDTH
+local game_area_height = GAME_AREA_HEIGHT
+
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
@@ -14,21 +19,22 @@ gameOver = false
 score = 0
 speed = 0.1
 
+
 -- initialize obstacles
 obstacles = {}
 obstacleCount = 0
 
-FuncionesAuxiliares = require("snake.pantalla_final")
 savegame = require('snake.modes.savegame')
 local move = require('snake.modes.move')
+PantallaPausa = require("snake.pantalla_pausa")
 
 local M = {}
 
 --pre:
 --pos: POne la fruta en una posicion valida
 function placeFruit()
-    local fruitX = Love.math.random(GAME_AREA_WIDTH - 1)
-    local fruitY = Love.math.random(GAME_AREA_HEIGHT - 1)
+    local fruitX = Love.math.random(game_area_width - 1)
+    local fruitY = Love.math.random(game_area_height - 1)
 
     -- check for collision with snake
     for i = 1, #snake do
@@ -52,8 +58,8 @@ end
 --pre:
 --pos: Pone un obstaculo en un lugar aleatoria donde no este la serpiente o un obstaculo cada cierto score
 function placeObstacle()
-    local obstacleX = Love.math.random(GAME_AREA_WIDTH - 1)
-    local obstacleY = Love.math.random(GAME_AREA_HEIGHT - 1)
+    local obstacleX = Love.math.random(game_area_width - 1)
+    local obstacleY = Love.math.random(game_area_height - 1)
 
     -- check for collision with fruit
     if obstacleX == fruit.x and obstacleY == fruit.y then
@@ -86,6 +92,9 @@ function M.load(loadGame)
         love.audio.stop(musica_fondo)
     end
 
+    FuncionesAuxiliares = require("snake.pantalla_final")
+    scores = require('snake.modes.scores.scores')
+
     snakeHeadImageUp = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_up.png')
     snakeHeadImageDown = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_down.png')
     snakeHeadImageLeft = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_left.png')
@@ -101,8 +110,15 @@ function M.load(loadGame)
     Love.window.setTitle('Snake Game')
 
     -- set window dimensions
-    Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
-
+    if config.fullScreen then
+        Love.window.setMode(BIG_WINDOW_WIDTH, BIG_WINDOW_HEIGHT)
+        game_area_height = BIG_GAME_AREA_HEIGHT
+        game_area_width = BIG_GAME_AREA_WIDTH
+    else
+        Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+        game_area_height = GAME_AREA_HEIGHT
+        game_area_width = GAME_AREA_WIDTH
+    end
     -- set background color to a light gray
     Love.graphics.setBackgroundColor(0.5, 0.5, 0.5)
 
@@ -115,7 +131,8 @@ function M.load(loadGame)
         snake = savedSnake.snake
         -- get the score by counting the number of segments in the snake
         score = savedSnake.score
-        speed = 0.1 - (score * SPEED_INCREMENT)
+        snake_len = #snake
+        speed = 0.1 - (snake_len * SPEED_INCREMENT)
         gameState = "playing"
         if snake[1].x == snake[2].x then
             if snake[1].y < snake[2].y then
@@ -144,7 +161,7 @@ function M.load(loadGame)
         fruit.y = FRUIT_START_Y
         -- initialize obstacles
         for i = 1, obstacleCount do
-            local obstacle = {x = Love.math.random(GAME_AREA_WIDTH - 1), y = Love.math.random(GAME_AREA_HEIGHT - 1)}
+            local obstacle = {x = Love.math.random(game_area_width - 1), y = Love.math.random(game_area_height - 1)}
             table.insert(obstacles, obstacle)
         end
         -- set initial direction
@@ -171,6 +188,7 @@ local function reiniciarJuego()
     M.load(false)
 end
 
+
 -- pre:
 -- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
 -- y actualiza la puntuación y la posición de la fruta
@@ -178,12 +196,32 @@ function M.update(dt)
 
     if Love.keyboard.isDown('m') and gameOver then
         love.event.quit("restart")
+    
+local cleared = false
+
+function checkEndMenuKeys()
+    Love.keypressed = function(key)
+        if key == 'f10' and gameOver then
+            reiniciarJuego()
+            FuncionesAuxiliares.load()
+        elseif key == 'f11' and gameOver then
+            FuncionesAuxiliares.load()
+            love.event.quit("restart")
+        elseif key == 'f12' and gameOver then
+            if FuncionesAuxiliares.getTextLenght() > 0 then
+                local text = FuncionesAuxiliares.getText()
+                scores.writeCsv(text, score, "clásico")
+                FuncionesAuxiliares.load()
+            end
+        end
+    end
+end
+
+function M.update(dt)
+    if gameOver then
+        checkEndMenuKeys()
     end
 
-    if Love.keyboard.isDown('z')  and  gameOver then
-        reiniciarJuego()
-    end
-    
     move.get_direction(false)
     -- move snake
     if Love.timer.getTime() - timer > speed then
@@ -192,14 +230,22 @@ function M.update(dt)
         move.move(snake)
 
         -- check for collision with wall
-        if snake[1].x < 0 or snake[1].x >= GAME_AREA_WIDTH or snake[1].y < 0 or snake[1].y >= GAME_AREA_HEIGHT then
+        if snake[1].x < 0 or snake[1].x >= game_area_width or snake[1].y < 0 or snake[1].y >= game_area_height then
             gameOver = true
+            if not cleared then
+                FuncionesAuxiliares.load()
+                cleared = not cleared
+            end
         end
 
         -- check for collision with self
         for i = 2, #snake do
             if snake[1].x == snake[i].x and snake[1].y == snake[i].y then
                 gameOver = true
+                if not cleared then
+                    FuncionesAuxiliares.load()
+                    cleared = not cleared
+                end
             end
         end
 
@@ -207,6 +253,10 @@ function M.update(dt)
         for i = 1, #obstacles do
             if snake[1].x == obstacles[i].x and snake[1].y == obstacles[i].y then
                 gameOver = true
+                if not cleared then
+                    FuncionesAuxiliares.load()
+                    cleared = not cleared
+                end
             end
         end
 
@@ -229,7 +279,7 @@ function M.update(dt)
 
             -- increase speed
             speed = math.max(speed - SPEED_INCREMENT, 0.05)
-        end
+        end        
     end
 end
 
@@ -239,8 +289,8 @@ function M.draw()
     -- draw game area
     if gameState == "playing" then
         Love.graphics.setColor(1, 1, 1)
-        for i = 0, GAME_AREA_WIDTH - 1 do
-            for j = 0, GAME_AREA_HEIGHT - 1 do
+        for i = 0, game_area_width - 1 do
+            for j = 0, game_area_height - 1 do
                 if (i + j) % 2 == 0 then
                     Love.graphics.setColor(1, 1, 1)  -- White color
                 else
@@ -253,7 +303,7 @@ function M.draw()
 
         -- draw game area borders
         Love.graphics.setColor(0, 0, 0)
-        Love.graphics.rectangle('line', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
+        Love.graphics.rectangle('line', 0, 0, game_area_width * TILE_SIZE, game_area_height * TILE_SIZE)
 
         -- draw obstacles
         for i = 1, #obstacles do
@@ -295,6 +345,11 @@ function M.draw()
             end
         end
 
+        -- draw button of pause
+        Love.graphics.setColor(0, 0, 0)
+        Love.graphics.setFont(font)
+        Love.graphics.print(gamePaused and "Reanudar (P)" or "Pausar (P)", 10, 130)
+
         -- draw fruit
         Love.graphics.setColor(1, 1, 1)
         Love.graphics.draw(fruitImage, fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, 0, TILE_SIZE/fruitImage:getWidth(), TILE_SIZE/fruitImage:getHeight())
@@ -310,6 +365,8 @@ function M.draw()
         Love.graphics.print('Direction: ' .. direction, 10, 100)
 
         -- draw game over message
+    elseif gameState == "pausa" then
+        dibujarPantallaPausa()
     end
     if gameOver then
         gameState = "not"
@@ -319,6 +376,14 @@ end
 
 -- pre: 
 -- pos: Se guardan los datos del juego si la aplicacion se cierra
+function dibujarPantallaPausa()
+    Love.graphics.setBackgroundColor(1, 0.6, 0)
+    Love.graphics.setColor(0.8, 0.8, 0.6) 
+    Love.graphics.rectangle("fill", 50, 200, Love.graphics.getWidth() - 100, 200, 10, 10)
+    Love.graphics.setColor(0, 0, 0)
+    Love.graphics.printf("El juego está en pausa. Presione P para volver al juego", 100, 220, Love.graphics.getWidth() - 200, "center")
+end
+
 function M.quit()
     -- if the game is over, don't save the snake state
     if gameOver then

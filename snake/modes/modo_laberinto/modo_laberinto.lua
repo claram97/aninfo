@@ -1,6 +1,5 @@
 Love = require('love')
 local M = {}
-local gameState = "playing"
 local level = 1
 local fruitsToChangeWalls = {3, 6}  -- Number of fruits to collect before walls change
 local wallsChanged = false
@@ -9,6 +8,7 @@ local obstacles = {}
 local move = require('snake.modes.move')
 local configuracion = require('snake.modes.configuracion.configuracion')
 savegame = require('snake.modes.savegame')
+
 FIRST_LEVEL_END_SCORE = 50
 SECOND_LEVEL_END_SCORE = 100
 
@@ -16,12 +16,15 @@ SECOND_LEVEL_END_SCORE = 100
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
 
+local constants = require('snake.modes.constants')
+FIRST_LEVEL_END_SCORE = 50
+SECOND_LEVEL_END_SCORE = 100
+local game_area_width = GAME_AREA_WIDTH
+local game_area_height = GAME_AREA_HEIGHT
+
+
 -- set tile dimensions
 TILE_SIZE = 50
-
--- set game area dimensions
-GAME_AREA_WIDTH = 24
-GAME_AREA_HEIGHT = 16
 
 -- set initial snake position
 SNAKE_START_X = 12
@@ -46,7 +49,6 @@ local staticVerticalLine2X, staticVerticalLine2Y
 local staticWalls = {}
 local staticVerticalLines = {}
 
-local FuncionesAuxiliares = require("snake.pantalla_final")
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
@@ -65,8 +67,15 @@ function initializeWindow()
     Love.window.setTitle('Snake Game')
 
     -- set window dimensions
-    Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
-
+    if config.fullScreen then
+        Love.window.setMode(BIG_WINDOW_WIDTH, BIG_WINDOW_HEIGHT)
+        game_area_height = BIG_GAME_AREA_HEIGHT
+        game_area_width = BIG_GAME_AREA_WIDTH
+    else
+        Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+        game_area_height = GAME_AREA_HEIGHT
+        game_area_width = GAME_AREA_WIDTH
+    end
     -- set background color to a light gray
     Love.graphics.setBackgroundColor(0.5, 0.5, 0.5)
 
@@ -97,6 +106,9 @@ function M.load(loadGame)
     if config.sound == false then
         love.audio.stop(musica_fondo)
     end
+    scores = require('snake.modes.scores.scores')
+    FuncionesAuxiliares = require('snake.pantalla_final')
+
     snakeHeadImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_down.png')
     snakeHeadImageLeft = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_left.png')
@@ -153,7 +165,6 @@ end
 function generateObstacles()
     obstacles = {}
 
-    
     for _ = 1, 2 do
         local x, y = get_random_position_away_from_snake()
         table.insert(obstacles, {x = x, y = y})
@@ -162,7 +173,6 @@ function generateObstacles()
         table.insert(obstacles, {x = x + 3, y = y})
     end
 
-   
     for _ = 1, 2 do
         local x, y = get_random_position_away_from_snake()
         table.insert(obstacles, {x = x, y = y})
@@ -205,8 +215,8 @@ end
 local function reloadGame()
     gameOver = false
     score = 0
-    direction = SNAKE_START_DIRECTION
     snake = {}
+
     for i = 1, SNAKE_START_LENGTH do
         table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
     end
@@ -235,11 +245,35 @@ end
 function M.update(dt)
     if Love.keyboard.isDown('m') and gameOver then
         love.event.quit("restart")
-    end
+    M.load()
+end
 
-    if Love.keyboard.isDown('z')  and  gameOver then
-        gameState = "playing"
-        reloadGame()
+function checkEndMenuKeys()
+    Love.keypressed = function(key)
+        if key == 'f10' and gameOver then
+            reloadGame()
+            FuncionesAuxiliares.load()
+        elseif key == 'f11' and gameOver then
+            FuncionesAuxiliares.load()
+            love.event.quit("restart")
+        elseif key == 'f12' and gameOver then
+            print("Se tocó f12. Debería guardarse el score.")
+            if FuncionesAuxiliares.getTextLenght() > 0 then
+                local text = FuncionesAuxiliares.getText()
+                scores.writeCsv(text, score, "laberinto")
+                FuncionesAuxiliares.load()
+            end
+        end
+    end
+end
+
+-- pre:
+-- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
+-- y actualiza la puntuación y la posición de la fruta
+function M.update(dt)
+    if gameOver then
+        checkEndMenuKeys()
+        return
     end
 
     move.get_direction(false)
@@ -257,7 +291,7 @@ function M.update(dt)
        
 
         -- check for collision with wall
-        if snake[1].x < 1 or snake[1].x >= GAME_AREA_WIDTH-1 or snake[1].y < 1 or snake[1].y >= GAME_AREA_HEIGHT-1 then
+        if snake[1].x < 1 or snake[1].x >= game_area_width-1 or snake[1].y < 1 or snake[1].y >= game_area_height-1 then
             gameOver = true
         end
 
@@ -281,8 +315,8 @@ function M.update(dt)
 end
 
 function draw_border()
-    for i = 0, GAME_AREA_WIDTH - 1 do
-        for j = 0, GAME_AREA_HEIGHT - 1 do
+    for i = 0, game_area_width - 1 do
+        for j = 0, game_area_height - 1 do
             if i == 0 then
                 love.graphics.setColor(0, 108/255, 44/255)
                 love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
@@ -291,11 +325,11 @@ function draw_border()
                 love.graphics.setColor(0, 108/255, 44/255)
                 love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
-            if i == GAME_AREA_WIDTH -1 then
+            if i == game_area_width -1 then
                 love.graphics.setColor(0, 108/255, 44/255)
                 love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
-            if j == GAME_AREA_HEIGHT -1 then
+            if j == game_area_height -1 then
                 love.graphics.setColor(0, 108/255, 44/255)
                 love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
@@ -350,21 +384,21 @@ end
 
 
 function draw_rectangle(start, finish)
-    for i = (GAME_AREA_WIDTH / 2) - start, (GAME_AREA_WIDTH / 2) + finish do
-        for j = (GAME_AREA_HEIGHT / 2) - start, (GAME_AREA_HEIGHT / 2) + finish do
-            if i == (GAME_AREA_WIDTH / 2) - start then
+    for i = (game_area_width / 2) - start, (game_area_width / 2) + finish do
+        for j = (game_area_height / 2) - start, (game_area_height / 2) + finish do
+            if i == (game_area_width / 2) - start then
                 Love.graphics.setColor(0, 108/255, 44/255)
                 Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE) 
             end
-            if i == (GAME_AREA_WIDTH / 2) + finish then
+            if i == (game_area_width / 2) + finish then
                 Love.graphics.setColor(0, 108/255, 44/255)
                 Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
-            if j == (GAME_AREA_HEIGHT / 2) - start then 
+            if j == (game_area_height / 2) - start then 
                 Love.graphics.setColor(0, 108/255, 44/255)
                 Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
-            if j == (GAME_AREA_HEIGHT / 2) + finish then
+            if j == (game_area_height / 2) + finish then
                 Love.graphics.setColor(0, 108/255, 44/255)
                 Love.graphics.rectangle('fill', i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             end
@@ -404,29 +438,28 @@ end
 
 function draw_labyrinth_4()
     draw_border()
-    draw_vertical_line((GAME_AREA_HEIGHT / 2) - 2, (GAME_AREA_HEIGHT / 2) + 2, (GAME_AREA_WIDTH / 2) - 5)
-    draw_vertical_line((GAME_AREA_HEIGHT / 2) - 2, (GAME_AREA_HEIGHT / 2) + 2, (GAME_AREA_WIDTH / 2) + 5)
-    draw_horizontal_line((GAME_AREA_WIDTH / 2) - 2, (GAME_AREA_WIDTH / 2) + 2, (GAME_AREA_HEIGHT / 2) - 5)
-    draw_horizontal_line((GAME_AREA_WIDTH / 2) - 2, (GAME_AREA_WIDTH / 2) + 2, (GAME_AREA_HEIGHT / 2) + 5)
+    draw_vertical_line((game_area_height / 2) - 2, (game_area_height / 2) + 2, (game_area_width / 2) - 5)
+    draw_vertical_line((game_area_height / 2) - 2, (game_area_height / 2) + 2, (game_area_width / 2) + 5)
+    draw_horizontal_line((game_area_width / 2) - 2, (game_area_width / 2) + 2, (game_area_height / 2) - 5)
+    draw_horizontal_line((game_area_width / 2) - 2, (game_area_width / 2) + 2, (game_area_height / 2) + 5)
 end
 
 function draw_labyrinth_4()
     draw_border()
-    draw_vertical_line((GAME_AREA_HEIGHT / 2) - 2, (GAME_AREA_HEIGHT / 2) + 2, (GAME_AREA_WIDTH / 2) - 5)
-    draw_vertical_line((GAME_AREA_HEIGHT / 2) - 2, (GAME_AREA_HEIGHT / 2) + 2, (GAME_AREA_WIDTH / 2) + 5)
-    draw_horizontal_line((GAME_AREA_WIDTH / 2) - 2, (GAME_AREA_WIDTH / 2) + 2, (GAME_AREA_HEIGHT / 2) - 5)
-    draw_horizontal_line((GAME_AREA_WIDTH / 2) - 2, (GAME_AREA_WIDTH / 2) + 2, (GAME_AREA_HEIGHT / 2) + 5)
+    draw_vertical_line((game_area_height / 2) - 2, (game_area_height / 2) + 2, (game_area_width / 2) - 5)
+    draw_vertical_line((game_area_height / 2) - 2, (game_area_height / 2) + 2, (game_area_width / 2) + 5)
+    draw_horizontal_line((game_area_width / 2) - 2, (game_area_width / 2) + 2, (game_area_height / 2) - 5)
+    draw_horizontal_line((game_area_width / 2) - 2, (game_area_width / 2) + 2, (game_area_height / 2) + 5)
 end
 
 function get_random_position()
-    local x = Love.math.random(2, GAME_AREA_WIDTH - 2)
-    local y = Love.math.random(2, GAME_AREA_HEIGHT - 2)
+    local x = Love.math.random(2, game_area_width - 2)
+    local y = Love.math.random(2, game_area_height - 2)
     return x, y
 end
 
 function draw_random_lines()
     draw_border()
-    
 end
 
 function drawStaticWalls()
@@ -455,7 +488,7 @@ function M.draw()
     -- draw game area
     wallColor1 = {15/255, 202/255, 81/255}
     wallColor = {175/255, 1, 206/255} 
-    if gameState == "playing" then
+    if not gameOver then
         if level == 1 then
             wallColor1 = {15/255, 202/255, 81/255}
             wallColor = {175/255, 1, 206/255} 
@@ -468,8 +501,8 @@ function M.draw()
         end
         
         Love.graphics.setBackgroundColor(1, 1, 1)  -- Set background color to white
-        for i = 0, GAME_AREA_WIDTH - 1 do
-            for j = 0, GAME_AREA_HEIGHT - 1 do
+        for i = 0, game_area_width - 1 do
+            for j = 0, game_area_height - 1 do
                 -- Alternate between white and green squares
                 if (i + j) % 2 == 0 then
                     Love.graphics.setColor(wallColor1)  -- White color
@@ -481,12 +514,9 @@ function M.draw()
             end
         end
 
-
-
         -- draw game area borders
         Love.graphics.setColor(0, 0, 0)
-        Love.graphics.rectangle('line', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
-
+        Love.graphics.rectangle('line', 0, 0, game_area_width * TILE_SIZE, game_area_height * TILE_SIZE)
 
         drawStaticWalls()
         -- draw snake
@@ -533,12 +563,24 @@ function M.draw()
         Love.graphics.setColor(0,0,0)
         Love.graphics.setFont(font)
         Love.graphics.print('Score: ' .. score, 10, 10)
-    end
-    if gameOver then
-        gameState = "not"
+    elseif gameOver then
         FuncionesAuxiliares.mostrarPantallaFinal(score)
-
     end
+end
+
+-- pre:
+-- pos: Devuelve true si hay un juego guardado
+function M.isSavedGame()
+    return savegame.loadSnakeState('modo_laberinto') ~= nil
+end
+
+-- pre: 
+-- pos: Se guardan los datos del juego si la aplicacion se cierra
+function M.quit()
+    if game_over then
+        return true
+    end
+    savegame.saveSnakeState(snake, obstacles, score, 'modo_laberinto')
 end
 
 -- pre:
