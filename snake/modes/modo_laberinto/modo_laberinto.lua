@@ -155,8 +155,6 @@ end
 --pos: genera nuevas paredes verticales y horizontales
 function generateObstacles()
     obstacles = {}
-
-    
     for _ = 1, 2 do
         local x, y = get_random_position_away_from_snake()
         table.insert(obstacles, {x = x, y = y})
@@ -165,7 +163,6 @@ function generateObstacles()
         table.insert(obstacles, {x = x + 3, y = y})
     end
 
-   
     for _ = 1, 2 do
         local x, y = get_random_position_away_from_snake()
         table.insert(obstacles, {x = x, y = y})
@@ -478,12 +475,9 @@ function M.draw()
             end
         end
 
-
-
         -- draw game area borders
         Love.graphics.setColor(0, 0, 0)
         Love.graphics.rectangle('line', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
-
 
         drawStaticWalls()
         -- draw snake
@@ -547,7 +541,7 @@ function M.quit()
     if game_over then
         return true
     end
-    savegame.saveSnakeState(snake_segments, obstacles, score, 'modo_laberinto')
+    savegame.saveSnakeState(snake, obstacles, score, 'modo_laberinto')
 end
 
 return M
