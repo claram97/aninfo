@@ -2,12 +2,18 @@
 WINDOW_WIDTH = 1200
 WINDOW_HEIGHT = 800
 
+BIG_WINDOW_WIDTH = 1600
+BIG_WINDOW_HEIGHT = 900
+
 -- tile dimensions
 TILE_SIZE = 50
 
 -- game area dimensions
 GAME_AREA_WIDTH = 24
 GAME_AREA_HEIGHT = 16
+
+BIG_GAME_AREA_WIDTH = 32
+BIG_GAME_AREA_HEIGHT = 18
 
 -- initial snake position
 SNAKE_START_X = 12
