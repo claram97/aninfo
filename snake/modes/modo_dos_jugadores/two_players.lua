@@ -4,6 +4,7 @@ love.timer = require('love.timer')
 love.keyboard = require('love.keyboard')
 local configuracion = require('snake.modes.configuracion.configuracion')
 savegame = require('snake.modes.savegame')
+local constants = require('snake.modes.constants')
 
 -- initialize game variables
 snake1 = {}
@@ -17,7 +18,6 @@ local M = {}
 player_1 = "jugador1"
 player_2 = "jugador2"
 ganador = ""
-perdedor = ""
 
 function M.load(loadGame)
     require('snake.modes.constants')
@@ -152,11 +152,11 @@ function reiniciarJuego()
 end
 
 function M.update(dt)
-    if Love.keyboard.isDown('m') and gameOver then
+    if Love.keyboard.isDown('f11') and gameOver then
         love.event.quit("restart")
     end
 
-    if Love.keyboard.isDown('z')  and  gameOver then
+    if Love.keyboard.isDown('f10')  and  gameOver then
         gameState = "playing"
         reiniciarJuego()
     end
@@ -210,15 +210,27 @@ function M.update(dt)
             snake1[1].x = snake1[1].x + 1
         end
 
+        if score1 == 300 then
+            gameOver = true
+            ganador = "jugador 1"    
+        end
+
+        if score2 == 300 then
+            gameOver = true
+            ganador = "jugador 2"    
+        end
+
         -- check for collision with wall
         if snake1[1].x < 0 or snake1[1].x >= GAME_AREA_WIDTH or snake1[1].y < 0 or snake1[1].y >= GAME_AREA_HEIGHT then
             gameOver = true
+            ganador = "jugador 2"
         end
 
         -- check for collision with self snake 1
         for i = 2, #snake1 do
             if snake1[1].x == snake1[i].x and snake1[1].y == snake1[i].y then
                 gameOver = true
+                ganador = "jugador 2"
             end
         end
 
@@ -226,6 +238,7 @@ function M.update(dt)
         for i = 2, #snake2 do
             if snake1[1].x == snake2[i].x and snake1[1].y == snake2[i].y then
                 gameOver = true
+                ganador = "jugador 1"
             end
         end
 
@@ -233,6 +246,7 @@ function M.update(dt)
         for i = 2, #snake2 do
             if snake1[1].x == snake2[i].x and snake1[1].y == snake2[i].y then
                 gameOver = true
+                ganador = "jugador 2"
             end
         end
 
@@ -240,6 +254,7 @@ function M.update(dt)
         for i = 2, #snake1 do
             if snake2[1].x == snake1[i].x and snake2[1].y == snake1[i].y then
                 gameOver = true
+                ganador = "jugador 1"
             end
         end
 
@@ -278,12 +293,14 @@ function M.update(dt)
         -- check for collision with wall
         if snake2[1].x < 0 or snake2[1].x >= GAME_AREA_WIDTH or snake2[1].y < 0 or snake2[1].y >= GAME_AREA_HEIGHT then
             gameOver = true
+            ganador = "jugador 1"
         end
 
         -- check for collision with self
         for i = 2, #snake2 do
             if snake2[1].x == snake2[i].x and snake2[1].y == snake2[i].y then
                 gameOver = true
+                ganador = "jugador 1"
             end
         end
 
@@ -307,7 +324,7 @@ function M.draw()
     -- draw game area
 
     if gameOver then
-        FuncionesAuxiliares.mostrarPantallaFinal(score)
+        FuncionesAuxiliares.mostrarPantallaFinal(score1, score2, ganador)
         return
     end
 
