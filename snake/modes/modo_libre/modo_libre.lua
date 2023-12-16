@@ -10,23 +10,17 @@ local savegame = require('snake.modes.savegame')
 local scores = require('snake.modes.scores.scores')
 
 local M = {}
-
--- Define screen size
-local screen_width = 1200
-local screen_height = 800
-
-local WINDOW_WIDTH = 1200
-local WINDOW_HEIGHT = 800
+local constants = require('snake.modes.constants')
 
 -- Define font
 local font = love.graphics.newFont(40)
 
 local game_over = false
 -- Define initial position of snake and fruit
-local snake_x = screen_width / 2
-local snake_y = screen_height / 2
-local fruit_x = math.random(screen_width)
-local fruit_y = math.random(screen_height)
+local snake_x = WINDOW_WIDTH / 2
+local snake_y = WINDOW_HEIGHT / 2
+local fruit_x = math.random(WINDOW_WIDTH)
+local fruit_y = math.random(WINDOW_HEIGHT)
 
 -- Define initial velocity of snake
 local snake_speed = 3
@@ -64,8 +58,8 @@ local obstacles = {
 function reiniciarTodo()
     -- Reiniciar todas las variables y estados a sus valores iniciales
     game_over = false
-    snake_x = screen_width / 2
-    snake_y = screen_height / 2
+    snake_x = WINDOW_WIDTH / 2
+    snake_y = WINDOW_HEIGHT / 2
     fruit_x, fruit_y = getRandomFruitPosition()
     snake_speed = 3
     snake_angle = 0
@@ -203,14 +197,14 @@ local function update(dt)
         if snake_x < 0 - margin then
             -- snake_x = screen_width - snake_radius + margin
             game_over = true
-        elseif snake_x > screen_width then
+        elseif snake_x > WINDOW_WIDTH then
             -- snake_x = snake_radius - margin
             game_over = true
         end
         if snake_y < 0 - margin then
             -- snake_y = screen_height - snake_radius + margin
             game_over = true
-        elseif snake_y > screen_height then
+        elseif snake_y > WINDOW_HEIGHT then
             -- snake_y = snake_radius - margin
             game_over = true
         end
@@ -299,7 +293,7 @@ function M.load(loadGame)
     local background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
 
     -- Adjust window size and title
-    love.window.setMode(screen_width, screen_height)
+    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
 
     local savedSnake = savegame.loadSnakeState('free_mode')
     if loadGame and savedSnake then
@@ -343,8 +337,8 @@ end
 
 -- Define function to get a random position for the snake
 function getRandomSnakePosition()
-    local x = math.random(screen_width)
-    local y = math.random(screen_height)
+    local x = math.random(WINDOW_WIDTH)
+    local y = math.random(WINDOW_HEIGHT)
     for _, obstacle in ipairs(obstacles) do
         local distance = math.sqrt((x - obstacle.x)^2 + (y - obstacle.y)^2)
         if distance < snake_radius + OBSTACLE_RADIUS then
@@ -356,8 +350,8 @@ end
 
 -- Define function to get a random position for the fruit
 function getRandomFruitPosition()
-    local x = math.random(screen_width)
-    local y = math.random(screen_height)
+    local x = math.random(WINDOW_WIDTH)
+    local y = math.random(WINDOW_HEIGHT)
     for _, obstacle in ipairs(obstacles) do
         local distance = math.sqrt((x - obstacle.x)^2 + (y - obstacle.y)^2)
         if distance < fruit_radius + OBSTACLE_RADIUS then
@@ -370,13 +364,13 @@ end
 function updateObstacles()
     if score % OBSTACLE_APPARITION_FREQUENCY == 0 then
         local obstacle_radius = OBSTACLE_RADIUS
-        obstacle_max_x = screen_width - obstacle_radius
+        obstacle_max_x = WINDOW_WIDTH - obstacle_radius
         local obstacle_x = math.random(obstacle_max_x)
         if obstacle_x < obstacle_radius then
             obstacle_x = obstacle_radius
         end
 
-        obstacle_max_y = screen_height - obstacle_radius
+        obstacle_max_y = WINDOW_HEIGHT - obstacle_radius
         local obstacle_y = math.random(obstacle_max_y)
         if obstacle_y < obstacle_radius then
             obstacle_y = obstacle_radius

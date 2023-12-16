@@ -1,6 +1,8 @@
 Love = require('love')
 gameState = "playing"
 
+local constants = require('snake.modes.constants')
+
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
