@@ -121,8 +121,8 @@ function scores.establecerFondo()
 end
 
 function scores.mousepressed(x, y, button, istouch, presses)
-    if x >= love.graphics.getWidth() / 3 and x <= love.graphics.getWidth() / 3 + 400 and y >= 650 and y<= 650+80 then
-        love.event.quit('restart')
+    if x > love.graphics.getWidth() / 3 and x < love.graphics.getWidth() / 3 + 400 and y > 650 and y < 730 then
+        return true
     end
 end
 
