@@ -116,28 +116,44 @@ end
 
 function scores.establecerFondo()
     love.graphics.setBackgroundColor(0.95, 0.95, 0.9)
+    local rectWidth = love.graphics.getWidth() * 0.8
+    local rectHeight = love.graphics.getHeight() * 0.6
+    local rectX = (love.graphics.getWidth() - rectWidth) / 2
+    local rectY = love.graphics.getHeight() * 0.15 -- Ajuste hacia abajo
     love.graphics.setColor(251/255, 180/255, 69/255, 100)
-    love.graphics.rectangle("fill", love.graphics.getWidth() / 2 - 500, 125, 1000, 485, 10, 10)
+    love.graphics.rectangle("fill", rectX, rectY, rectWidth, rectHeight, 10, 10)
 end
 
 function scores.mousepressed(x, y, button, istouch, presses)
-    if x > love.graphics.getWidth() / 3 and x < love.graphics.getWidth() / 3 + 400 and y > 650 and y < 730 then
+    local buttonX = love.graphics.getWidth() / 3
+    local buttonY = love.graphics.getHeight() * 0.77 -- Ajuste hacia abajo
+    local buttonWidth = love.graphics.getWidth() * 0.4
+    local buttonHeight = love.graphics.getHeight() * 0.1
+    
+    if x > buttonX and x < buttonX + buttonWidth and y > buttonY and y < buttonY + buttonHeight then
         return true
     end
 end
 
 function scores.dibujarTitulo()
     love.graphics.setColor(0, 0, 0)
-    love.graphics.setFont(love.graphics.newFont(40))
-    love.graphics.printf("High scores", 0, 50, love.graphics.getWidth(), "center")
+    local fontSize = love.graphics.getHeight() * 0.05
+    love.graphics.setFont(love.graphics.newFont(fontSize))
+    love.graphics.printf("High scores", 0, love.graphics.getHeight() * 0.07, love.graphics.getWidth(), "center") -- Ajuste hacia abajo
 end
 
 function scores.dibujarSaveButton()
+    local buttonX = love.graphics.getWidth() / 3
+    local buttonY = love.graphics.getHeight() * 0.77 -- Ajuste hacia abajo
+    local buttonWidth = love.graphics.getWidth() * 0.4
+    local buttonHeight = love.graphics.getHeight() * 0.1
+
     love.graphics.setColor(0.1, 0.9, 0.1, 0.7)
-    love.graphics.rectangle("fill", love.graphics.getWidth() / 3, 650, 400, 80, 10, 10)
+    love.graphics.rectangle("fill", buttonX, buttonY, buttonWidth, buttonHeight, 10, 10)
     love.graphics.setColor(1.0, 1.0, 1.0)
-    love.graphics.print("Volver", love.graphics.getWidth() / 3 + 150, 665)
+    love.graphics.print("Volver", buttonX + buttonWidth * 0.375, buttonY + buttonHeight * 0.35)
 end
+
 
 function scores.draw()
     scores.establecerFondo()
@@ -151,9 +167,9 @@ function scores.draw()
     
     local y = 150
     love.graphics.setColor(0, 0, 0)  -- Establecer color de texto a negro
-    
+    local x = width * 0.10
     for _, persona in ipairs(datos) do
-        love.graphics.print(persona.nombre .. ", " .. persona.puntuacion .. " puntos, modo " .. persona.modo .. ", " .. persona.fecha, 120, y)
+        love.graphics.print(persona.nombre .. ", " .. persona.puntuacion .. " puntos, modo " .. persona.modo .. ", " .. persona.fecha, x, y)
         y = y + 45  -- Incrementar la posición Y para la siguiente línea
     end    
 end

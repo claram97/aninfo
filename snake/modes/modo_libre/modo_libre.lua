@@ -9,15 +9,15 @@ local configuracion = require('snake.modes.configuracion.configuracion')
 local savegame = require('snake.modes.savegame')
 Love.keyboard = require('love.keyboard')
 local scores = require('snake.modes.scores.scores')
-
 local M = {}
 local constants = require('snake.modes.constants')
+local game_area_height = GAME_AREA_HEIGHT
+local game_area_width = GAME_AREA_WIDTH
 
 -- Define font
 local font = love.graphics.newFont(40)
 
 local game_over = false
--- Define initial position of snake and fruit
 local snake_x = WINDOW_WIDTH / 2
 local snake_y = WINDOW_HEIGHT / 2
 local fruit_x = math.random(WINDOW_WIDTH)
@@ -83,8 +83,8 @@ end
 function draw()
     if not game_over then
         love.graphics.setColor(1, 1, 1)
-        for i = 0, GAME_AREA_WIDTH - 1 do
-            for j = 0, GAME_AREA_HEIGHT - 1 do
+        for i = 0, game_area_width - 1 do
+            for j = 0, game_area_height - 1 do
                 -- Alternate between white and green squares
                 if (i + j) % 2 == 0 then
                     Love.graphics.setColor(227/255, 242/255, 200/255)
@@ -109,20 +109,8 @@ function draw()
             love.graphics.circle('fill', obstacle.x, obstacle.y, OBSTACLE_RADIUS)
         end
 
-        -- -- Print debug information
-        -- love.graphics.setColor(1, 1, 1)
-        -- love.graphics.setFont(font)
         love.graphics.print("Score: " .. score, 10, 10)
-        -- Snake speed
-        -- love.graphics.print("Snake speed: " .. snake_speed, 10, 60)
-        -- -- Snake angle
-        -- love.graphics.print("Snake angle: " .. snake_angle, 10, 110)
-        -- -- Head position
-        -- love.graphics.print("Head position: (" .. snake_segments[1].x .. ", " .. snake_segments[1].y .. ")", 10, 160)
-        -- -- Game state
-        -- love.graphics.print("Game over: " .. tostring(game_over), 10, 210)
-
-
+ 
     end
 
     if game_over then
@@ -200,17 +188,13 @@ local function update(dt)
 
         -- Check if snake has collided with walls
         if snake_x < 0 - margin then
-            -- snake_x = screen_width - snake_radius + margin
             game_over = true
         elseif snake_x > WINDOW_WIDTH then
-            -- snake_x = snake_radius - margin
             game_over = true
         end
         if snake_y < 0 - margin then
-            -- snake_y = screen_height - snake_radius + margin
             game_over = true
         elseif snake_y > WINDOW_HEIGHT then
-            -- snake_y = snake_radius - margin
             game_over = true
         end
 
@@ -273,8 +257,23 @@ function M.load(loadGame)
     local fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
     local background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
 
-    -- Adjust window size and title
-    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+    if config.fullScreen then
+        Love.window.setMode(BIG_WINDOW_WIDTH, BIG_WINDOW_HEIGHT)
+        game_area_height = BIG_GAME_AREA_HEIGHT
+        game_area_width = BIG_GAME_AREA_WIDTH
+        snake_x = BIG_WINDOW_WIDTH / 2
+        snake_y = BIG_WINDOW_HEIGHT / 2
+        fruit_x = math.random(BIG_WINDOW_WIDTH)
+        fruit_y = math.random(BIG_WINDOW_HEIGHT)
+    else
+        Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+        game_area_height = GAME_AREA_HEIGHT
+        game_area_width = GAME_AREA_WIDTH     
+        snake_x = WINDOW_WIDTH / 2
+        snake_y = WINDOW_HEIGHT / 2
+        fruit_x = math.random(WINDOW_WIDTH)
+        fruit_y = math.random(WINDOW_HEIGHT)
+    end
 
     local savedSnake = savegame.loadSnakeState('free_mode')
     if loadGame and savedSnake then

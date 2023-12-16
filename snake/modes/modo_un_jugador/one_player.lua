@@ -3,6 +3,9 @@ gameState = "playing"
 
 local constants = require('snake.modes.constants')
 
+local game_area_width = GAME_AREA_WIDTH
+local game_area_height = GAME_AREA_HEIGHT
+
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
@@ -29,8 +32,8 @@ local M = {}
 
 -- function to place a fruit in a random location without obstacles
 function placeFruit()
-    local fruitX = Love.math.random(GAME_AREA_WIDTH - 1)
-    local fruitY = Love.math.random(GAME_AREA_HEIGHT - 1)
+    local fruitX = Love.math.random(game_area_width - 1)
+    local fruitY = Love.math.random(game_area_height - 1)
 
     -- check for collision with snake
     for i = 1, #snake do
@@ -53,8 +56,8 @@ end
 
 -- function to place an obstacle in a random location without fruit or snake every certain amount of fruit eaten
 function placeObstacle()
-    local obstacleX = Love.math.random(GAME_AREA_WIDTH - 1)
-    local obstacleY = Love.math.random(GAME_AREA_HEIGHT - 1)
+    local obstacleX = Love.math.random(game_area_width - 1)
+    local obstacleY = Love.math.random(game_area_height - 1)
 
     -- check for collision with fruit
     if obstacleX == fruit.x and obstacleY == fruit.y then
@@ -102,8 +105,15 @@ function M.load(loadGame)
     Love.window.setTitle('Snake Game')
 
     -- set window dimensions
-    Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
-
+    if config.fullScreen then
+        Love.window.setMode(BIG_WINDOW_WIDTH, BIG_WINDOW_HEIGHT)
+        game_area_height = BIG_GAME_AREA_HEIGHT
+        game_area_width = BIG_GAME_AREA_WIDTH
+    else
+        Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+        game_area_height = GAME_AREA_HEIGHT
+        game_area_width = GAME_AREA_WIDTH
+    end
     -- set background color to a light gray
     Love.graphics.setBackgroundColor(0.5, 0.5, 0.5)
 
@@ -146,7 +156,7 @@ function M.load(loadGame)
         fruit.y = FRUIT_START_Y
         -- initialize obstacles
         for i = 1, obstacleCount do
-            local obstacle = {x = Love.math.random(GAME_AREA_WIDTH - 1), y = Love.math.random(GAME_AREA_HEIGHT - 1)}
+            local obstacle = {x = Love.math.random(game_area_width - 1), y = Love.math.random(game_area_height - 1)}
             table.insert(obstacles, obstacle)
         end
         -- set initial direction
@@ -182,7 +192,6 @@ function checkEndMenuKeys()
             FuncionesAuxiliares.load()
             love.event.quit("restart")
         elseif key == 'f12' and gameOver then
-            print("Se tocó f12. Debería guardarse el score.")
             if FuncionesAuxiliares.getTextLenght() > 0 then
                 local text = FuncionesAuxiliares.getText()
                 scores.writeCsv(text, score, "clásico")
@@ -205,7 +214,7 @@ function M.update(dt)
         move.move(snake)
 
         -- check for collision with wall
-        if snake[1].x < 0 or snake[1].x >= GAME_AREA_WIDTH or snake[1].y < 0 or snake[1].y >= GAME_AREA_HEIGHT then
+        if snake[1].x < 0 or snake[1].x >= game_area_width or snake[1].y < 0 or snake[1].y >= game_area_height then
             gameOver = true
             if not cleared then
                 FuncionesAuxiliares.load()
@@ -264,8 +273,8 @@ function M.draw()
     -- draw game area
     if gameState == "playing" then
         Love.graphics.setColor(1, 1, 1)
-        for i = 0, GAME_AREA_WIDTH - 1 do
-            for j = 0, GAME_AREA_HEIGHT - 1 do
+        for i = 0, game_area_width - 1 do
+            for j = 0, game_area_height - 1 do
                 if (i + j) % 2 == 0 then
                     Love.graphics.setColor(1, 1, 1)  -- White color
                 else
@@ -278,7 +287,7 @@ function M.draw()
 
         -- draw game area borders
         Love.graphics.setColor(0, 0, 0)
-        Love.graphics.rectangle('line', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
+        Love.graphics.rectangle('line', 0, 0, game_area_width * TILE_SIZE, game_area_height * TILE_SIZE)
 
         -- draw obstacles
         for i = 1, #obstacles do

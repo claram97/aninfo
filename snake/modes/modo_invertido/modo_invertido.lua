@@ -3,7 +3,8 @@ local M = {}
 local move = require('snake.modes.move')
 local configuracion = require('snake.modes.configuracion.configuracion')
 local constants = require('snake.modes.constants')
-
+local game_area_width = GAME_AREA_WIDTH
+local game_area_height = GAME_AREA_HEIGHT
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
@@ -57,7 +58,15 @@ function M.load(loadGame)
     love.window.setTitle('Snake Game')
 
     -- set window dimensions
-    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+    if config.fullScreen then
+        Love.window.setMode(BIG_WINDOW_WIDTH, BIG_WINDOW_HEIGHT)
+        game_area_height = BIG_GAME_AREA_HEIGHT
+        game_area_width = BIG_GAME_AREA_WIDTH
+    else
+        Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+        game_area_height = GAME_AREA_HEIGHT
+        game_area_width = GAME_AREA_WIDTH
+    end
 
     -- set background color to a light gray
     love.graphics.setBackgroundColor(0.5, 0.5, 0.5)
@@ -135,7 +144,7 @@ function M.update(dt)
 
 
         -- check for collision with wall
-        if snake[1].x < 0 or snake[1].x >= GAME_AREA_WIDTH or snake[1].y < 0 or snake[1].y >= GAME_AREA_HEIGHT then
+        if snake[1].x < 0 or snake[1].x >= game_area_width or snake[1].y < 0 or snake[1].y >= game_area_height then
             gameOver = true
         end
 
@@ -156,8 +165,8 @@ function M.update(dt)
             table.insert(snake, {x = snake[#snake].x, y = snake[#snake].y})
 
             -- move fruit to new location
-            fruit.x = love.math.random(GAME_AREA_WIDTH - 1)
-            fruit.y = love.math.random(GAME_AREA_HEIGHT - 1)
+            fruit.x = love.math.random(game_area_width - 1)
+            fruit.y = love.math.random(game_area_height - 1)
         end
     end
 end
@@ -169,8 +178,8 @@ function M.draw()
        
         love.graphics.setBackgroundColor(1, 1, 1)  -- Set background color to white
 
-        for i = 0, GAME_AREA_WIDTH - 1 do
-            for j = 0, GAME_AREA_HEIGHT - 1 do
+        for i = 0, game_area_width - 1 do
+            for j = 0, game_area_height - 1 do
                 -- Alternate between white and green squares
                 if (i + j) % 2 == 0 then
                     Love.graphics.setColor(0, 108/255, 44/255)
@@ -184,7 +193,7 @@ function M.draw()
 
         -- draw game area borders
         love.graphics.setColor(0, 0, 0)
-        love.graphics.rectangle('line', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
+        love.graphics.rectangle('line', 0, 0, game_area_width * TILE_SIZE, game_area_height * TILE_SIZE)
 
         -- draw snake
         for i = 1, #snake do

@@ -1,5 +1,5 @@
 local inputText = ""
-local maxCharacters = 23
+local maxCharacters = 22
 
 local function dibujarFondo()
     love.graphics.setBackgroundColor(1, 0.6, 0) 
@@ -20,8 +20,7 @@ local function dibujarCirculo(score)
     love.graphics.setColor(1, 1, 0) 
     local circleRadius = 30
     local circleX = love.graphics.getWidth() / 2
-    local circleY = 300  
-    
+    local circleY = 300 
     love.graphics.circle("fill", circleX, circleY, circleRadius)
 
     love.graphics.setColor(0, 0, 0)
@@ -43,11 +42,13 @@ local function dibujarCirculo(score)
 end
 
 local function dibujarBotones()
+    local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
+    
     local buttonWidth = 200  -- Aumenta el ancho del botón
     local buttonHeight = 80   -- Aumenta la altura del botón
     local cornerRadius = 10
     local restartButtonX = (love.graphics.getWidth() - buttonWidth) / 4
-    local restartButtonY = 575
+    local restartButtonY = screenHeight * 0.71875  -- 575/800
 
     -- Botón "Volver a Jugar"
     love.graphics.setColor(0.1, 0.5, 0.1)
@@ -58,7 +59,7 @@ local function dibujarBotones()
 
     -- Botón "Menú"
     local menuButtonX = 2 * (love.graphics.getWidth() - buttonWidth) / 4 + buttonWidth
-    local menuButtonY = 575
+    local menuButtonY = screenHeight * 0.71875  -- 575/800
 
     love.graphics.setColor(0.1, 0.5, 0.1)
     love.graphics.rectangle("fill", menuButtonX, menuButtonY, buttonWidth, buttonHeight, cornerRadius, cornerRadius)
@@ -68,8 +69,8 @@ local function dibujarBotones()
 
     local sendScoreButtonWidth = 200
     local sendScoreButtonHeight = 80
-    local sendScoreButtonX = 475
-    local sendScoreButtonY = 485
+    local sendScoreButtonX = screenWidth * 0.3958  -- 475/1200
+    local sendScoreButtonY = screenHeight * 0.60625  -- 485/800
 
     love.graphics.setColor(0.1, 0.5, 0.1)
     love.graphics.rectangle("fill", sendScoreButtonX, sendScoreButtonY, sendScoreButtonWidth, sendScoreButtonHeight, cornerRadius, cornerRadius)
@@ -79,11 +80,25 @@ local function dibujarBotones()
 end
 
 function dibujarTextEntry()
+    local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
+
+    -- Calcula los valores relativos a la pantalla
+    local x = screenWidth * 0.3333  -- 400/1200
+    local y = screenHeight * 0.5    -- 400/800
+    local width = screenWidth * 0.2917  -- 350/1200
+    local height = screenHeight * 0.0625  -- 50/800
+
     love.graphics.setColor(1, 1, 1)
-    love.graphics.rectangle("fill", 400, 400, 350, 50)
+    love.graphics.rectangle("fill", x, y, width, height)
+
     love.graphics.setColor(0.1, 0.5, 0.1)
-    love.graphics.rectangle("line", 400, 400, 350, 50)
+    love.graphics.rectangle("line", x, y, width, height)
+
     love.graphics.setColor(0, 0, 0)
+    if screenWidth == BIG_WINDOW_WIDTH then
+        x = x + 65
+    end
+    love.graphics.printf(inputText, x, y + 5, 350, "center")
 end
 
 function love.textinput(text)
@@ -105,7 +120,6 @@ function FuncionesExtras.mostrarPantallaFinal(score)
     dibujarCirculo(score)
     dibujarBotones()
     dibujarTextEntry()
-    love.graphics.printf(inputText, 400, 410, 350, "center")
 end
 
 function FuncionesExtras.getTextLenght()
