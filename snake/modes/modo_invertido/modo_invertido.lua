@@ -32,14 +32,14 @@ FRUIT_START_Y = 1
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
 Love.keyboard = require('love.keyboard')
-local FuncionesAuxiliares = require("snake.pantalla_final")
-
+local FuncionesAuxiliares = require("snake.modes.modo_invertido.pantalla_final")
+local scores = require('snake.modes.scores.scores')
 -- initialize game variables
-snake = {}
-fruit = {}
-gameOver = false
-score = 0
-gameState = "playing"
+local snake = {}
+local fruit = {}
+local gameOver = false
+local score = 0
+local gameState = "playing"
 
 
 function reiniciarJuego()
@@ -105,14 +105,30 @@ function M.load()
     timer = love.timer.getTime()
 end
 
+local pressed = false
+local cleared = false
+
 function M.update(dt)
-    if Love.keyboard.isDown('m') and gameOver then
+    if Love.keyboard.isDown('f10')  and  gameOver then
+        reiniciarJuego()
+        gameState = "playing"
+        pressed = false
+        FuncionesAuxiliares.load()
+    end
+
+    if Love.keyboard.isDown('f11') and gameOver then
+        pressed = false
+        FuncionesAuxiliares.load()
         love.event.quit("restart")
     end
 
-    if Love.keyboard.isDown('z')  and gameOver then
-        gameState = "playing"
-        reiniciarJuego()
+    if Love.keyboard.isDown('f12') and gameOver and not pressed then
+        if FuncionesAuxiliares.getTextLenght() > 0 then
+            local text = FuncionesAuxiliares.getText()
+            scores.writeCsv(text, score, "invertido")
+            pressed = not pressed
+            FuncionesAuxiliares.load()
+        end
     end
 
     move.get_direction(true, direction)
@@ -126,12 +142,20 @@ function M.update(dt)
         -- check for collision with wall
         if snake[1].x < 0 or snake[1].x >= GAME_AREA_WIDTH or snake[1].y < 0 or snake[1].y >= GAME_AREA_HEIGHT then
             gameOver = true
+            if not cleared then
+                FuncionesAuxiliares.load()
+                cleared = not cleared
+            end
         end
 
         -- check for collision with self
         for i = 2, #snake do
             if snake[1].x == snake[i].x and snake[1].y == snake[i].y then
                 gameOver = true
+                if not cleared then
+                    FuncionesAuxiliares.load()
+                    cleared = not cleared
+                end
             end
         end
 
