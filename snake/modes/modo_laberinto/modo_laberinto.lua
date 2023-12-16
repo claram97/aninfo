@@ -1,17 +1,42 @@
 Love = require('love')
 local M = {}
-local gameState = "playing"
 local level = 1
 local fruitsToChangeWalls = {3, 6}  -- Number of fruits to collect before walls change
 local wallsChanged = false
 local gameOverHandled = false
-
+local obstacles = {}
 local move = require('snake.modes.move')
 local configuracion = require('snake.modes.configuracion.configuracion')
+savegame = require('snake.modes.savegame')
 local constants = require('snake.modes.constants')
 
 FIRST_LEVEL_END_SCORE = 50
-SECOND_LEVEL_END_SCORE = 130
+SECOND_LEVEL_END_SCORE = 100
+
+-- set window dimensions
+WINDOW_WIDTH = 1200
+WINDOW_HEIGHT = 800
+
+-- set tile dimensions
+TILE_SIZE = 50
+
+-- set game area dimensions
+GAME_AREA_WIDTH = 24
+GAME_AREA_HEIGHT = 16
+
+-- set initial snake position
+SNAKE_START_X = 12
+SNAKE_START_Y = 8
+
+-- set initial snake length
+SNAKE_START_LENGTH = 3
+
+-- set initial snake direction
+SNAKE_START_DIRECTION = 'right'
+
+-- set initial fruit position
+FRUIT_START_X = 1
+FRUIT_START_Y = 1
 
 local staticWall1X, staticWall1Y
 local staticWall2X, staticWall2Y
@@ -33,6 +58,8 @@ fruit = {}
 gameOver = false
 score = 0
 
+--pre:
+-- pos: Inicializa la ventana del juego con los parámetros especificados
 function initializeWindow()
     -- set window title
     Love.window.setTitle('Snake Game')
@@ -47,6 +74,8 @@ function initializeWindow()
     font = Love.graphics.newFont(24)
 end
 
+-- pre: 
+-- pos: Inicializa las paredes estáticas y las líneas verticales en posiciones aleatorias
 function initializeWalls()
     staticWall1X, staticWall1Y = get_random_position()
     staticWall2X, staticWall2Y = get_random_position()
@@ -54,11 +83,13 @@ function initializeWalls()
     staticWall4X, staticWall4Y = get_random_position()
     staticVerticalLine1X, staticVerticalLine1Y = get_random_position()
     staticVerticalLine2X, staticVerticalLine2Y = get_random_position()
-    generateStaticWalls()
-    generateStaticVerticalLines()
+    generateObstacles()
 end
 
-function M.load()
+--pre: Se espera que las imágenes y recursos necesarios estén disponibles
+-- Pos: La función inicializa el juego, cargando las imágenes necesarias, estableciendo el título y las dimensiones de la ventana, 
+--inicializando las serpientes y la fruta, y configurando la dirección inicial de las serpientes.
+function M.load(loadGame)
     local config = configuracion.load()
     if config.sound == true then
         love.audio.play(musica_fondo)
@@ -66,6 +97,8 @@ function M.load()
     if config.sound == false then
         love.audio.stop(musica_fondo)
     end
+
+    FuncionesAuxiliares = require('snake.pantalla_final')
 
     snakeHeadImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_down.png')
@@ -79,56 +112,86 @@ function M.load()
     backgroundImage = love.graphics.newImage('modes/modo_laberinto/assets/background.png')
 
     initializeWindow()
-
-    FuncionesAuxiliares = require("snake.pantalla_final")
-    scores = require('snake.modes.scores.scores')
-
-    for i = 1, SNAKE_START_LENGTH do
-        table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
+    local savedSnake = savegame.loadSnakeState('modo_laberinto')
+    if savedSnake and loadGame then
+        snake = savedSnake.snake
+        score = savedSnake.score
+        speed = 0.1 - (score * SPEED_INCREMENT)
+        gameState = "playing"
+        if snake[1].x == snake[2].x then
+            if snake[1].y < snake[2].y then
+                direction = 'up'
+            else
+                direction = 'down'
+            end
+        else
+            if snake[1].x < snake[2].x then
+                direction = 'left'
+            else
+                direction = 'right'
+            end
+        end
+        obstacles = savedSnake.obstacles
+        timer = Love.timer.getTime()
+        fruit.x = FRUIT_START_X
+        fruit.y = FRUIT_START_Y
+    else
+        for i = 1, SNAKE_START_LENGTH do
+            table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
+        end
+        direction = SNAKE_START_DIRECTION
+    
+        initializeWalls()
+    
+        fruit.x = FRUIT_START_X
+        fruit.y = FRUIT_START_Y
+    
+        timer = love.timer.getTime()
     end
-    direction = SNAKE_START_DIRECTION
 
-    initializeWalls()
-
-    fruit.x = FRUIT_START_X
-    fruit.y = FRUIT_START_Y
-
-    timer = love.timer.getTime()
 end
 
-function generateStaticVerticalLines()
-    staticVerticalLines = {}
+--pre:
+--pos: genera nuevas paredes verticales y horizontales
+function generateObstacles()
+    obstacles = {}
+    for _ = 1, 2 do
+        local x, y = get_random_position_away_from_snake()
+        table.insert(obstacles, {x = x, y = y})
+        table.insert(obstacles, {x = x + 1, y = y})
+        table.insert(obstacles, {x = x + 2, y = y})
+        table.insert(obstacles, {x = x + 3, y = y})
+    end
 
     for _ = 1, 2 do
-        local x, y = get_random_position()
-        table.insert(staticVerticalLines, {x = x, y = y})
+        local x, y = get_random_position_away_from_snake()
+        table.insert(obstacles, {x = x, y = y})
+        table.insert(obstacles, {x = x, y = y + 1})
+        table.insert(obstacles, {x = x, y = y + 2})
+        table.insert(obstacles, {x = x, y = y + 3})
     end
 end
 
-function generateStaticWalls()
-    staticWalls = {}
-
-    for _ = 1, 4 do
-        local x, y = get_random_position()
-        table.insert(staticWalls, {x = x, y = y})
-    end
-end
-
+--pre:
+--pos: genera nuevas paredes y sube el nivel cuando el score alcanza ciertos parametros
 function change_level()
-    if score == FIRST_LEVEL_END_SCORE or score == SECOND_LEVEL_END_SCORE then
-        if not wallsChanged then
-            level = level + 1
-            wallsChanged = true
-            generateStaticWalls()
-            generateStaticVerticalLines()
-        end
+    if score >= FIRST_LEVEL_END_SCORE and score < SECOND_LEVEL_END_SCORE and level == 1 then
+        level = 2
+        wallsChanged = true
+        generateObstacles()
+    elseif score >= SECOND_LEVEL_END_SCORE and level == 2 then
+        level = 3
+        wallsChanged = true
+        generateObstacles()
     else
         wallsChanged = false
     end
 end
 
+--pre:
+--pos:devuelve un booleano que significa si la fruta esta en la misma coordenada que una pared
 function wallsOverlapWithFruit()
-    for _, wall in ipairs(staticWalls) do
+    for _, wall in ipairs(obstacles) do
         if wall.x >= fruit.x and wall.x < fruit.x + 4 and wall.y == fruit.y then
             return true
         end
@@ -137,38 +200,19 @@ function wallsOverlapWithFruit()
     return false
 end
 
+--pre:
+--pos: reinicia las variables para "reiniciar" el juego
 local function reloadGame()
     gameOver = false
     score = 0
-    direction = SNAKE_START_DIRECTION
     snake = {}
-    for i = 1, SNAKE_START_LENGTH do
-        table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
-    end
-    level = 1
-    fruit.x = FRUIT_START_X
-    fruit.y = FRUIT_START_Y
- 
-    staticWall1X, staticWall1Y = get_random_position()
-    staticWall2X, staticWall2Y = get_random_position()
-    staticWall3X, staticWall3Y = get_random_position()
-    staticWall4X, staticWall4Y = get_random_position()
-    staticVerticalLine1X, staticVerticalLine1Y = get_random_position()
-    staticVerticalLine2X, staticVerticalLine2Y = get_random_position()
-    generateStaticWalls()
-    generateStaticVerticalLines()
-
-    fruit.x = FRUIT_START_X
-    fruit.y = FRUIT_START_Y
-
-    direction = SNAKE_START_DIRECTION
-    timer = love.timer.getTime()
+    M.load()
 end
 
 function checkEndMenuKeys()
     Love.keypressed = function(key)
         if key == 'f10' and gameOver then
-            reiniciarJuego()
+            reloadGame()
             FuncionesAuxiliares.load()
         elseif key == 'f11' and gameOver then
             FuncionesAuxiliares.load()
@@ -184,9 +228,13 @@ function checkEndMenuKeys()
     end
 end
 
+-- pre:
+-- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
+-- y actualiza la puntuación y la posición de la fruta
 function M.update(dt)
     if gameOver then
         checkEndMenuKeys()
+        return
     end
 
     move.get_direction(false)
@@ -200,8 +248,8 @@ function M.update(dt)
         move.move(snake)
 
         change_level()
-        checkCollisionWithStaticWalls()
-        checkCollisionWithStaticLines()
+        checkCollisionWithObstacles()
+       
 
         -- check for collision with wall
         if snake[1].x < 1 or snake[1].x >= GAME_AREA_WIDTH-1 or snake[1].y < 1 or snake[1].y >= GAME_AREA_HEIGHT-1 then
@@ -249,8 +297,29 @@ function draw_border()
         end
     end
 end
+--pre:
+--pos: genera nuevas coordenadas hasta que no este cerca de la snake
+function get_random_position_away_from_snake()
+    local x, y
+    repeat
+        x, y = get_random_position()
+    until not isPositionNearSnake(x, y)
+    return x, y
+end
 
+--pre:
+--pos: chequea si las coordenadas esta cerca de la snake
+function isPositionNearSnake(x, y)
+    for _, segment in ipairs(snake) do
+        if math.abs(x - segment.x) < 4 and math.abs(y - segment.y) < 4 then
+            return true
+        end
+    end
+    return false
+end
 
+--pre:
+--pos: mueve la fruta hacia una posicion nueva donde las coordenadas no coincidan con las paredes
 function moveFruitToSafePosition()
     local newFruitX, newFruitY
 
@@ -262,22 +331,18 @@ function moveFruitToSafePosition()
     fruit.y = newFruitY
 end
 
-
+--pre:
+--pos: Retorna un booleano que: si los x e y coinciden con las coordenadas de una pared entonces es verdadero, sino falso
 function isPositionOnWall(x, y)
-    for _, wall in ipairs(staticWalls) do
-        if x >= wall.x and x < wall.x + 4 and y == wall.y then
-            return true
-        end
-    end
-
-    for _, line in ipairs(staticVerticalLines) do
-        if y >= line.y and y < line.y + 4 and x == line.x then
+    for _, wall in ipairs(obstacles) do
+        if x == wall.x and y == wall.y then
             return true
         end
     end
 
     return false
 end
+
 
 function draw_rectangle(start, finish)
     for i = (GAME_AREA_WIDTH / 2) - start, (GAME_AREA_WIDTH / 2) + finish do
@@ -356,49 +421,35 @@ end
 
 function draw_random_lines()
     draw_border()
-
-    
 end
 
 function drawStaticWalls()
     Love.graphics.setColor(0, 108/255, 44/255)
-    for _, wall in ipairs(staticWalls) do
-        Love.graphics.rectangle('fill', wall.x * TILE_SIZE, wall.y * TILE_SIZE, TILE_SIZE * 4, TILE_SIZE)
+    for _, wall in ipairs(obstacles) do
+        Love.graphics.rectangle('fill', wall.x * TILE_SIZE, wall.y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
     end
 end
 
--- Function to draw static vertical lines
-function drawStaticVerticalLines()
-    Love.graphics.setColor(0, 108/255, 44/255)
-    for _, line in ipairs(staticVerticalLines) do
-        Love.graphics.rectangle('fill', line.x * TILE_SIZE, line.y * TILE_SIZE, TILE_SIZE, TILE_SIZE * 4)
-    end
-end
 
--- Check collision with static walls and lines
-function checkCollisionWithStaticWalls()
-    for _, wall in ipairs(staticWalls) do
-        if snake[1].x >= wall.x and snake[1].x < wall.x + 4 and snake[1].y == wall.y then
-            -- Collision with a static wall, trigger game over
+--pre:
+--pos: chequea la colision de la serpiente con un obstaculo, si chocan gameOVer es verdadero, sino falso
+function checkCollisionWithObstacles()
+    for _, wall in ipairs(obstacles) do
+        if snake[1].x == wall.x and snake[1].y == wall.y then
+            -- Colisión con una pared estática, activa el fin del juego
             gameOver = true
         end
     end
 end
 
-function checkCollisionWithStaticLines()
-    for _, line in ipairs(staticVerticalLines) do
-        if snake[1].y >= line.y and snake[1].y < line.y + 4 and snake[1].x == line.x then
-            -- Collision with a static vertical line, trigger game over
-            gameOver = true
-        end
-    end
-end
 
+--pre: El juego está en curso, snake es válido, direction es una cadena, fruitImage y fruit son válidos, TILE_SIZE es positivo, score es no negativo, y gameOver es un booleano.
+--pos: Dibuja en la pantalla el área de juego, las paredes, la serpiente, la fruta y la puntuación según el estado actual del juego
 function M.draw()
     -- draw game area
     wallColor1 = {15/255, 202/255, 81/255}
     wallColor = {175/255, 1, 206/255} 
-    if gameState == "playing" then
+    if not gameOver then
         if level == 1 then
             wallColor1 = {15/255, 202/255, 81/255}
             wallColor = {175/255, 1, 206/255} 
@@ -424,15 +475,11 @@ function M.draw()
             end
         end
 
-
-
         -- draw game area borders
         Love.graphics.setColor(0, 0, 0)
         Love.graphics.rectangle('line', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
 
-
         drawStaticWalls()
-        drawStaticVerticalLines()
         -- draw snake
         for i = 1, #snake do
             if i == 1 then
@@ -477,12 +524,24 @@ function M.draw()
         Love.graphics.setColor(0,0,0)
         Love.graphics.setFont(font)
         Love.graphics.print('Score: ' .. score, 10, 10)
-    end
-    if gameOver then
-        gameState = "not"
+    elseif gameOver then
         FuncionesAuxiliares.mostrarPantallaFinal(score)
-
     end
+end
+
+-- pre:
+-- pos: Devuelve true si hay un juego guardado
+function M.isSavedGame()
+    return savegame.loadSnakeState('modo_laberinto') ~= nil
+end
+
+-- pre: 
+-- pos: Se guardan los datos del juego si la aplicacion se cierra
+function M.quit()
+    if game_over then
+        return true
+    end
+    savegame.saveSnakeState(snake, obstacles, score, 'modo_laberinto')
 end
 
 return M

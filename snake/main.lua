@@ -233,8 +233,12 @@ function love.mousepressed(x, y, button, istouch, presses)
                     gameState = "free_mode"
                 end
             elseif isMouseOver(button4X, button4Y, buttonWidth, buttonHeight) then
-                labyrinth.load()
-                gameState = "labyrinth"
+                if labyrinth.isSavedGame() then
+                    gameState = "loading_labyrinth_mode"
+                else
+                    labyrinth.load(false)
+                    gameState = "labyrinth"
+                end
             elseif isMouseOver(button5X, button5Y, buttonWidth, buttonHeight) then
                 if inverted.isSavedGame() then
                     gameState = "loading_inverted_mode"
@@ -276,8 +280,13 @@ function love.mousepressed(x, y, button, istouch, presses)
                 gameState = "free_mode"
             end
         elseif gameState == "loading_labyrinth_mode" then
-            labyrinth.load()
-            gameState = "labyrinth"
+            if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+                labyrinth.load(true)
+                gameState = "labyrinth"
+            elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+                labyrinth.load(false)
+                gameState = "labyrinth"
+            end
         elseif gameState == "loading_inverted_mode" then
             if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
                 inverted.load(true)
@@ -319,6 +328,8 @@ function love.quit()
         free_mode.quit()
     elseif gameState == "inverted" then
         inverted.quit()
+    elseif gameState == "labyrinth" then
+        labyrinth.quit()
     elseif gameState == "paused" then
         if last_mode == "one_player" then
             one_player.quit()
@@ -328,6 +339,8 @@ function love.quit()
             free_mode.quit()
         elseif last_mode == "inverted" then
             inverted.quit()
+        elseif last_mode == "labyrinth" then
+            labyrinth.quit()
         end
     end
 end
