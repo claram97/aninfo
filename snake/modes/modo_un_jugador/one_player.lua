@@ -1,5 +1,5 @@
 Love = require('love')
-local gameState = "playing"
+gameState = "playing"
 
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
@@ -9,18 +9,18 @@ local configuracion = require('snake.modes.configuracion.configuracion')
 local scores = require('snake.modes.scores.scores')
 
 -- initialize game variables
-local snake = {}
-local fruit = {}
-local gameOver = false
-local score = 0
-local speed = 0.1
+snake = {}
+fruit = {}
+gameOver = false
+score = 0
+speed = 0.1
 
 -- initialize obstacles
-local obstacles = {}
-local obstacleCount = 0
+obstacles = {}
+obstacleCount = 0
 
-local FuncionesAuxiliares = require("snake.pantalla_final")
-local savegame = require('snake.modes.savegame')
+FuncionesAuxiliares = require("snake.pantalla_final")
+savegame = require('snake.modes.savegame')
 local move = require('snake.modes.move')
 
 local M = {}
@@ -183,6 +183,7 @@ function M.update(dt)
     end
 
     if Love.keyboard.isDown('f12') and gameOver and not pressed then
+        print("Se tocó f12. Debería guardarse el score.")
         if FuncionesAuxiliares.getTextLenght() > 0 then
             local text = FuncionesAuxiliares.getText()
             scores.writeCsv(text, score, "clásico")

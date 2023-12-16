@@ -46,17 +46,17 @@ local staticVerticalLine2X, staticVerticalLine2Y
 local staticWalls = {}
 local staticVerticalLines = {}
 
-local FuncionesAuxiliares = require("snake.modes.modo_laberinto.pantalla_final")
+local FuncionesAuxiliares = require("snake.pantalla_final")
 -- load Love2D libraries
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
 Love.keyboard = require('love.keyboard')
 
 -- initialize game variables
-local snake = {}
-local fruit = {}
-local gameOver = false
-local score = 0
+snake = {}
+fruit = {}
+gameOver = false
+score = 0
 
 function initializeWindow()
     -- set window title
@@ -186,31 +186,17 @@ local function reloadGame()
     timer = love.timer.getTime()
 end
 
-local pressed = false
-local cleared = false
-
 function M.update(dt)
-    if Love.keyboard.isDown('f10')  and  gameOver then
-        gameState = "playing"
-        reloadGame()
-        pressed = false
-        FuncionesAuxiliares.load()
-    end
-
-    if Love.keyboard.isDown('f11') and gameOver then
-        pressed = false
-        FuncionesAuxiliares.load()
+    if Love.keyboard.isDown('m') and gameOver then
         love.event.quit("restart")
     end
 
-    if Love.keyboard.isDown('f12') and gameOver and not pressed then
-        if FuncionesAuxiliares.getTextLenght() > 0 then
-            local text = FuncionesAuxiliares.getText()
-            scores.writeCsv(text, score, "laberinto")
-            pressed = not pressed
-            FuncionesAuxiliares.load()
-        end
+    if Love.keyboard.isDown('z')  and  gameOver then
+        gameState = "playing"
+        reloadGame()
     end
+
+--    if Love.keyboard.isDown('')
 
     move.get_direction(false)
 
@@ -229,20 +215,12 @@ function M.update(dt)
         -- check for collision with wall
         if snake[1].x < 1 or snake[1].x >= GAME_AREA_WIDTH-1 or snake[1].y < 1 or snake[1].y >= GAME_AREA_HEIGHT-1 then
             gameOver = true
-            if not cleared then
-                FuncionesAuxiliares.load()
-                cleared = not cleared
-            end
         end
 
         -- check for collision with self
         for i = 2, #snake do
             if snake[1].x == snake[i].x and snake[1].y == snake[i].y then
                 gameOver = true
-                if not cleared then
-                    FuncionesAuxiliares.load()
-                    cleared = not cleared
-                end
             end
         end
 
