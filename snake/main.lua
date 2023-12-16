@@ -1,26 +1,28 @@
 -- main.lua
 
 -- Variables to store window dimensions
-local setWidth = 1200
-local setHeight = 800
+-- local setWidth = 1200
+-- local setHeight = 800
 
 -- Generate 2 columns to locate the buttons.
-local columnWidth = setWidth / 2
+local constants = require('snake.modes.constants')
+
+local columnWidth = WINDOW_WIDTH / 2
 
 -- Variables to store button dimensions
 local buttonWidth, buttonHeight = 200, 50
 
 -- Variables to store button positions
-local button1X, button1Y = columnWidth - 150, setHeight / 3
-local button2X, button2Y = columnWidth - 150, setHeight / 2
-local button3X, button3Y = columnWidth + 150, setHeight / 3
-local button4X, button4Y = columnWidth + 150, setHeight / 2
-local button5X, button5Y = columnWidth, (setHeight / 2) + 100
+local button1X, button1Y = columnWidth - 150, WINDOW_HEIGHT / 3
+local button2X, button2Y = columnWidth - 150, WINDOW_HEIGHT / 2
+local button3X, button3Y = columnWidth + 150, WINDOW_HEIGHT / 3
+local button4X, button4Y = columnWidth + 150, WINDOW_HEIGHT / 2
+local button5X, button5Y = columnWidth, (WINDOW_HEIGHT / 2) + 100
 local button6X, button6Y = columnWidth + 150, button5Y + 100
 local button7X, button7Y = columnWidth - 150, button5Y + 100
 
-local buttonLoadX, buttonLoadY = setWidth/2, setHeight/3
-local buttonStartX, buttonStartY = setWidth/2, setHeight/2
+local buttonLoadX, buttonLoadY = WINDOW_WIDTH/2, WINDOW_HEIGHT/3
+local buttonStartX, buttonStartY = WINDOW_WIDTH/2, WINDOW_HEIGHT/2
 
 -- Colors
 local backgroundColor = {0.95, 0.95, 0.9, 0.5}
@@ -59,7 +61,7 @@ local acumulador = 0
 
 function love.load()
     love.window.setTitle("La Viborita")
-    love.window.setMode(setWidth, setHeight, {resizable=false})
+    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT, {resizable=false})
     musica_fondo = love.audio.newSource("musica.mp3", "stream")
     sonido_comer = love.audio.newSource("valentin.mp3", "static")
     musica_fondo:setLooping(true) 
@@ -74,7 +76,7 @@ function love.load()
 
     -- Define the toggle pause key for the P key
     love.keypressed = function(key)
-        if key == "p" then
+        if key == "f8" then
             togglePause()
         end
     end
@@ -138,14 +140,14 @@ function drawLoadingSavedGame()
     -- Set background color
     love.graphics.setColor(1, 1, 1)
 
-    love.graphics.draw(backgroundImage, 0, 0, 0, setWidth / backgroundImage:getWidth(), setHeight / backgroundImage:getHeight())
+    love.graphics.draw(backgroundImage, 0, 0, 0, WINDOW_WIDTH / backgroundImage:getWidth(), WINDOW_HEIGHT / backgroundImage:getHeight())
     love.graphics.setColor(backgroundColor)
     love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 
     -- Draw title
     love.graphics.setColor(0, 0, 0)
     love.graphics.setFont(fontTitle)
-    love.graphics.printf("¿Queres continuar tu ultima partida?", 0, setHeight / 6, love.graphics.getWidth(), "center")
+    love.graphics.printf("¿Queres continuar tu ultima partida?", 0, WINDOW_HEIGHT / 6, love.graphics.getWidth(), "center")
     love.graphics.setFont(fontBody)
 
     -- Draw buttons
@@ -158,14 +160,14 @@ function love.draw()
         -- Set background color
         love.graphics.setColor(1, 1, 1)
 
-        love.graphics.draw(backgroundImage, 0, 0, 0, setWidth / backgroundImage:getWidth(), setHeight / backgroundImage:getHeight())
+        love.graphics.draw(backgroundImage, 0, 0, 0, WINDOW_WIDTH / backgroundImage:getWidth(), WINDOW_HEIGHT / backgroundImage:getHeight())
         love.graphics.setColor(backgroundColor)
         love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 
         -- Draw title
         love.graphics.setColor(0, 0, 0)
         love.graphics.setFont(fontTitle)
-        love.graphics.printf("La Viborita", 0, setHeight / 6, love.graphics.getWidth(), "center")
+        love.graphics.printf("La Viborita", 0, WINDOW_HEIGHT / 6, love.graphics.getWidth(), "center")
         love.graphics.setFont(fontBody)
 
         -- Draw buttons

@@ -7,34 +7,10 @@ local gameOverHandled = false
 
 local move = require('snake.modes.move')
 local configuracion = require('snake.modes.configuracion.configuracion')
+local constants = require('snake.modes.constants')
 
 FIRST_LEVEL_END_SCORE = 50
 SECOND_LEVEL_END_SCORE = 130
-
--- set window dimensions
-WINDOW_WIDTH = 1200
-WINDOW_HEIGHT = 800
-
--- set tile dimensions
-TILE_SIZE = 50
-
--- set game area dimensions
-GAME_AREA_WIDTH = 24
-GAME_AREA_HEIGHT = 16
-
--- set initial snake position
-SNAKE_START_X = 12
-SNAKE_START_Y = 8
-
--- set initial snake length
-SNAKE_START_LENGTH = 3
-
--- set initial snake direction
-SNAKE_START_DIRECTION = 'right'
-
--- set initial fruit position
-FRUIT_START_X = 1
-FRUIT_START_Y = 1
 
 local staticWall1X, staticWall1Y
 local staticWall2X, staticWall2Y
