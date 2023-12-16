@@ -295,7 +295,12 @@ function love.mousepressed(x, y, button, istouch, presses)
                 inverted.load(false)
                 gameState = "inverted"
             end
+        elseif gameState == "scores" then
+            if scores.mousepressed(x, y, button, istouch, presses) then
+                gameState = "menu"
+            end
         end
+
     end
 end
 
