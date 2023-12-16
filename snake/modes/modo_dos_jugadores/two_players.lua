@@ -152,11 +152,11 @@ function reiniciarJuego()
 end
 
 function M.update(dt)
-    if Love.keyboard.isDown('m') and gameOver then
+    if Love.keyboard.isDown('f11') and gameOver then
         love.event.quit("restart")
     end
 
-    if Love.keyboard.isDown('z')  and  gameOver then
+    if Love.keyboard.isDown('f10')  and  gameOver then
         gameState = "playing"
         reiniciarJuego()
     end
