@@ -116,9 +116,6 @@ function M.load(loadGame)
 end
 
 
--- pre:
--- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
--- y actualiza la puntuación y la posición de la fruta
 function checkEndMenuKeys()
     Love.keypressed = function(key)
         if key == 'f10' and gameOver then
@@ -129,16 +126,17 @@ function checkEndMenuKeys()
             FuncionesAuxiliares.load()
             love.event.quit("restart")
         elseif key == 'f12' and gameOver then
-            print("Se tocó f12. Debería guardarse el score.")
             if FuncionesAuxiliares.getTextLenght() > 0 then
                 local text = FuncionesAuxiliares.getText()
                 scores.writeCsv(text, score, "invertido")
                 FuncionesAuxiliares.load()
             end
         end
+    end
 end
-
-
+-- pre:
+-- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
+-- y actualiza la puntuación y la posición de la fruta
 function M.update(dt)
     if gameOver then
         checkEndMenuKeys()
@@ -179,6 +177,7 @@ function M.update(dt)
         end
     end
 end
+
 
 --pre: El juego está en curso, snake es válido, direction es una cadena, fruitImage y fruit son válidos, TILE_SIZE es positivo, score es no negativo, y gameOver es un booleano.
 --pos: Dibuja en la pantalla el área de juego, la serpiente, la fruta y la puntuación según el estado actual del juego

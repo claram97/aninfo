@@ -192,11 +192,6 @@ end
 -- pre:
 -- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
 -- y actualiza la puntuación y la posición de la fruta
-function M.update(dt)
-
-    if Love.keyboard.isDown('m') and gameOver then
-        love.event.quit("restart")
-    
 local cleared = false
 
 function checkEndMenuKeys()

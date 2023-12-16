@@ -194,13 +194,29 @@ local function update(dt)
         -- Check if snake has collided with walls
         if snake_x < 0 - margin then
             game_over = true
+            if not cleared then
+                FuncionesAuxiliares.load()
+                cleared = not cleared
+            end
         elseif snake_x > WINDOW_WIDTH then
             game_over = true
+            if not cleared then
+                FuncionesAuxiliares.load()
+                cleared = not cleared
+            end
         end
         if snake_y < 0 - margin then
             game_over = true
+            if not cleared then
+                FuncionesAuxiliares.load()
+                cleared = not cleared
+            end
         elseif snake_y > WINDOW_HEIGHT then
             game_over = true
+            if not cleared then
+                FuncionesAuxiliares.load()
+                cleared = not cleared
+            end
         end
 
         -- Check if snake has collided with obstacles
@@ -208,6 +224,10 @@ local function update(dt)
             local distance = math.sqrt((snake_x - obstacle.x)^2 + (snake_y - obstacle.y)^2)
             if distance < snake_radius + OBSTACLE_RADIUS then
                 game_over = true
+                if not cleared then
+                    FuncionesAuxiliares.load()
+                    cleared = not cleared
+                end
             end
         end
 
@@ -217,6 +237,10 @@ local function update(dt)
             local distance = math.sqrt((snake_x - segment.x)^2 + (snake_y - segment.y)^2)
             if distance < snake_radius * 2 then
                 game_over = true
+                if not cleared then
+                    FuncionesAuxiliares.load()
+                    cleared = not cleared
+                end
             end
         end
 
