@@ -224,6 +224,7 @@ function love.draw()
 end
 
 function love.mousepressed(x, y, button, istouch, presses)
+    local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
     if button == 1 then
         if gameState == "menu" then
             if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
@@ -280,34 +281,34 @@ function love.mousepressed(x, y, button, istouch, presses)
                 gameState = "one_player"
             end
         elseif gameState == "loading_two_players" then
-            if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
                 two_players.load(true)
                 gameState = "two_players"
-            elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
                 two_players.load(false)
                 gameState = "two_players"
             end
         elseif gameState == "loading_free_mode" then
-            if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
                 free_mode.load(true)
                 gameState = "free_mode"
-            elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
                 free_mode.load(false)
                 gameState = "free_mode"
             end
         elseif gameState == "loading_labyrinth_mode" then
-            if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
                 labyrinth.load(true)
                 gameState = "labyrinth"
-            elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
                 labyrinth.load(false)
                 gameState = "labyrinth"
             end
         elseif gameState == "loading_inverted_mode" then
-            if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
+            if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
                 inverted.load(true)
                 gameState = "inverted"
-            elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
+            elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
                 inverted.load(false)
                 gameState = "inverted"
             end
