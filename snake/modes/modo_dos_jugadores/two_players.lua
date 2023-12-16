@@ -2,7 +2,6 @@
 love.graphics = require('love.graphics')
 love.timer = require('love.timer')
 love.keyboard = require('love.keyboard')
-local FuncionesExtras = require("snake.pantalla_final")
 local configuracion = require('snake.modes.configuracion.configuracion')
 savegame = require('snake.modes.savegame')
 
@@ -165,6 +164,8 @@ function M.update(dt)
     if gameOver then
         return
     end
+
+    FuncionesAuxiliares = require("snake.modes.modo_dos_jugadores.pantalla_final")
 
     -- check for input
     if love.keyboard.isDown('up') and direction1 ~= 'down' then

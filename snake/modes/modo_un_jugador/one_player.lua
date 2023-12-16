@@ -19,7 +19,6 @@ speed = 0.1
 obstacles = {}
 obstacleCount = 0
 
-FuncionesAuxiliares = require("snake.pantalla_final")
 savegame = require('snake.modes.savegame')
 local move = require('snake.modes.move')
 PantallaPausa = require("snake.pantalla_pausa")
@@ -82,6 +81,9 @@ function M.load(loadGame)
     if config.sound == false then
         love.audio.stop(musica_fondo)
     end
+
+    FuncionesAuxiliares = require("snake.pantalla_final")
+    scores = require('snake.modes.scores.scores')
 
     snakeHeadImageUp = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_up.png')
     snakeHeadImageDown = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_down.png')
@@ -166,15 +168,30 @@ local function reiniciarJuego()
     M.load(false)
 end
 
+local cleared = false
+
+function checkEndMenuKeys()
+    Love.keypressed = function(key)
+        if key == 'f10' and gameOver then
+            reiniciarJuego()
+            FuncionesAuxiliares.load()
+        elseif key == 'f11' and gameOver then
+            FuncionesAuxiliares.load()
+            love.event.quit("restart")
+        elseif key == 'f12' and gameOver then
+            print("Se tocó f12. Debería guardarse el score.")
+            if FuncionesAuxiliares.getTextLenght() > 0 then
+                local text = FuncionesAuxiliares.getText()
+                scores.writeCsv(text, score, "clásico")
+                FuncionesAuxiliares.load()
+            end
+        end
+    end
+end
 
 function M.update(dt)
-
-    if Love.keyboard.isDown('m') and gameOver then
-        love.event.quit("restart")
-    end
-
-    if Love.keyboard.isDown('z') and gameOver then
-        reiniciarJuego()
+    if gameOver then
+        checkEndMenuKeys()
     end
 
     move.get_direction(false)
@@ -187,12 +204,20 @@ function M.update(dt)
         -- check for collision with wall
         if snake[1].x < 0 or snake[1].x >= GAME_AREA_WIDTH or snake[1].y < 0 or snake[1].y >= GAME_AREA_HEIGHT then
             gameOver = true
+            if not cleared then
+                FuncionesAuxiliares.load()
+                cleared = not cleared
+            end
         end
 
         -- check for collision with self
         for i = 2, #snake do
             if snake[1].x == snake[i].x and snake[1].y == snake[i].y then
                 gameOver = true
+                if not cleared then
+                    FuncionesAuxiliares.load()
+                    cleared = not cleared
+                end
             end
         end
 
@@ -200,6 +225,10 @@ function M.update(dt)
         for i = 1, #obstacles do
             if snake[1].x == obstacles[i].x and snake[1].y == obstacles[i].y then
                 gameOver = true
+                if not cleared then
+                    FuncionesAuxiliares.load()
+                    cleared = not cleared
+                end
             end
         end
 

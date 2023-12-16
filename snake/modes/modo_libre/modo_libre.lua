@@ -5,10 +5,10 @@ snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png'
 snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')
 fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
 background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
-FuncionesAuxiliares = require("snake.modes.modo_libre.pantalla_final")
 local configuracion = require('snake.modes.configuracion.configuracion')
 local savegame = require('snake.modes.savegame')
 Love.keyboard = require('love.keyboard')
+local scores = require('snake.modes.scores.scores')
 
 local M = {}
 
@@ -115,10 +115,10 @@ function draw()
             love.graphics.circle('fill', obstacle.x, obstacle.y, OBSTACLE_RADIUS)
         end
 
-        -- Print debug information
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.setFont(font)
-        love.graphics.print("Score: " .. score, 10, 10)
+        -- -- Print debug information
+        -- love.graphics.setColor(1, 1, 1)
+        -- love.graphics.setFont(font)
+        -- love.graphics.print("Score: " .. score, 10, 10)
         -- Snake speed
         love.graphics.print("Snake speed: " .. snake_speed, 10, 60)
         -- Snake angle
@@ -133,17 +133,38 @@ function draw()
 
 end
 
+local pressed = false
+local cleared = false
+
 -- Define function to update position of snake and fruit
 local function update(dt)
-    if Love.keyboard.isDown('m') and game_over then
+    if Love.keyboard.isDown('f10')  and  game_over then
+        reiniciarTodo()
+        pressed = false
+        FuncionesAuxiliares.load()
+    end
+
+    if Love.keyboard.isDown('f11') and game_over then
+        pressed = false
+        FuncionesAuxiliares.load()
         love.event.quit("restart")
     end
 
-    if Love.keyboard.isDown('z')  and  game_over then
-        reiniciarTodo()
+    if Love.keyboard.isDown('f12') and game_over and not pressed then
+        print("Se tocó f12. Debería guardarse el score.")
+        if FuncionesAuxiliares.getTextLenght() > 0 then
+            local text = FuncionesAuxiliares.getText()
+            scores.writeCsv(text, score, "libre")
+            pressed = not pressed
+            FuncionesAuxiliares.load()
+        end
     end
-    
+
     if game_over then
+        if not cleared then
+            FuncionesAuxiliares.load()
+            cleared = not cleared
+        end
         return
     end
 
@@ -245,6 +266,8 @@ function M.load(loadGame)
     if config.sound == false then
         love.audio.stop(musica_fondo)
     end
+
+    FuncionesAuxiliares = require("snake.modes.modo_libre.pantalla_final")
 
     local snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png')
     local snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')

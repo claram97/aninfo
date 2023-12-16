@@ -32,7 +32,6 @@ FRUIT_START_Y = 1
 Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
 Love.keyboard = require('love.keyboard')
-local FuncionesAuxiliares = require("snake.pantalla_final")
 
 -- initialize game variables
 snake = {}
@@ -63,6 +62,9 @@ function M.load(loadGame)
     if config.sound == false then
         love.audio.stop(musica_fondo)
     end
+
+    FuncionesAuxiliares = require("snake.pantalla_final")
+    scores = require('snake.modes.scores.scores')
 
     snakeHeadImageUp = love.graphics.newImage('modes/modo_invertido/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_invertido/assets/snake_head_down.png')
@@ -123,14 +125,29 @@ function M.load(loadGame)
     timer = love.timer.getTime()
 end
 
-function M.update(dt)
-    if Love.keyboard.isDown('m') and gameOver then
-        love.event.quit("restart")
+function checkEndMenuKeys()
+    Love.keypressed = function(key)
+        if key == 'f10' and gameOver then
+            gameState = "playing"
+            reiniciarJuego()
+            FuncionesAuxiliares.load()
+        elseif key == 'f11' and gameOver then
+            FuncionesAuxiliares.load()
+            love.event.quit("restart")
+        elseif key == 'f12' and gameOver then
+            print("Se tocó f12. Debería guardarse el score.")
+            if FuncionesAuxiliares.getTextLenght() > 0 then
+                local text = FuncionesAuxiliares.getText()
+                scores.writeCsv(text, score, "invertido")
+                FuncionesAuxiliares.load()
+            end
+        end
     end
+end
 
-    if Love.keyboard.isDown('z')  and gameOver then
-        gameState = "playing"
-        reiniciarJuego()
+function M.update(dt)
+    if gameOver then
+        checkEndMenuKeys()
     end
 
     move.get_direction(true, direction)
