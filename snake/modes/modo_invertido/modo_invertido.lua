@@ -17,7 +17,8 @@ gameOver = false
 score = 0
 gameState = "playing"
 
-
+--pre:
+--pos: reinicia las variables para que el juego se reinici
 function reiniciarJuego()
     -- Reinicia todas las variables del juego
     gameOver = false
@@ -31,6 +32,9 @@ function reiniciarJuego()
     fruit.y = FRUIT_START_Y
 end
 
+--pre: Se espera que las imágenes y recursos necesarios estén disponibles. El estado del juego puede cargarse si `loadGame` es verdadero.
+-- Pos: La función inicializa el juego, cargando las imágenes necesarias, estableciendo el título y las dimensiones de la ventana, 
+--inicializando las serpientes y la fruta, y configurando la dirección inicial de las serpientes.
 function M.load(loadGame)
     local config = configuracion.load()
     if config.sound == true then
@@ -130,6 +134,9 @@ function checkEndMenuKeys()
     end
 end
 
+-- pre:
+-- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
+-- y actualiza la puntuación y la posición de la fruta
 function M.update(dt)
     if gameOver then
         checkEndMenuKeys()
@@ -171,6 +178,8 @@ function M.update(dt)
     end
 end
 
+--pre: El juego está en curso, snake es válido, direction es una cadena, fruitImage y fruit son válidos, TILE_SIZE es positivo, score es no negativo, y gameOver es un booleano.
+--pos: Dibuja en la pantalla el área de juego, la serpiente, la fruta y la puntuación según el estado actual del juego
 function M.draw()
     -- draw game area
     if gameState == "playing" then
@@ -247,6 +256,8 @@ function M.draw()
     end
 end
 
+-- pre: El juego está en curso (gameState == "playing"), snake es una tabla válida, fruit es una posición válida, y score es un número no negativo
+-- pos: Se guardan los datos del juego si la aplicacion se cierra
 function M.quit()
     if gameOver then
         return

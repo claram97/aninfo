@@ -1,15 +1,22 @@
 local inputText = ""
 local maxCharacters = 22
 
+-- pre: Ninguna
+-- pos: Establece el color de fondo en RGB(1, 0.6, 0)
 local function dibujarFondo()
     love.graphics.setBackgroundColor(1, 0.6, 0) 
 end
 
+-- pre: Ninguna
+-- pos: Establece el color de trazo en RGB(0.8, 0.8, 0.6) y dibuja un rectángulo relleno en la pantalla con esquinas redondeadas
 local function dibujarRectangulo()
     love.graphics.setColor(0.8, 0.8, 0.6) 
     love.graphics.rectangle("fill", 50, 160, love.graphics.getWidth() - 100, 200, 10, 10)
 end
 
+
+-- pre: Ninguna
+-- pos: Establece el color de trazo en RGB(0, 0, 0) y dibuja dos bloques de texto centrados en la pantalla, indicando que el juego ha finalizado junto a su score
 local function dibujarTexto()
     love.graphics.setColor(0, 0, 0)
     love.graphics.printf("El juego ha finalizado!", 0, 75, love.graphics.getWidth(), "center")
@@ -39,6 +46,8 @@ local function dibujarCirculo(score)
     love.graphics.printf("puntos", circleX + circleRadius + 10, circleY - 10, love.graphics.getWidth(), "left")
 end
 
+-- pre: Ninguna
+-- pos: Dibuja dos botones en la pantalla con anchos y alturas específicos, con texto centrado en cada botón, uno para volver a jugar y otro volver al menu
 local function dibujarBotones()
     local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
     
@@ -48,14 +57,12 @@ local function dibujarBotones()
     local restartButtonX = (love.graphics.getWidth() - buttonWidth) / 4
     local restartButtonY = screenHeight * 0.71875  -- 575/800
 
-    -- Botón "Volver a Jugar"
     love.graphics.setColor(0.1, 0.5, 0.1)
     love.graphics.rectangle("fill", restartButtonX, restartButtonY, buttonWidth, buttonHeight, cornerRadius, cornerRadius)
 
     love.graphics.setColor(1, 1, 1)
     love.graphics.printf("Volver a jugar (F10)", restartButtonX, restartButtonY + 15, buttonWidth, "center")
 
-    -- Botón "Menú"
     local menuButtonX = 2 * (love.graphics.getWidth() - buttonWidth) / 4 + buttonWidth
     local menuButtonY = screenHeight * 0.71875  -- 575/800
 
@@ -77,6 +84,8 @@ local function dibujarBotones()
     love.graphics.printf("Send score (F12)", sendScoreButtonX, sendScoreButtonY + 13, buttonWidth, "center")
 end
 
+-- pre: 'score' es un número que representa el puntaje del jugador.
+-- pos: Dibuja la pantalla final del juego, incluyendo el fondo, un rectángulo, texto informativo, un círculo con el puntaje
 function dibujarTextEntry()
     local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
 

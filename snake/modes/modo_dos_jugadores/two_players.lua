@@ -20,6 +20,9 @@ player_1 = "jugador1"
 player_2 = "jugador2"
 ganador = ""
 
+--pre: Se espera que las imágenes y recursos necesarios estén disponibles. El estado del juego puede cargarse si `loadGame` es verdadero.
+-- Pos: La función inicializa el juego, cargando las imágenes necesarias, estableciendo el título y las dimensiones de la ventana, 
+--inicializando las serpientes y la fruta, y configurando la dirección inicial de las serpientes.
 function M.load(loadGame)
     require('snake.modes.constants')
 
@@ -129,6 +132,8 @@ function M.load(loadGame)
 end
 
 
+--pre:
+--pos: reinicia los valores de las variables para que se "reinicie" el juego
 function reiniciarJuego()
     snake1 = {}
     snake2 = {}
@@ -160,6 +165,9 @@ function reiniciarJuego()
     timer = love.timer.getTime()
 end
 
+-- Pre: 
+-- Pos: Las serpientes se mueven, se verifican colisiones, se actualiza el puntaje y la longitud de la serpiente, se reproduce el sonido al comer,
+-- y se manejan las acciones específicas de las teclas 'm' y 'z' si se cumplen las condiciones durante el juego.
 function M.update(dt)
     if Love.keyboard.isDown('f11') and gameOver then
         love.event.quit("restart")
@@ -329,6 +337,8 @@ function M.update(dt)
     end
 end
 
+-- Pre: 
+-- Pos: Se dibuja el área de juego, las serpientes, la fruta, el puntaje y, en caso de juego terminado, se muestra la pantalla final con el resultado.
 function M.draw()
     -- draw game area
 
@@ -439,6 +449,8 @@ function M.draw()
     end
 end
 
+-- Pre: 
+-- Pos: Si el juego está en curso, se guarda el estado de las serpientes y el puntaje
 function M.quit()
     if gameOver then
         return
@@ -449,6 +461,8 @@ function M.quit()
     savegame.saveSnakeState(snake2, obstacles, score, 'two_players_snake2')
 end
 
+-- Pre: 
+-- Pos: Devuelve true si hay un juego guardado y false en caso contrario
 function M.isSavedGame()
     return savegame.loadSnakeState('two_players_snake1') ~= nil and savegame.loadSnakeState('two_players_snake2') ~= nil
 end
