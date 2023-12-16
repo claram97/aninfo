@@ -3,6 +3,7 @@ local scores = {}
 function scores.readCsv()
     local file = io.open(".scores", "r")
     local datos = {}  -- Tabla para almacenar los datos del CSV
+    local lineCount = 0  -- Contador de líneas leídas
 
     if file then
         for linea in file:lines() do
@@ -19,6 +20,12 @@ function scores.readCsv()
                     modo = campos[3],  -- Agrega el campo de modo
                     fecha = campos[4]  -- Agrega el campo de fecha
                 })
+
+                lineCount = lineCount + 1  -- Incrementa el contador de líneas leídas
+
+                if lineCount >= 10 then
+                    break  -- Sale del bucle después de leer 10 líneas
+                end
             else
                 -- Manejo de error o advertencia si la línea no tiene suficientes campos
                 print("Advertencia: La línea no tiene suficientes campos.")
@@ -30,27 +37,28 @@ function scores.readCsv()
     return datos
 end
 
-
 -- function scores.readCsv()
 --     local file = io.open(".scores", "r")
 --     local datos = {}  -- Tabla para almacenar los datos del CSV
 
 --     if file then
---         local lineCount = 0  -- Contador de líneas
 --         for linea in file:lines() do
---             lineCount = lineCount + 1
---             if lineCount <= 10 then
---                 local campos = {}  -- Tabla para almacenar los campos de cada línea
---                 for valor in string.gmatch(linea, "[^;]+") do
---                     table.insert(campos, valor)  -- Agrega cada campo a la tabla
---                 end
+--             local campos = {}  -- Tabla para almacenar los campos de cada línea
+--             for valor in string.gmatch(linea, "[^;]+") do
+--                 table.insert(campos, valor)  -- Agrega cada campo a la tabla
+--             end
+
+--             -- Verifica que la línea tenga al menos 3 campos antes de intentar acceder a ellos
+--             if #campos >= 3 then
 --                 table.insert(datos, {
 --                     nombre = campos[1],
 --                     puntuacion = tonumber(campos[2]),
---                     fecha = campos[3]  -- Agrega el campo de fecha
+--                     modo = campos[3],  -- Agrega el campo de modo
+--                     fecha = campos[4]  -- Agrega el campo de fecha
 --                 })
 --             else
---                 break  -- Sal del bucle después de leer las primeras 10 líneas
+--                 -- Manejo de error o advertencia si la línea no tiene suficientes campos
+--                 print("Advertencia: La línea no tiene suficientes campos.")
 --             end
 --         end
 
