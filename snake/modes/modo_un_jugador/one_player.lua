@@ -192,7 +192,6 @@ function checkEndMenuKeys()
             FuncionesAuxiliares.load()
             love.event.quit("restart")
         elseif key == 'f12' and gameOver then
-            print("Se tocó f12. Debería guardarse el score.")
             if FuncionesAuxiliares.getTextLenght() > 0 then
                 local text = FuncionesAuxiliares.getText()
                 scores.writeCsv(text, score, "clásico")

@@ -1,5 +1,5 @@
 local inputText = ""
-local maxCharacters = 23
+local maxCharacters = 22
 
 local function dibujarFondo()
     love.graphics.setBackgroundColor(1, 0.6, 0) 
