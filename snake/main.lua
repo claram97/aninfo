@@ -122,6 +122,10 @@ end
 
 local last_mode = "menu"
 function togglePause() 
+    if gameState == "menu" then
+        return
+    end
+
     if gameState == "paused" then
         gameState = last_mode
     else
@@ -313,5 +317,15 @@ function love.quit()
         free_mode.quit()
     elseif gameState == "inverted" then
         inverted.quit()
+    elseif gameState == "paused" then
+        if last_mode == "one_player" then
+            one_player.quit()
+        elseif last_mode == "two_players" then
+            two_players.quit()
+        elseif last_mode == "free_mode" then
+            free_mode.quit()
+        elseif last_mode == "inverted" then
+            inverted.quit()
+        end
     end
 end

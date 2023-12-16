@@ -53,8 +53,8 @@ local OBSTACLE_APPARITION_FREQUENCY = 5
 -- Define table to store snake segments
 local segment_distance = 45
 local snake_segments = {
-    {x=snake_x, y=snake_y},
-    {x=snake_x - segment_distance, y=snake_y}
+    {x = snake_x, y = snake_y},
+    {x = snake_x - segment_distance, y = snake_y}
 }
 
 -- Define table to store obstacles
@@ -285,6 +285,7 @@ function M.load(loadGame)
     local savedSnake = savegame.loadSnakeState('free_mode')
     if loadGame and savedSnake then
         snake_segments = savedSnake.snake
+        print("head: " .. snake_segments[1].x .. ", " .. snake_segments[1].y)
         obstacles = savedSnake.obstacles
         score = savedSnake.score
         
@@ -293,6 +294,8 @@ function M.load(loadGame)
         local dx = head.x - secondSegment.x
         local dy = head.y - secondSegment.y
         snake_angle = math.atan2(dy, dx)
+        snake_x = head.x
+        snake_y = head.y
     else
         snake_segments = {
             {x = snake_x, y = snake_y},
