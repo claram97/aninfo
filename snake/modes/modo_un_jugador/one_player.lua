@@ -14,12 +14,14 @@ gameOver = false
 score = 0
 speed = 0.1
 
+
 -- initialize obstacles
 obstacles = {}
 obstacleCount = 0
 
 savegame = require('snake.modes.savegame')
 local move = require('snake.modes.move')
+PantallaPausa = require("snake.pantalla_pausa")
 
 local M = {}
 
@@ -112,7 +114,8 @@ function M.load(loadGame)
         snake = savedSnake.snake
         -- get the score by counting the number of segments in the snake
         score = savedSnake.score
-        speed = 0.1 - (score * SPEED_INCREMENT)
+        snake_len = #snake
+        speed = 0.1 - (snake_len * SPEED_INCREMENT)
         gameState = "playing"
         if snake[1].x == snake[2].x then
             if snake[1].y < snake[2].y then
@@ -249,9 +252,11 @@ function M.update(dt)
 
             -- increase speed
             speed = math.max(speed - SPEED_INCREMENT, 0.05)
-        end
+        end        
     end
 end
+
+
 
 function M.draw()
     -- draw game area
@@ -313,6 +318,11 @@ function M.draw()
             end
         end
 
+        -- draw button of pause
+        Love.graphics.setColor(0, 0, 0)
+        Love.graphics.setFont(font)
+        Love.graphics.print(gamePaused and "Reanudar (P)" or "Pausar (P)", 10, 130)
+
         -- draw fruit
         Love.graphics.setColor(1, 1, 1)
         Love.graphics.draw(fruitImage, fruit.x * TILE_SIZE, fruit.y * TILE_SIZE, 0, TILE_SIZE/fruitImage:getWidth(), TILE_SIZE/fruitImage:getHeight())
@@ -328,11 +338,21 @@ function M.draw()
         Love.graphics.print('Direction: ' .. direction, 10, 100)
 
         -- draw game over message
+    elseif gameState == "pausa" then
+        dibujarPantallaPausa()
     end
     if gameOver then
         gameState = "not"
         FuncionesAuxiliares.mostrarPantallaFinal(score)
     end
+end
+
+function dibujarPantallaPausa()
+    Love.graphics.setBackgroundColor(1, 0.6, 0)
+    Love.graphics.setColor(0.8, 0.8, 0.6) 
+    Love.graphics.rectangle("fill", 50, 200, Love.graphics.getWidth() - 100, 200, 10, 10)
+    Love.graphics.setColor(0, 0, 0)
+    Love.graphics.printf("El juego está en pausa. Presione P para volver al juego", 100, 220, Love.graphics.getWidth() - 200, "center")
 end
 
 function M.quit()

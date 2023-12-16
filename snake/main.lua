@@ -52,6 +52,7 @@ local labyrinth = require('snake.modes.modo_laberinto.modo_laberinto')
 local inverted = require('snake.modes.modo_invertido.modo_invertido')
 local configuracion = require('snake.modes.configuracion.configuracion')
 local scores = require('snake.modes.scores.scores')
+local pantallaPausa = require('snake.pantalla_pausa')
 
 local ticks = 1/60
 local acumulador = 0
@@ -69,6 +70,13 @@ function love.load()
     end
     if config.sound == false then
         love.audio.stop(musica_fondo)
+    end
+
+    -- Define the toggle pause key for the P key
+    love.keypressed = function(key)
+        if key == "p" then
+            togglePause()
+        end
     end
 end
 
@@ -107,6 +115,22 @@ function update()
         configuracion.update()
     elseif gameState == "scores" then
         scores.update()
+    elseif gameState == "paused" then
+        --
+    end
+end
+
+local last_mode = "menu"
+function togglePause() 
+    if gameState == "menu" then
+        return
+    end
+
+    if gameState == "paused" then
+        gameState = last_mode
+    else
+        last_mode = gameState
+        gameState = "paused"
     end
 end
 
@@ -177,6 +201,8 @@ function love.draw()
         configuracion.draw()
     elseif gameState == "scores" then
         scores.draw()
+    elseif gameState == "paused" then
+        pantallaPausa.draw()
     end
 end
 
@@ -205,13 +231,6 @@ function love.mousepressed(x, y, button, istouch, presses)
                     gameState = "free_mode"
                 end
             elseif isMouseOver(button4X, button4Y, buttonWidth, buttonHeight) then
-                -- if labyrinth.isSavedGame() then
-                --     gameState = "loading_labyrinth_mode"
-                -- else
-                --     labyrinth.load(false)
-                --     gameState = "labyrinth"
-                -- end
-                --Acá no sé dónde poner labyrinth y dónde modo_laberinto
                 labyrinth.load()
                 gameState = "labyrinth"
             elseif isMouseOver(button5X, button5Y, buttonWidth, buttonHeight) then
@@ -255,13 +274,8 @@ function love.mousepressed(x, y, button, istouch, presses)
                 gameState = "free_mode"
             end
         elseif gameState == "loading_labyrinth_mode" then
-            -- if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
-            --     labyrinth.load(true)
-            --     gameState = "labyrinth"
-            -- elseif isMouseOver(button2X, button2Y, buttonWidth, buttonHeight) then
-            --     labyrinth.load(false)
-            --     gameState = "labyrinth"
-            -- end
+            labyrinth.load()
+            gameState = "labyrinth"
         elseif gameState == "loading_inverted_mode" then
             if isMouseOver(button1X, button1Y, buttonWidth, buttonHeight) then
                 inverted.load(true)
@@ -301,9 +315,17 @@ function love.quit()
         two_players.quit()
     elseif gameState == "free_mode" then
         free_mode.quit()
-    -- elseif gameState == "labyrinth" then
-    --     labyrinth.quit()
     elseif gameState == "inverted" then
         inverted.quit()
+    elseif gameState == "paused" then
+        if last_mode == "one_player" then
+            one_player.quit()
+        elseif last_mode == "two_players" then
+            two_players.quit()
+        elseif last_mode == "free_mode" then
+            free_mode.quit()
+        elseif last_mode == "inverted" then
+            inverted.quit()
+        end
     end
 end

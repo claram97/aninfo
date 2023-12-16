@@ -7,6 +7,7 @@ fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
 background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
 local configuracion = require('snake.modes.configuracion.configuracion')
 local savegame = require('snake.modes.savegame')
+Love.keyboard = require('love.keyboard')
 local scores = require('snake.modes.scores.scores')
 
 local M = {}
@@ -52,8 +53,8 @@ local OBSTACLE_APPARITION_FREQUENCY = 5
 -- Define table to store snake segments
 local segment_distance = 45
 local snake_segments = {
-    {x=snake_x, y=snake_y},
-    {x=snake_x - segment_distance, y=snake_y}
+    {x = snake_x, y = snake_y},
+    {x = snake_x - segment_distance, y = snake_y}
 }
 
 -- Define table to store obstacles
@@ -117,11 +118,15 @@ function draw()
         -- -- Print debug information
         -- love.graphics.setColor(1, 1, 1)
         -- love.graphics.setFont(font)
-        -- love.graphics.print("Score: " .. score, 10, 10)
+        love.graphics.print("Score: " .. score, 10, 10)
         -- Snake speed
-        love.graphics.print("Snake speed: " .. snake_speed, 10, 60)
-        -- Snake angle
-        love.graphics.print("Snake angle: " .. snake_angle, 10, 110)
+        -- love.graphics.print("Snake speed: " .. snake_speed, 10, 60)
+        -- -- Snake angle
+        -- love.graphics.print("Snake angle: " .. snake_angle, 10, 110)
+        -- -- Head position
+        -- love.graphics.print("Head position: (" .. snake_segments[1].x .. ", " .. snake_segments[1].y .. ")", 10, 160)
+        -- -- Game state
+        -- love.graphics.print("Game over: " .. tostring(game_over), 10, 210)
 
 
     end
@@ -169,9 +174,9 @@ local function update(dt)
 
     if not game_over then
         -- Update position of snake based on velocity
-        if left_pressed then
+        if Love.keyboard.isDown('left') then
             snake_angle = snake_angle - math.pi / 64
-        elseif right_pressed then
+        elseif Love.keyboard.isDown('right') then
             snake_angle = snake_angle + math.pi / 64
         end
         snake_x = snake_x + snake_speed * math.cos(snake_angle)
@@ -247,22 +252,6 @@ local function update(dt)
     end
 end
 
--- Define function to handle arrow key inputs and update velocity of snake
-local function keypressed(key)
-    if key == "left" then
-        left_pressed = true
-    elseif key == "right" then
-        right_pressed = true
-    end
-end
-
-local function keyreleased(key)
-    if key == "left" then
-        left_pressed = false
-    elseif key == "right" then
-        right_pressed = false
-    end
-end
 
 -- Call update and draw functions in main loop
 function M.draw()
@@ -271,14 +260,6 @@ end
 
 function M.update(dt)
     update(dt)
-end
-
-function love.keypressed(key)
-    keypressed(key)
-end
-
-function love.keyreleased(key)
-    keyreleased(key)
 end
 
 -- Define function to load game assets
@@ -304,6 +285,7 @@ function M.load(loadGame)
     local savedSnake = savegame.loadSnakeState('free_mode')
     if loadGame and savedSnake then
         snake_segments = savedSnake.snake
+        print("head: " .. snake_segments[1].x .. ", " .. snake_segments[1].y)
         obstacles = savedSnake.obstacles
         score = savedSnake.score
         
@@ -312,6 +294,8 @@ function M.load(loadGame)
         local dx = head.x - secondSegment.x
         local dy = head.y - secondSegment.y
         snake_angle = math.atan2(dy, dx)
+        snake_x = head.x
+        snake_y = head.y
     else
         snake_segments = {
             {x = snake_x, y = snake_y},
