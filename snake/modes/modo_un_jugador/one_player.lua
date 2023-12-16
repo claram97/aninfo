@@ -6,7 +6,6 @@ Love.graphics = require('love.graphics')
 Love.timer = require('love.timer')
 Love.keyboard = require('love.keyboard')
 local configuracion = require('snake.modes.configuracion.configuracion')
-local scores = require('snake.modes.scores.scores')
 
 -- initialize game variables
 snake = {}
@@ -82,6 +81,7 @@ function M.load(loadGame)
     end
 
     FuncionesAuxiliares = require("snake.pantalla_final")
+    scores = require('snake.modes.scores.scores')
 
     snakeHeadImageUp = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_up.png')
     snakeHeadImageDown = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_head_down.png')

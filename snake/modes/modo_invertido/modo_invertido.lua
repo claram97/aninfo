@@ -64,6 +64,7 @@ function M.load(loadGame)
     end
 
     FuncionesAuxiliares = require("snake.pantalla_final")
+    scores = require('snake.modes.scores.scores')
 
     snakeHeadImageUp = love.graphics.newImage('modes/modo_invertido/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_invertido/assets/snake_head_down.png')
@@ -137,7 +138,7 @@ function checkEndMenuKeys()
             print("Se tocó f12. Debería guardarse el score.")
             if FuncionesAuxiliares.getTextLenght() > 0 then
                 local text = FuncionesAuxiliares.getText()
-                scores.writeCsv(text, score, "clásico")
+                scores.writeCsv(text, score, "invertido")
                 FuncionesAuxiliares.load()
             end
         end

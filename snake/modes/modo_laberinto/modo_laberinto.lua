@@ -105,6 +105,7 @@ function M.load()
     initializeWindow()
 
     FuncionesAuxiliares = require("snake.pantalla_final")
+    scores = require('snake.modes.scores.scores')
 
     for i = 1, SNAKE_START_LENGTH do
         table.insert(snake, {x = SNAKE_START_X - i, y = SNAKE_START_Y})
@@ -200,7 +201,7 @@ function checkEndMenuKeys()
             print("Se tocó f12. Debería guardarse el score.")
             if FuncionesAuxiliares.getTextLenght() > 0 then
                 local text = FuncionesAuxiliares.getText()
-                scores.writeCsv(text, score, "clásico")
+                scores.writeCsv(text, score, "laberinto")
                 FuncionesAuxiliares.load()
             end
         end
