@@ -9,10 +9,10 @@ local configuracion = require('snake.modes.configuracion.configuracion')
 local savegame = require('snake.modes.savegame')
 Love.keyboard = require('love.keyboard')
 local scores = require('snake.modes.scores.scores')
-local game_area_height = GAME_AREA_HEIGHT
-local game_area_width = GAME_AREA_WIDTH
 local M = {}
 local constants = require('snake.modes.constants')
+local game_area_height = GAME_AREA_HEIGHT
+local game_area_width = GAME_AREA_WIDTH
 
 -- Define font
 local font = love.graphics.newFont(40)
@@ -188,17 +188,13 @@ local function update(dt)
 
         -- Check if snake has collided with walls
         if snake_x < 0 - margin then
-            -- snake_x = screen_width - snake_radius + margin
             game_over = true
         elseif snake_x > WINDOW_WIDTH then
-            -- snake_x = snake_radius - margin
             game_over = true
         end
         if snake_y < 0 - margin then
-            -- snake_y = screen_height - snake_radius + margin
             game_over = true
         elseif snake_y > WINDOW_HEIGHT then
-            -- snake_y = snake_radius - margin
             game_over = true
         end
 

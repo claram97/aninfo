@@ -5,7 +5,8 @@ love.keyboard = require('love.keyboard')
 local configuracion = require('snake.modes.configuracion.configuracion')
 savegame = require('snake.modes.savegame')
 local constants = require('snake.modes.constants')
-
+local game_area_height = GAME_AREA_HEIGHT
+local game_area_width = GAME_AREA_WIDTH
 -- initialize game variables
 snake1 = {}
 snake2 = {}
@@ -52,7 +53,15 @@ function M.load(loadGame)
     love.window.setTitle('Snake Game')
 
     -- set window dimensions
-    love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+    if config.fullScreen then
+        Love.window.setMode(BIG_WINDOW_WIDTH, BIG_WINDOW_HEIGHT)
+        game_area_height = BIG_GAME_AREA_HEIGHT
+        game_area_width = BIG_GAME_AREA_WIDTH
+    else
+        Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+        game_area_height = GAME_AREA_HEIGHT
+        game_area_width = GAME_AREA_WIDTH
+    end
 
     -- set background color to a light gray
     love.graphics.setBackgroundColor(0.5, 0.5, 0.5)
@@ -221,7 +230,7 @@ function M.update(dt)
         end
 
         -- check for collision with wall
-        if snake1[1].x < 0 or snake1[1].x >= GAME_AREA_WIDTH or snake1[1].y < 0 or snake1[1].y >= GAME_AREA_HEIGHT then
+        if snake1[1].x < 0 or snake1[1].x >= game_area_width or snake1[1].y < 0 or snake1[1].y >= game_area_height then
             gameOver = true
             ganador = "jugador 2"
         end
@@ -268,8 +277,8 @@ function M.update(dt)
             table.insert(snake1, {x = snake1[#snake1].x, y = snake1[#snake1].y})
 
             -- move fruit to new location
-            fruit.x = love.math.random(GAME_AREA_WIDTH - 1)
-            fruit.y = love.math.random(GAME_AREA_HEIGHT - 1)
+            fruit.x = love.math.random(game_area_width - 1)
+            fruit.y = love.math.random(game_area_height - 1)
         end
 
         -- move snake 2
@@ -291,7 +300,7 @@ function M.update(dt)
         end
 
         -- check for collision with wall
-        if snake2[1].x < 0 or snake2[1].x >= GAME_AREA_WIDTH or snake2[1].y < 0 or snake2[1].y >= GAME_AREA_HEIGHT then
+        if snake2[1].x < 0 or snake2[1].x >= game_area_width or snake2[1].y < 0 or snake2[1].y >= game_area_height then
             gameOver = true
             ganador = "jugador 1"
         end
@@ -314,8 +323,8 @@ function M.update(dt)
             table.insert(snake2, {x = snake2[#snake2].x, y = snake2[#snake2].y})
 
             -- move fruit to new location
-            fruit.x = love.math.random(GAME_AREA_WIDTH - 1)
-            fruit.y = love.math.random(GAME_AREA_HEIGHT - 1)
+            fruit.x = love.math.random(game_area_width - 1)
+            fruit.y = love.math.random(game_area_height - 1)
         end
     end
 end
@@ -329,11 +338,11 @@ function M.draw()
     end
 
     love.graphics.setColor(0.82, 0.553, 0.275)
-    love.graphics.rectangle('fill', 0, 0, GAME_AREA_WIDTH * TILE_SIZE, GAME_AREA_HEIGHT * TILE_SIZE)
+    love.graphics.rectangle('fill', 0, 0, game_area_width * TILE_SIZE, game_area_height * TILE_SIZE)
 
     Love.graphics.setColor(1, 1, 1)
-    for i = 0, GAME_AREA_WIDTH - 1 do
-        for j = 0, GAME_AREA_HEIGHT - 1 do
+    for i = 0, game_area_width - 1 do
+        for j = 0, game_area_height - 1 do
             if (i + j) % 2 == 0 then
                 Love.graphics.setColor(0, 125/255, 50/255) -- Dark green
             else

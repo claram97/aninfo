@@ -47,7 +47,7 @@ local function dibujarBotones()
     local buttonWidth = 200  -- Aumenta el ancho del botón
     local buttonHeight = 80   -- Aumenta la altura del botón
     local cornerRadius = 10
-    local restartButtonX = (love.graphics.getWidth() - buttonWidth) / 4
+    local restartButtonX = (love.graphics.getWidth() - buttonWidth) / 4 * 1.4
     local restartButtonY = 575
 
     -- Botón "Volver a Jugar"
