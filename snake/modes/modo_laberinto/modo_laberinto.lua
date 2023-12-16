@@ -98,6 +98,8 @@ function M.load(loadGame)
         love.audio.stop(musica_fondo)
     end
 
+    FuncionesAuxiliares = require('snake.pantalla_final')
+
     snakeHeadImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_up.png')
     snakeHeadImageDown = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_down.png')
     snakeHeadImageLeft = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_left.png')
