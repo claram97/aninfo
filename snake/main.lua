@@ -163,9 +163,10 @@ function drawLoadingSavedGame()
     love.graphics.printf("¿Queres continuar tu ultima partida?", 0, height / 6, love.graphics.getWidth(), "center")
     love.graphics.setFont(fontBody)
 
+    local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
     -- Draw buttons
-    drawButton(buttonLoadX, buttonLoadY, "Yes", onePlayerButton1Hovered, buttonColor)
-    drawButton(buttonStartX, buttonStartY, "No", onePlayerButton2Hovered, buttonColor)
+    drawButton(screenWidth * 0.5, screenHeight * 0.35 , "Yes", onePlayerButton1Hovered, buttonColor)
+    drawButton(screenWidth * 0.5, screenHeight * 0.45, "No", onePlayerButton2Hovered, buttonColor)
 end
 
 function love.draw()
