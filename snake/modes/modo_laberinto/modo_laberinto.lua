@@ -98,7 +98,7 @@ function M.load(loadGame)
     if config.sound == false then
         love.audio.stop(musica_fondo)
     end
-
+    scores = require('snake.modes.scores.scores')
     FuncionesAuxiliares = require('snake.pantalla_final')
 
     snakeHeadImageUp = love.graphics.newImage('modes/modo_laberinto/assets/snake_head_up.png')
