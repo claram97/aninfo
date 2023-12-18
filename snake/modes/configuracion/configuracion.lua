@@ -101,7 +101,8 @@ function saveConfig()
     love.event.quit('restart')
 end
 
-
+-- pre: variable global 'config' debe estar definida.
+-- post: se encarga de modificar las configuraciones según lo que se haya elegido por el usuario. En el caso de que los valores sean inválidos, se enviará un mensaje por pantalla y se le cargaran los valores por defecto.
 function loadConfig()
     local file = io.open("config.txt", "r")
     config = defaultConfig
@@ -128,6 +129,8 @@ function loadConfig()
     return config
 end
 
+-- pre: la variable global 'config' debe estar previamente definida.
+-- post: inicializa la configuarción del juego.
 function configuracion.load()
     config = loadConfig()
     return config
