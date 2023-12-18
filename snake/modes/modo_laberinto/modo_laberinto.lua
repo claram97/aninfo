@@ -205,6 +205,7 @@ end
 local function reloadGame()
     gameOver = false
     score = 0
+    speed = 0.1
     snake = {}
     M.load()
 end
@@ -242,8 +243,6 @@ function M.update(dt)
     move.get_direction(false)
 
     -- move snake
-    local speed = 0.1 - 0.01 * (score - 1)
-    speed = math.max(speed, 0.05)  -- Ensure the speed doesn't go below a certain threshold (e.g., 0.05)
     
     if Love.timer.getTime() - timer > speed then
         timer = Love.timer.getTime()
@@ -270,7 +269,7 @@ function M.update(dt)
             love.audio.play(sonido_comer)
 
             table.insert(snake, {x = snake[#snake].x, y = snake[#snake].y})
-
+            speed = math.max(speed - 0.003, 0.05)
             moveFruitToSafePosition()
         end
  
