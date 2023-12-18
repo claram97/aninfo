@@ -43,7 +43,7 @@ function configuracion.dibujarTamanioPantalla()
     local opcionGrande = (config.fullScreen == true) and " [X]" or " [ ]"
 
     love.graphics.printf("Mediana" .. opcionMediana, 0, 380, love.graphics.getWidth(), "center")
-    love.graphics.printf("Grande" .. opcionGrande, 0, 410, love.graphics.getWidth(), "center")
+    love.graphics.printf("Pequeña" .. opcionGrande, 0, 410, love.graphics.getWidth(), "center")
 end
 
 -- Pre: Ninguna
