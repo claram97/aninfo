@@ -162,20 +162,34 @@ function scores.draw()
     local datos = scores.readCsv()
     
     -- Configurar la fuente
-    local font = love.graphics.newFont(25)  -- Tamaño de letra 30 (puedes ajustar según sea necesario)
-    love.graphics.setFont(font)
+ 
+    local config = configuracion.load()
+    if config.fullScreen then
+        local font = love.graphics.newFont(23)  -- Tamaño de letra 30 (puedes ajustar según sea necesario)
+        love.graphics.setFont(font)
+        local y = 120
+        love.graphics.setColor(0, 0, 0)  -- Establecer color de texto a negro
+        local x = width * 0.10
+        for _, persona in ipairs(datos) do
+            love.graphics.print(persona.nombre .. ", " .. persona.puntuacion .. " puntos, modo " .. persona.modo .. ", " .. persona.fecha, x, y)
+            y = y + 40  -- Incrementar la posición Y para la siguiente línea
+        end    
+    else
+        local font = love.graphics.newFont(25)  -- Tamaño de letra 30 (puedes ajustar según sea necesario)
+        love.graphics.setFont(font)
+        local y = 150
+        love.graphics.setColor(0, 0, 0)  -- Establecer color de texto a negro
+        local x = width * 0.10
+        for _, persona in ipairs(datos) do
+            love.graphics.print(persona.nombre .. ", " .. persona.puntuacion .. " puntos, modo " .. persona.modo .. ", " .. persona.fecha, x, y)
+            y = y + 45  -- Incrementar la posición Y para la siguiente línea
+        end    
+    end
     
-    local y = 150
-    love.graphics.setColor(0, 0, 0)  -- Establecer color de texto a negro
-    local x = width * 0.10
-    for _, persona in ipairs(datos) do
-        love.graphics.print(persona.nombre .. ", " .. persona.puntuacion .. " puntos, modo " .. persona.modo .. ", " .. persona.fecha, x, y)
-        y = y + 45  -- Incrementar la posición Y para la siguiente línea
-    end    
 end
 
 function scores.load()
-    
+    configuracion = require('snake.modes.configuracion.configuracion')
 end
 
 function scores.update()

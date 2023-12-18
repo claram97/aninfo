@@ -115,8 +115,13 @@ function update()
         button7Hovered = isMouseOver(button7X, button7Y, buttonWidth, buttonHeight)
     elseif gameState == "loading_one_player" or gameState == "loading_two_players" or gameState == "loading_free_mode" or gameState == "loading_labyrinth_mode" or gameState == "loading_inverted_mode" then
         local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
-        onePlayerButton1Hovered = isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight)
-        onePlayerButton2Hovered = isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight)
+        if screenWidth == WINDOW_WIDTH then
+            onePlayerButton1Hovered = isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight)
+            onePlayerButton2Hovered = isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight)
+        else
+            onePlayerButton1Hovered = isMouseOver(screenWidth * 0.5, screenHeight * 0.40, buttonWidth, buttonHeight)
+            onePlayerButton2Hovered = isMouseOver(screenWidth * 0.5, screenHeight * 0.50, buttonWidth, buttonHeight)
+        end
     elseif gameState == "one_player" then
         one_player.update()
     elseif gameState == "two_players" then
@@ -165,9 +170,13 @@ function drawLoadingSavedGame()
     love.graphics.setFont(fontBody)
 
     local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
-    -- Draw buttons
-    drawButton(screenWidth * 0.5, screenHeight * 0.35 , "Yes", onePlayerButton1Hovered, buttonColor)
-    drawButton(screenWidth * 0.5, screenHeight * 0.45, "No", onePlayerButton2Hovered, buttonColor)
+    if screenWidth == WINDOW_WIDTH then
+        drawButton(screenWidth * 0.5, screenHeight * 0.35 , "Yes", onePlayerButton1Hovered, buttonColor)
+        drawButton(screenWidth * 0.5, screenHeight * 0.45, "No", onePlayerButton2Hovered, buttonColor)
+    else
+        drawButton(screenWidth * 0.5, screenHeight * 0.40 , "Yes", onePlayerButton1Hovered, buttonColor)
+        drawButton(screenWidth * 0.5, screenHeight * 0.50, "No", onePlayerButton2Hovered, buttonColor)
+    end    
 end
 
 function love.draw()
@@ -273,44 +282,98 @@ function love.mousepressed(x, y, button, istouch, presses)
             configuracion.mousepressed(x, y, button, istouch, presses)
         elseif gameState == "loading_one_player" then
             local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
-            if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
-                one_player.load(true)
-                gameState = "one_player"
-            elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
-                one_player.load(false)
-                gameState = "one_player"
+            if screenWidth == WINDOW_WIDTH then
+                if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
+                    one_player.load(true)
+                    gameState = "one_player"
+                elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
+                    one_player.load(false)
+                    gameState = "one_player"
+                end
+            else
+                if isMouseOver(screenWidth * 0.5, screenHeight * 0.40, buttonWidth, buttonHeight) then
+                    one_player.load(true)
+                    gameState = "one_player"
+                elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.50, buttonWidth, buttonHeight) then
+                    one_player.load(false)
+                    gameState = "one_player"
+                end
             end
         elseif gameState == "loading_two_players" then
-            if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
-                two_players.load(true)
-                gameState = "two_players"
-            elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
-                two_players.load(false)
-                gameState = "two_players"
+            local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
+            if screenWidth == WINDOW_WIDTH then
+                if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
+                    one_player.load(true)
+                    gameState = "one_player"
+                elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
+                    one_player.load(false)
+                    gameState = "one_player"
+                end
+            else
+                if isMouseOver(screenWidth * 0.5, screenHeight * 0.40, buttonWidth, buttonHeight) then
+                    one_player.load(true)
+                    gameState = "one_player"
+                elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.50, buttonWidth, buttonHeight) then
+                    one_player.load(false)
+                    gameState = "one_player"
+                end
             end
         elseif gameState == "loading_free_mode" then
-            if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
-                free_mode.load(true)
-                gameState = "free_mode"
-            elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
-                free_mode.load(false)
-                gameState = "free_mode"
+            local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
+            if screenWidth == WINDOW_WIDTH then
+                if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
+                    one_player.load(true)
+                    gameState = "one_player"
+                elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
+                    one_player.load(false)
+                    gameState = "one_player"
+                end
+            else
+                if isMouseOver(screenWidth * 0.5, screenHeight * 0.40, buttonWidth, buttonHeight) then
+                    one_player.load(true)
+                    gameState = "one_player"
+                elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.50, buttonWidth, buttonHeight) then
+                    one_player.load(false)
+                    gameState = "one_player"
+                end
             end
         elseif gameState == "loading_labyrinth_mode" then
-            if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
-                labyrinth.load(true)
-                gameState = "labyrinth"
-            elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
-                labyrinth.load(false)
-                gameState = "labyrinth"
+            local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
+            if screenWidth == WINDOW_WIDTH then
+                if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
+                    one_player.load(true)
+                    gameState = "one_player"
+                elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
+                    one_player.load(false)
+                    gameState = "one_player"
+                end
+            else
+                if isMouseOver(screenWidth * 0.5, screenHeight * 0.40, buttonWidth, buttonHeight) then
+                    one_player.load(true)
+                    gameState = "one_player"
+                elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.50, buttonWidth, buttonHeight) then
+                    one_player.load(false)
+                    gameState = "one_player"
+                end
             end
         elseif gameState == "loading_inverted_mode" then
-            if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
-                inverted.load(true)
-                gameState = "inverted"
-            elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
-                inverted.load(false)
-                gameState = "inverted"
+            local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
+            if screenWidth == WINDOW_WIDTH then
+                if isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight) then
+                    one_player.load(true)
+                    gameState = "one_player"
+                elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight) then
+                    one_player.load(false)
+                    gameState = "one_player"
+                end
+            else
+                if isMouseOver(screenWidth * 0.5, screenHeight * 0.40, buttonWidth, buttonHeight) then
+                    one_player.load(true)
+                    gameState = "one_player"
+                elseif isMouseOver(screenWidth * 0.5, screenHeight * 0.50, buttonWidth, buttonHeight) then
+                    one_player.load(false)
+                    gameState = "one_player"
+                end
             end
         elseif gameState == "scores" then
             if scores.mousepressed(x, y, button, istouch, presses) then
