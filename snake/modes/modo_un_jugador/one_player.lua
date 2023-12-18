@@ -103,6 +103,7 @@ function M.load(loadGame)
     snakeBodyImageDown = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_body_down.png')
     snakeBodyImageLeft = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_body_left.png')
     snakeBodyImageRight = Love.graphics.newImage('modes/modo_un_jugador/assets/snake_body_right.png')
+    obstacleImage = Love.graphics.newImage('modes/modo_un_jugador/assets/obstacle.png')
     fruitImage = Love.graphics.newImage('modes/modo_un_jugador/assets/fruit.png')
     backgroundImage = Love.graphics.newImage('modes/modo_un_jugador/assets/background.png')
 
@@ -192,7 +193,7 @@ local cleared = false
 
 -- pre: -
 -- post: configuración para que las teclas f10, f11 y f12 tengan funcionalidades determinadas si el usuario las presiona.
-function checkEndMenuKeys()
+function checkFinalOptions()
     Love.keypressed = function(key)
         if key == 'f10' and gameOver then
             reiniciarJuego()
@@ -214,7 +215,7 @@ end
 -- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente y actualiza la puntuación y la posición de la fruta
 function M.update(dt)
     if gameOver then
-        checkEndMenuKeys()
+        checkFinalOptions()
     end
 
     move.get_direction(false)
@@ -266,9 +267,9 @@ function M.update(dt)
 
             -- move fruit to new location
             placeFruit()
-
+            obstacleCount = obstacleCount + 1
             -- add obstacle every certain amount of fruit eaten
-            if score % 10 == 0 then
+            if obstacleCount % 3 == 0 then
                 placeObstacle()
             end
 
@@ -302,8 +303,8 @@ function M.draw()
 
         -- draw obstacles
         for i = 1, #obstacles do
-            Love.graphics.setColor(0, 0, 0)
-            Love.graphics.rectangle('fill', obstacles[i].x * TILE_SIZE, obstacles[i].y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+            Love.graphics.setColor(0.5, 0.5, 0.5)
+            Love.graphics.draw(obstacleImage, obstacles[i].x * TILE_SIZE, obstacles[i].y * TILE_SIZE, 0)
         end
 
         -- draw snake
