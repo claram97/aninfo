@@ -4,6 +4,7 @@ local love = require("love")
 snakeBodyImage = love.graphics.newImage('modes/modo_libre/assets/snake_body.png')
 snakeHeadImage = love.graphics.newImage('modes/modo_libre/assets/snake_head.png')
 fruitImage = love.graphics.newImage('modes/modo_libre/assets/fruit_image.png')
+obstacleImage = love.graphics.newImage('modes/modo_libre/assets/obstaculo-libre.png')
 background = love.graphics.newImage('modes/modo_libre/assets/sprite_libre2.png')
 local configuracion = require('snake.modes.configuracion.configuracion')
 local savegame = require('snake.modes.savegame')
@@ -33,6 +34,9 @@ local snake_color = {1, 1, 1}
 local fruit_radius = 20
 local fruit_color = {1, 0, 0}
 
+local obstacle_color = {0.016, 0.749, 0.271}
+local obstacle_counter = 0
+
 -- Define flag to indicate if arrow key is pressed
 local left_pressed = false
 local right_pressed = false
@@ -41,8 +45,8 @@ local right_pressed = false
 local score = 0
 
 -- Define obstacle variables
-local OBSTACLE_RADIUS = 35
-local OBSTACLE_APPARITION_FREQUENCY = 5
+local OBSTACLE_RADIUS = 30
+local OBSTACLE_APPARITION_FREQUENCY = 2
 
 -- Define table to store snake segments
 local segment_distance = 45
@@ -56,7 +60,6 @@ local obstacles = {
     {x = 200, y = 300},
 }
 
-
 -- pre:
 -- post: se encarga de volver todas las variables, los estados, la serpientes y las posiciones de los obstáculos a los valores por defecto.
 function reiniciarTodo()
@@ -69,6 +72,7 @@ function reiniciarTodo()
     left_pressed = false
     right_pressed = false
     score = 0
+    obstacle_counter = 0
 
     snake_segments = {
         {x = snake_x, y = snake_y},
@@ -106,12 +110,12 @@ function draw()
         love.graphics.setColor(1, 0, 0)
         love.graphics.draw(fruitImage, fruit_x - fruit_radius, fruit_y - fruit_radius)
 
-        -- Draw obstacles
-        love.graphics.setColor(0, 0, 0)
+        love.graphics.setColor(obstacle_color)
         for _, obstacle in ipairs(obstacles) do
-            love.graphics.circle('fill', obstacle.x, obstacle.y, OBSTACLE_RADIUS)
+            love.graphics.draw(obstacleImage, obstacle.x - OBSTACLE_RADIUS, obstacle.y - OBSTACLE_RADIUS)
         end
 
+        love.graphics.setColor(0, 0, 0)
         love.graphics.print("Score: " .. score, 10, 10)
  
     end
@@ -320,6 +324,8 @@ function M.load(loadGame)
         end
     end
 
+    obstacle_counter = 0
+
     -- Check if fruit spawns on an obstacle and reposition it if necessary
     for _, obstacle in ipairs(obstacles) do
         local distance = math.sqrt((fruit_x - obstacle.x)^2 + (fruit_y - obstacle.y)^2)
@@ -361,7 +367,8 @@ end
 -- pre: WINDOW_WIDTH, WINDOW_HEIGHT, OBSTACLE_APPARITION_FREQUENCY y OBSTACLE_RADIUS  deben ser variables globales previamente definidas.
 -- post: se encarga de agregar obstáculos de manera aleatoria según el puntaje que vaya logrando el jugador.
 function updateObstacles()
-    if score % OBSTACLE_APPARITION_FREQUENCY == 0 then
+    obstacle_counter = obstacle_counter + 1
+    if obstacle_counter > OBSTACLE_APPARITION_FREQUENCY then
         local obstacle_radius = OBSTACLE_RADIUS
         obstacle_max_x = WINDOW_WIDTH - obstacle_radius
         local obstacle_x = math.random(obstacle_max_x)
@@ -375,6 +382,7 @@ function updateObstacles()
             obstacle_y = obstacle_radius
         end
         table.insert(obstacles, {x = obstacle_x, y = obstacle_y})
+        obstacle_counter = 0
     end
 end
 
