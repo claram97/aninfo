@@ -1,5 +1,5 @@
 local inputText = ""
-local maxCharacters = 22
+local maxCharacters = 18
 
 -- pre: Ninguna
 -- pos: Establece el color de fondo en RGB(1, 0.6, 0)
@@ -11,7 +11,7 @@ end
 -- pos: Establece el color de trazo en RGB(0.8, 0.8, 0.6) y dibuja un rectángulo relleno en la pantalla con esquinas redondeadas
 local function dibujarRectangulo()
     love.graphics.setColor(0.8, 0.8, 0.6) 
-    love.graphics.rectangle("fill", 50, 160, love.graphics.getWidth() - 100, 200, 10, 10)
+    love.graphics.rectangle("fill", 50, 130, love.graphics.getWidth() - 100, 200, 10, 10)
 end
 
 
@@ -27,7 +27,7 @@ local function dibujarCirculo(score)
     love.graphics.setColor(1, 1, 0) 
     local circleRadius = 30
     local circleX = love.graphics.getWidth() / 2
-    local circleY = 300 
+    local circleY = 270
     love.graphics.circle("fill", circleX, circleY, circleRadius)
 
     love.graphics.setColor(0, 0, 0)
@@ -103,7 +103,7 @@ function dibujarTextEntry()
 
     love.graphics.setColor(0, 0, 0)
     if screenWidth == BIG_WINDOW_WIDTH then
-        x = x + 65
+        x = x - 30
     end
     love.graphics.printf(inputText, x, y + 5, 350, "center")
 end
