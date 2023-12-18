@@ -14,7 +14,8 @@ local M = {}
 local constants = require('snake.modes.constants')
 local game_area_height = GAME_AREA_HEIGHT
 local game_area_width = GAME_AREA_WIDTH
-
+local window_width = WINDOW_WIDTH
+local window_height = WINDOW_HEIGHT
 -- Define font
 local font = love.graphics.newFont(40)
 
@@ -204,12 +205,12 @@ local function update(dt)
         -- Check if snake has collided with walls
         if snake_x < 0 - margin then
             game_over = true
-        elseif snake_x > WINDOW_WIDTH then
+        elseif snake_x > window_width then
             game_over = true
         end
         if snake_y < 0 - margin then
             game_over = true
-        elseif snake_y > WINDOW_HEIGHT then
+        elseif snake_y > window_height then
             game_over = true
         end
 
@@ -281,6 +282,8 @@ function M.load(loadGame)
         snake_y = BIG_WINDOW_HEIGHT / 2
         fruit_x = math.random(BIG_WINDOW_WIDTH)
         fruit_y = math.random(BIG_WINDOW_HEIGHT)
+        window_width = BIG_WINDOW_WIDTH
+        window_height = BIG_WINDOW_HEIGHT
     else
         Love.window.setMode(WINDOW_WIDTH, WINDOW_HEIGHT)
         game_area_height = GAME_AREA_HEIGHT
@@ -289,6 +292,8 @@ function M.load(loadGame)
         snake_y = WINDOW_HEIGHT / 2
         fruit_x = math.random(WINDOW_WIDTH)
         fruit_y = math.random(WINDOW_HEIGHT)
+        window_width = WINDOW_WIDTH
+        window_height = WINDOW_HEIGHT
     end
 
     local savedSnake = savegame.loadSnakeState('free_mode')
