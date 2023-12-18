@@ -55,6 +55,8 @@ function M.load(loadGame)
     -- set window title
     love.window.setTitle('Snake Game')
 
+    FuncionesAuxiliares = require("snake.modes.modo_dos_jugadores.pantalla_final")
+
     -- set window dimensions
     if config.fullScreen then
         Love.window.setMode(BIG_WINDOW_WIDTH, BIG_WINDOW_HEIGHT)
@@ -134,7 +136,7 @@ end
 
 --pre:
 --pos: reinicia los valores de las variables para que se "reinicie" el juego
-function reiniciarJuego()
+function reiniciar()
     snake1 = {}
     snake2 = {}
     score1 = 0
@@ -165,24 +167,24 @@ function reiniciarJuego()
     timer = love.timer.getTime()
 end
 
+function checkEndKeys()
+    Love.keypressed = function(key)
+        if key == 'f10' and gameOver then
+            reiniciar()
+        elseif key == 'f11' and gameOver then
+            love.event.quit("restart")
+        end
+    end
+end
+
 -- Pre: 
 -- Pos: Las serpientes se mueven, se verifican colisiones, se actualiza el puntaje y la longitud de la serpiente, se reproduce el sonido al comer,
 -- y se manejan las acciones específicas de las teclas 'm' y 'z' si se cumplen las condiciones durante el juego.
 function M.update(dt)
-    if Love.keyboard.isDown('f11') and gameOver then
-        love.event.quit("restart")
-    end
-
-    if Love.keyboard.isDown('f10')  and  gameOver then
-        gameState = "playing"
-        reiniciarJuego()
-    end
-
     if gameOver then
+        checkEndKeys()
         return
     end
-
-    FuncionesAuxiliares = require("snake.modes.modo_dos_jugadores.pantalla_final")
 
     -- check for input
     if love.keyboard.isDown('up') and direction1 ~= 'down' then
@@ -439,14 +441,6 @@ function M.draw()
     love.graphics.setFont(font)
     love.graphics.print('Player 1 Score: ' .. score1, 10, 10)
     love.graphics.print('Player 2 Score: ' .. score2, WINDOW_WIDTH - font:getWidth('Player 2 Score: ' .. score2) - 10, 10)
-
-    -- draw game over message
-    if gameOver then
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.setFont(font)
-        --love.graphics.print('Game Over', WINDOW_WIDTH / 2 - font:getWidth('Game Over') / 2, WINDOW_HEIGHT / 2 - font:getHeight() / 2)
-        FuncionesExtras.mostrarPantallaFinal(score, ganador, perdedor)
-    end
 end
 
 -- Pre: 

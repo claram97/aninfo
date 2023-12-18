@@ -343,7 +343,7 @@ function M.draw()
         -- draw button of pause
         Love.graphics.setColor(0, 0, 0)
         Love.graphics.setFont(font)
-        Love.graphics.print(gamePaused and "Reanudar (P)" or "Pausar (P)", 10, 130)
+        Love.graphics.print(gamePaused and "Reanudar (.)" or "Pausar (.)", 10, 40)
 
         -- draw fruit
         Love.graphics.setColor(1, 1, 1)
@@ -353,11 +353,6 @@ function M.draw()
         Love.graphics.setColor(0, 0, 0)
         Love.graphics.setFont(font)
         Love.graphics.print('Score: ' .. score, 10, 10)
-
-        -- show debug information
-        Love.graphics.print('FPS: ' .. Love.timer.getFPS(), 10, 40)
-        Love.graphics.print('Speed: ' .. speed, 10, 70)
-        Love.graphics.print('Direction: ' .. direction, 10, 100)
 
         -- draw game over message
     elseif gameState == "pausa" then
