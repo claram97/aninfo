@@ -113,7 +113,7 @@ function update()
         button5Hovered = isMouseOver(button5X, button5Y, buttonWidth, buttonHeight)
         button6Hovered = isMouseOver(button6X, button6Y, buttonWidth, buttonHeight)
         button7Hovered = isMouseOver(button7X, button7Y, buttonWidth, buttonHeight)
-    elseif gameState == "loading_one_player" then
+    elseif gameState == "loading_one_player" or gameState == "loading_two_players" or gameState == "loading_free_mode" or gameState == "loading_labyrinth_mode" or gameState == "loading_inverted_mode" then
         local screenWidth, screenHeight = love.graphics.getWidth(), love.graphics.getHeight()
         onePlayerButton1Hovered = isMouseOver(screenWidth * 0.5, screenHeight * 0.35, buttonWidth, buttonHeight)
         onePlayerButton2Hovered = isMouseOver(screenWidth * 0.5, screenHeight * 0.45, buttonWidth, buttonHeight)
