@@ -338,7 +338,7 @@ end
 
 function isMouseOver(x, y, width, height)
     local mouseX, mouseY = love.mouse.getPosition()
-    return mouseX >= x and mouseX <= x + width and mouseY >= y and mouseY <= y + height
+    return mouseX >= x - buttonWidth / 2 and mouseX <= x + buttonWidth / 2 and mouseY >= y and mouseY <= y + buttonHeight
 end
 
 function love.quit()
