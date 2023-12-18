@@ -29,6 +29,7 @@ local move = require('snake.modes.move')
 PantallaPausa = require("snake.pantalla_pausa")
 
 local M = {}
+
 --pre:
 --pos: pone la fruta en una posicion valida
 function placeFruit()
@@ -78,9 +79,8 @@ function placeObstacle()
 end
 
 
---pre: Se espera que las imágenes y recursos necesarios estén disponibles
--- Pos: La función inicializa el juego, cargando las imágenes necesarias, estableciendo el título y las dimensiones de la ventana, 
---inicializando las serpientes y la fruta, y configurando la dirección inicial de las serpiente.
+-- pre: Se espera que las imágenes y recursos necesarios estén disponibles
+-- Post: La función inicializa el juego, cargando las imágenes necesarias, estableciendo el título y las dimensiones de la ventana, inicializando las serpientes y la fruta, y configurando la dirección inicial de las serpiente.
 function M.load(loadGame)
     require('snake.modes.constants')
 
@@ -190,6 +190,8 @@ end
 
 local cleared = false
 
+-- pre: -
+-- post: configuración para que las teclas f10, f11 y f12 tengan funcionalidades determinadas si el usuario las presiona.
 function checkEndMenuKeys()
     Love.keypressed = function(key)
         if key == 'f10' and gameOver then
@@ -209,8 +211,7 @@ function checkEndMenuKeys()
 end
 
 -- pre:
--- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente
--- y actualiza la puntuación y la posición de la fruta
+-- pos: Maneja la entrada del teclado, reinicia el juego si es necesario, obtiene la dirección y mueve la serpiente y actualiza la puntuación y la posición de la fruta
 function M.update(dt)
     if gameOver then
         checkEndMenuKeys()
@@ -378,6 +379,8 @@ function dibujarPantallaPausa()
     Love.graphics.printf("El juego está en pausa. Presione P para volver al juego", 100, 220, Love.graphics.getWidth() - 200, "center")
 end
 
+-- pre:
+-- post: guarda la partida de este modo de juego antes de que el jugador pierda.
 function M.quit()
     -- if the game is over, don't save the snake state
     if gameOver then

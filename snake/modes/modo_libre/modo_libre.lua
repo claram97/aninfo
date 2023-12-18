@@ -56,8 +56,10 @@ local obstacles = {
     {x = 200, y = 300},
 }
 
+
+-- pre:
+-- post: se encarga de volver todas las variables, los estados, la serpientes y las posiciones de los obstáculos a los valores por defecto.
 function reiniciarTodo()
-    -- Reiniciar todas las variables y estados a sus valores iniciales
     game_over = false
     snake_x = WINDOW_WIDTH / 2
     snake_y = WINDOW_HEIGHT / 2
@@ -68,18 +70,19 @@ function reiniciarTodo()
     right_pressed = false
     score = 0
 
-    -- Reiniciar segmentos de la serpiente
     snake_segments = {
         {x = snake_x, y = snake_y},
         {x = snake_x - segment_distance, y = snake_y}
     }
 
-    -- Reiniciar obstáculos
     obstacles = {
         {x = 200, y = 300},
     }
 end
 
+
+-- pre: las variables utilizadas para las dimensiones del terreno de juego deben estar previamente definidas.
+-- post: se encarga de dibujar todo el área de juego, es decir, el terreno con sus paredes, los obstáculos y la fruta.
 function draw()
     if not game_over then
         love.graphics.setColor(1, 1, 1)
@@ -122,8 +125,9 @@ end
 local pressed = false
 local cleared = false
 
--- Define function to update position of snake and fruit
-local function update(dt)
+-- pre: 
+-- post: configuración para que las teclas f10, f11 y f12 tengan funcionalidades determinadas si el usuario las presiona.
+local function checkEndMenuKeys()
     if Love.keyboard.isDown('f10')  and  game_over then
         reiniciarTodo()
         pressed = false
@@ -145,6 +149,13 @@ local function update(dt)
             FuncionesAuxiliares.load()
         end
     end
+end
+
+-- pre:
+-- post: esta función se encarga de mantener el juego actualizado, es decir, lo reinicia si es necesario, lee las opciones que el usuario ingresa por teclado, actualiza la posición de la fruta, de los obstáculos y de la serpiente.
+local function update(dt)
+    
+    checkEndMenuKeys()
 
     if game_over then
         if not cleared then
@@ -230,8 +241,8 @@ local function update(dt)
     end
 end
 
-
--- Call update and draw functions in main loop
+-- pre:
+-- post: se encarga de dibujar toda la pantalla del juego.
 function M.draw()
     draw()
 end
@@ -240,7 +251,8 @@ function M.update(dt)
     update(dt)
 end
 
--- Define function to load game assets
+-- pre: el parámetro loadGame debe estar previamente inicializado.
+-- post: se encarga de inicializar y darle valor a todas las variables que utiliza el sistema.
 function M.load(loadGame)
     local config = configuracion.load()
     if config.sound == true then
@@ -318,7 +330,8 @@ function M.load(loadGame)
 
 end
 
--- Define function to get a random position for the snake
+-- pre: WINDOW_WIDTH Y WINDOW_HEIGHT deben ser variables globales previamente definidas.
+-- post: define una posición aleatoria para la serpiente.
 function getRandomSnakePosition()
     local x = math.random(WINDOW_WIDTH)
     local y = math.random(WINDOW_HEIGHT)
@@ -331,7 +344,8 @@ function getRandomSnakePosition()
     return x, y
 end
 
--- Define function to get a random position for the fruit
+-- pre: WINDOW_WIDTH Y WINDOW_HEIGHT deben ser variables globales previamente definidas.
+-- post: define una posición aleatoria para la fruta.
 function getRandomFruitPosition()
     local x = math.random(WINDOW_WIDTH)
     local y = math.random(WINDOW_HEIGHT)
@@ -344,6 +358,8 @@ function getRandomFruitPosition()
     return x, y
 end
 
+-- pre: WINDOW_WIDTH, WINDOW_HEIGHT, OBSTACLE_APPARITION_FREQUENCY y OBSTACLE_RADIUS  deben ser variables globales previamente definidas.
+-- post: se encarga de agregar obstáculos de manera aleatoria según el puntaje que vaya logrando el jugador.
 function updateObstacles()
     if score % OBSTACLE_APPARITION_FREQUENCY == 0 then
         local obstacle_radius = OBSTACLE_RADIUS
@@ -362,10 +378,14 @@ function updateObstacles()
     end
 end
 
+-- pre: 
+-- post: verifica si el archivo de guardado para este modo de juego es nulo o no.
 function M.isSavedGame()
     return savegame.loadSnakeState('free_mode') ~= nil
 end
 
+-- pre:
+-- post: guarda la partida de este modo de juego antes de que el jugador pierda.
 function M.quit()
     if game_over then
         return true

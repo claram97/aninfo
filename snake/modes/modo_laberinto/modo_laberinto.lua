@@ -209,6 +209,8 @@ local function reloadGame()
     M.load()
 end
 
+-- pre: la variable local gameState debe estar previamente inicializada.
+-- post: configuración para que las teclas f10, f11 y f12 tengan funcionalidades determinadas si el usuario las presiona.
 function checkEndMenuKeys()
     Love.keypressed = function(key)
         if key == 'f10' and gameOver then
@@ -275,6 +277,9 @@ function M.update(dt)
     end
 end
 
+
+-- pre: la variable global TILE_SIZE debe estar previamente definida.
+-- post: define el borde del área de juego.
 function draw_border()
     for i = 0, game_area_width - 1 do
         for j = 0, game_area_height - 1 do
@@ -297,6 +302,7 @@ function draw_border()
         end
     end
 end
+
 --pre:
 --pos: genera nuevas coordenadas hasta que no este cerca de la snake
 function get_random_position_away_from_snake()
@@ -343,7 +349,8 @@ function isPositionOnWall(x, y)
     return false
 end
 
-
+-- pre: la variable global TILE_SIZE debe estar previamente definida.
+-- post: crea el rectángulo donde se va a generar el juego.
 function draw_rectangle(start, finish)
     for i = (game_area_width / 2) - start, (game_area_width / 2) + finish do
         for j = (game_area_height / 2) - start, (game_area_height / 2) + finish do
@@ -367,22 +374,31 @@ function draw_rectangle(start, finish)
     end
 end
 
+
+-- pre:
+-- post: dibuja en pantalla el terreno del juego para el nivel 1.
 function draw_labyrinth()
     draw_border()
     draw_rectangle(3,3)
     
 end
 
+-- pre:
+-- post: dibuja en pantalla el terreno del juego para el nivel 2.
 function draw_labyrinth_2()
     draw_border()
 end
 
+-- pre:
+-- post: dibuja en pantalla el terreno del juego para el nivel 3.
 function draw_labyrinth_3()
     draw_border()
     draw_rectangle(5,5)
     draw_rectangle(2,2)
 end
 
+-- pre: start, finish y j deben estar previamente inicializadas.
+-- post: genera lineas de paredes horizontales.
 function draw_horizontal_line(start, finish, j)
     for i = start, finish do
         Love.graphics.setColor(0, 108/255, 44/255)
@@ -390,6 +406,8 @@ function draw_horizontal_line(start, finish, j)
     end
 end
 
+-- pre: start, finish y j deben estar previamente inicializadas.
+-- post: genera lineas de paredes verticales.
 function draw_vertical_line(start, finish, j)
     for i = start, finish do
         Love.graphics.setColor(0, 108/255, 44/255)
@@ -397,6 +415,8 @@ function draw_vertical_line(start, finish, j)
     end
 end
 
+-- pre:
+-- post: dibuja en pantalla el terreno del juego para el nivel 4.
 function draw_labyrinth_4()
     draw_border()
     draw_vertical_line((game_area_height / 2) - 2, (game_area_height / 2) + 2, (game_area_width / 2) - 5)
@@ -405,24 +425,24 @@ function draw_labyrinth_4()
     draw_horizontal_line((game_area_width / 2) - 2, (game_area_width / 2) + 2, (game_area_height / 2) + 5)
 end
 
-function draw_labyrinth_4()
-    draw_border()
-    draw_vertical_line((game_area_height / 2) - 2, (game_area_height / 2) + 2, (game_area_width / 2) - 5)
-    draw_vertical_line((game_area_height / 2) - 2, (game_area_height / 2) + 2, (game_area_width / 2) + 5)
-    draw_horizontal_line((game_area_width / 2) - 2, (game_area_width / 2) + 2, (game_area_height / 2) - 5)
-    draw_horizontal_line((game_area_width / 2) - 2, (game_area_width / 2) + 2, (game_area_height / 2) + 5)
-end
 
+-- pre: game_area_height y game_area_width deben estar previamente inicializadas.
+-- post: obtiene posiciones aleatorias que se encuentren dentro de los límites del terreno de juego.
 function get_random_position()
     local x = Love.math.random(2, game_area_width - 2)
     local y = Love.math.random(2, game_area_height - 2)
     return x, y
 end
 
+
+-- pre:
+-- post: genera lineas de paredes aleatorias.
 function draw_random_lines()
     draw_border()
 end
 
+-- pre:
+-- post: genera paredes estáticas en el terreno de juego.
 function drawStaticWalls()
     Love.graphics.setColor(0, 108/255, 44/255)
     for _, wall in ipairs(obstacles) do
@@ -536,7 +556,7 @@ function M.isSavedGame()
 end
 
 -- pre: 
--- pos: Se guardan los datos del juego si la aplicacion se cierra
+-- pos: Se guardan los datos del juego si la aplicacion se cierra antes de que el jugador pierda.
 function M.quit()
     if game_over then
         return true
