@@ -29,7 +29,9 @@ Nota: los pasos 3 y 4 pueden reemplazarse por `sudo make all install` o `sudo ma
 En Windows, la versión 5.4 existe pero en el release 2.
 Puede descargarse en: [luabinaries.sourceforge.net](https://luabinaries.sourceforge.net/download.html)
 
-Descargamos la versión **lua-5.4.2_Win64_bin.zip** que es para Windows de 64 bits y posee los ejecutables. 
+Descargamos la versión **lua-5.4.2_Win64_bin.zip** que es para Windows de 64 bits y posee los ejecutables.
+
+### Paso a Paso
 - Descomprimir en C:\Program Files\lua
 - Abrir ajustes
 - Buscar la opción en el buscado para "Editar las variables de entorno del sistema"
@@ -61,32 +63,13 @@ O bien:
 
 ### Windows:
 
--Descargar y correr el instalador.
+- Descargar y correr el instalador.
 
+- Similar a la [seccion anterior](#paso-a-paso) editar las variables de entorno agregando el path de love en el directorio instalado. 
 ---
 
-## Correr un hola mundo en lua
-
-1. Crear un archivo hola_mundo.lua
-2. Escribir print("¡Hola, mundo!")
-3. Ir a la carpeta del proyecto y correr por línea de comandos `lua hola_mundo.lua`.
-
-## Para correr un proyecto hecho en Love2D
-
-Creamos una carpeta para nuestro proyecto y dentro de esa carpeta creamos un **main.lua**. Es importante que el archivo se llame main.
-Dentro del main.lua podemos escribir por ejemplo:
+## Correr el juego
+Pararse en la carpeta root del proyecto, por default  `aninfo-main`, abrir una terminal y correr el comando:
+```console
+$ love snake
 ```
-function love.draw()
-	love.graphics.print("Hello World!", 400, 300)
-end
-```
-
-Adicionalmente, podemos hacer un archivo de configuración conf.lua
-
-function love.conf(t)
-    t.window.title = "Hola Mundo en Love2D"
-    t.window.width = 800
-    t.window.height = 600
-end
-
-Luego, vamos a la carpeta que contiene a la carpeta del proyecto. Es decir si el main.lua fue creado en /Desktop/lua/proyecto/, nos paramos en /Desktop/lua y corremos love proyecto en la terminal.
