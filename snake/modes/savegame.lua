@@ -70,4 +70,10 @@ function M.loadSnakeState(mode)
     return loadedData
 end
 
+-- Function to remove savefiles once the game is over correctly
+function M.clearSnakeState(mode)
+    local filename = "snake_state_" .. mode .. ".txt"
+    os.remove(filename)
+end
+
 return M

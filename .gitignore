@@ -1,0 +1,5 @@
+# Cosas de VSCode
+.vscode/
+
+# Archivos de guardado
+/snake_state_*.txt

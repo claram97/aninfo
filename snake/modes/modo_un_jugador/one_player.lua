@@ -194,6 +194,7 @@ local cleared = false
 -- pre: -
 -- post: configuración para que las teclas f10, f11 y f12 tengan funcionalidades determinadas si el usuario las presiona.
 function checkFinalOptions()
+    savegame.clearSnakeState('one_player')
     Love.keypressed = function(key)
         if key == 'f10' and gameOver then
             reiniciarJuego()

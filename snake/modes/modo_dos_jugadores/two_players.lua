@@ -168,6 +168,8 @@ function reiniciar()
 end
 
 function checkEndKeys()
+    savegame.clearSnakeState('two_players_snake1')
+    savegame.clearSnakeState('two_players_snake2')
     Love.keypressed = function(key)
         if key == 'f10' and gameOver then
             reiniciar()

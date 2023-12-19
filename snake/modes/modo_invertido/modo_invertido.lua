@@ -117,6 +117,7 @@ end
 -- pre: la variable local gameState debe estar previamente inicializada.
 -- post: configuración para que las teclas f10, f11 y f12 tengan funcionalidades determinadas si el usuario las presiona.
 function checkEndMenuKeys()
+    savegame.clearSnakeState('inverted')
     Love.keypressed = function(key)
         if key == 'f10' and gameOver then
             gameState = "playing"

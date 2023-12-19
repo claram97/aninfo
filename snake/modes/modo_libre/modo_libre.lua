@@ -133,6 +133,7 @@ local cleared = false
 -- pre: 
 -- post: configuración para que las teclas f10, f11 y f12 tengan funcionalidades determinadas si el usuario las presiona.
 local function checkEndMenuKeys()
+    savegame.clearSnakeState('free_mode')
     if Love.keyboard.isDown('f10')  and  game_over then
         reiniciarTodo()
         pressed = false
