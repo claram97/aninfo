@@ -557,7 +557,7 @@ end
 -- pre: 
 -- pos: Se guardan los datos del juego si la aplicacion se cierra antes de que el jugador pierda.
 function M.quit()
-    if game_over then
+    if gameOver then
         return true
     end
     savegame.saveSnakeState(snake, obstacles, score, 'modo_laberinto')
