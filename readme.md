@@ -1,4 +1,7 @@
+# Snake
+TP Análisis de la Información. Curso Camejo. 2do cuatrimestre 2023. Implementación del juego Snake en Lua, utilizando Love2D para el desarrollo de la interfaz gráfica. 
 Trabajaremos con la versión 5.4.6 de Lua, que es la más actual hasta la fecha.
+
 ---
 # Instalación de Lua en Linux o WSL. En particular, con Ubuntu 22.04.
 
