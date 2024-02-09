@@ -1,7 +1,0 @@
-Snake:
-30,6
-30,7
-30,8
-
-Obstacles:
-Score: 0
